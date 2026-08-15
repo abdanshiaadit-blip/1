@@ -6,7 +6,7 @@ import {
   StateDot,
   ListRow,
 } from '../components/primitives'
-import { IntelligenceRing, LoopStrip, Sparkline, ProgressRing } from '../components/viz'
+import { IntelligencePanel, LoopStrip, Sparkline, ProgressRing } from '../components/viz'
 
 export default function Home() {
   const { p, openSheet, setTab, openBooking, done, toggleAction } = useApp()
@@ -37,14 +37,15 @@ export default function Home() {
           <div className="hero__field" aria-hidden="true" />
           <div className="hero__sheen" aria-hidden="true" />
 
-          <button type="button" className="hero__ringwrap" onClick={() => openSheet('intel')}>
-            <IntelligenceRing score={p.intel.score} baseline={p.intel.baselineScore} />
-            <div className="hero__delta">
-              <svg width="11" height="11" viewBox="0 0 12 12" aria-hidden="true">
-                <path d="M6 2.2l4 5.2H2l4-5.2z" fill="currentColor" />
-              </svg>
-              +{p.intel.delta} since baseline
-            </div>
+          {/* The delta now lives on the panel face, so the panel is a complete
+              readout rather than a number needing a caption underneath. */}
+          <button type="button" className="hero__panelwrap" onClick={() => openSheet('intel')}>
+            <IntelligencePanel
+              score={p.intel.score}
+              baseline={p.intel.baselineScore}
+              delta={p.intel.delta}
+              history={p.intel.history.map((h) => h.score)}
+            />
           </button>
 
           <div className="hero__rule" />

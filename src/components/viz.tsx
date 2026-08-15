@@ -28,193 +28,236 @@ export function useCountUp(target: number, duration = 1400, decimals = 0) {
   return v
 }
 
-/* --------------------------------------------------- Intelligence Ring
-   A dark instrument dial set into the light glass card — the way premium
-   hardware pairs a white body with a black screen. Saturated colour on
-   near-black reads as precision instrumentation; the same colour on white
-   reads as candy, which is what the earlier pastel-on-white version did.
+/* -------------------------------------------------- Intelligence Panel
+   A dark instrument panel — a squircle display set into the light glass card,
+   the way premium hardware pairs a white body with a black screen.
 
-   Layers, outside in:
-     aura        cool bloom escaping around the dial
-     dial        machined dark disc with a lens highlight and a rim light
-     ticks       60 graduations; those inside the score are lit by the gradient
-     arc         thin, crisp score arc — no fuzzy bloom
-     baseline    a single notch marking where this member started
-     sweep       instrument sweep with a trailing comet, screen-blended so it
-                 brightens the ticks and arc as it passes
-     readout     the number
+   The score runs as a SEGMENTED GAUGE around the panel's perimeter rather than
+   as a ring, which is the form the square actually wants: a circle centred in
+   a square wastes its corners and reads as a circle in a box.
+
+   Using the square's real estate, the face carries a full readout — label,
+   score, delta, and the score's own history — instead of a lone number.
+
+   Layers:
+     aura     cool bloom escaping around the panel
+     panel    machined dark squircle, rim light, inner shadow, lens reflection
+     gauge    60 perimeter segments; those inside the score are lit
+     sweep    light running the perimeter, confined to the gauge band
+     face     label / score / delta / history
+
+   Geometry is concentric: the gauge inset equals panel radius minus gauge
+   radius, so the two curves stay parallel the whole way round.
 
    All looping motion is CSS transform/opacity, so it stays composited and
-   prefers-reduced-motion halts it globally. */
+   prefers-reduced-motion halts it. */
 
-const TICKS = 60
+const SEGMENTS = 60
 
-export function IntelligenceRing({
+/** Rounded-rect path starting at TOP CENTRE, running clockwise — so the gauge
+ *  fills from 12 o'clock like an instrument rather than from a corner. */
+function squirclePath(x: number, y: number, w: number, h: number, r: number) {
+  const cx = x + w / 2
+  return [
+    `M${cx},${y}`,
+    `L${x + w - r},${y}`,
+    `A${r},${r} 0 0 1 ${x + w},${y + r}`,
+    `L${x + w},${y + h - r}`,
+    `A${r},${r} 0 0 1 ${x + w - r},${y + h}`,
+    `L${x + r},${y + h}`,
+    `A${r},${r} 0 0 1 ${x},${y + h - r}`,
+    `L${x},${y + r}`,
+    `A${r},${r} 0 0 1 ${x + r},${y}`,
+    `L${cx},${y}`,
+  ].join(' ')
+}
+
+export function IntelligencePanel({
   score,
   baseline,
-  size = 216,
+  delta,
+  history = [],
+  size = 286,
 }: {
   score: number
   baseline?: number
+  delta?: number
+  history?: number[]
   size?: number
 }) {
   const uid = useId().replace(/:/g, '')
-  const c0 = size / 2
 
-  const R_DIAL = size * 0.481
-  const R_ARC = size * 0.4259
-  const ARC_W = size * 0.0417
-  const R_TICK_OUT = size * 0.3796
-  const R_TICK_IN = size * 0.3472
+  const INSET = 11
+  const R_PANEL = size * 0.246
+  const R_GAUGE = R_PANEL - INSET
+  const GW = size * 0.0238
+  const gw = size - INSET * 2
 
-  const circ = 2 * Math.PI * R_ARC
+  const path = squirclePath(INSET, INSET, gw, gw, R_GAUGE)
+  const perim = 4 * (gw - 2 * R_GAUGE) + 2 * Math.PI * R_GAUGE
+  const cell = perim / SEGMENTS
+  const dash = `${(cell * 0.6).toFixed(2)} ${(cell * 0.4).toFixed(2)}`
+
   const [len, setLen] = useState(0)
   const shown = useCountUp(score, 1600)
 
   useEffect(() => {
-    const t = window.setTimeout(() => setLen((score / 100) * circ), 140)
+    const t = window.setTimeout(() => setLen((score / 100) * perim), 140)
     return () => window.clearTimeout(t)
-  }, [score, circ])
-
-  const rad = (deg: number) => ((deg - 90) * Math.PI) / 180
-  const at = (deg: number, r: number) => [c0 + r * Math.cos(rad(deg)), c0 + r * Math.sin(rad(deg))] as const
-
-  const endA = (score / 100) * 360
-  const [ex, ey] = at(endA, R_ARC)
-
-  const litUpTo = (score / 100) * TICKS
+  }, [score, perim])
 
   return (
-    <div className="ring" style={{ width: size, height: size }}>
-      <div className="ring__aura" aria-hidden="true" />
-      <div className="ring__dial" aria-hidden="true">
-        <span className="ring__lens" />
+    <div className="hi" style={{ width: size, height: size }}>
+      <div className="hi__aura" aria-hidden="true" />
+      <div className="hi__panel" aria-hidden="true">
+        <span className="hi__lens" />
       </div>
 
-      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="ring__svg">
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="hi__svg">
         <defs>
-          <linearGradient id={`g${uid}`} x1="6%" y1="94%" x2="94%" y2="6%">
+          <linearGradient id={`g${uid}`} x1="4%" y1="96%" x2="96%" y2="4%">
             <stop offset="0%" stopColor="#2bf0a8" />
             <stop offset="46%" stopColor="#00d2ea" />
             <stop offset="100%" stopColor="#5c9bff" />
           </linearGradient>
-          <radialGradient id={`s${uid}`}>
-            <stop offset="0%" stopColor="#fff" stopOpacity="0.9" />
-            <stop offset="60%" stopColor="#fff" stopOpacity="0.22" />
-            <stop offset="100%" stopColor="#fff" stopOpacity="0" />
-          </radialGradient>
-          {/* userSpaceOnUse: the default objectBoundingBox mask region is
-              -10%..120% of the bbox, which clips a stroke this wide. */}
+          {/* Reveals the lit run of segments. A solid stroke on the same path,
+              so segments and progress can never drift out of register. */}
           <mask id={`m${uid}`} maskUnits="userSpaceOnUse" x="0" y="0" width={size} height={size}>
-            <circle
-              cx={c0}
-              cy={c0}
-              r={R_ARC}
+            <path
+              d={path}
               fill="none"
               stroke="#fff"
-              strokeWidth={ARC_W}
-              strokeLinecap="round"
-              strokeDasharray={circ}
-              strokeDashoffset={circ - len}
-              transform={`rotate(-90 ${c0} ${c0})`}
-              style={{ transition: 'stroke-dashoffset 1600ms cubic-bezier(.22,1,.36,1)' }}
+              strokeWidth={GW * 2.4}
+              strokeDasharray={perim}
+              strokeDashoffset={perim - len}
+              style={{ transition: 'stroke-dashoffset 1700ms cubic-bezier(.22,1,.36,1)' }}
             />
           </mask>
         </defs>
 
-        {/* graduations */}
-        <g strokeLinecap="round">
-          {Array.from({ length: TICKS }, (_, i) => {
-            const deg = (i / TICKS) * 360
-            const [x1, y1] = at(deg, R_TICK_IN)
-            const [x2, y2] = at(deg, R_TICK_OUT)
-            const lit = i < litUpTo
-            const major = i % 5 === 0
-            return (
-              <line
-                key={i}
-                x1={x1}
-                y1={y1}
-                x2={x2}
-                y2={y2}
-                stroke={lit ? `url(#g${uid})` : 'rgba(214,240,238,.16)'}
-                strokeWidth={major ? 1.9 : 1.1}
-                opacity={lit ? (major ? 0.95 : 0.62) : major ? 1 : 0.66}
-                className="ring__tick"
-                style={{ transitionDelay: `${180 + i * 14}ms` }}
-              />
-            )
-          })}
-        </g>
-
-        {/* hairline registration circles */}
-        <circle cx={c0} cy={c0} r={R_TICK_IN - 5} fill="none" stroke="rgba(214,240,238,.09)" strokeWidth="1" />
-        <circle cx={c0} cy={c0} r={R_DIAL - 4} fill="none" stroke="rgba(214,240,238,.07)" strokeWidth="1" />
-
-        {/* arc track */}
-        <circle
-          cx={c0}
-          cy={c0}
-          r={R_ARC}
+        {/* unlit segments */}
+        <path
+          d={path}
           fill="none"
-          stroke="rgba(214,240,238,.075)"
-          strokeWidth={ARC_W}
-        />
-
-        {/* score arc — crisp, no bloom pass */}
-        <circle
-          cx={c0}
-          cy={c0}
-          r={R_ARC}
-          fill="none"
-          stroke={`url(#g${uid})`}
-          strokeWidth={ARC_W}
+          stroke="rgba(214,240,238,.17)"
+          strokeWidth={GW}
+          strokeDasharray={dash}
           strokeLinecap="round"
-          strokeDasharray={circ}
-          strokeDashoffset={circ - len}
-          transform={`rotate(-90 ${c0} ${c0})`}
-          style={{ transition: 'stroke-dashoffset 1600ms cubic-bezier(.22,1,.36,1)' }}
         />
 
-        {/* travelling specular, confined to the arc */}
-        <g mask={`url(#m${uid})`} className="ring__shine">
-          <ellipse cx={c0} cy={c0 - R_ARC} rx={ARC_W * 3.4} ry={ARC_W * 1.1} fill={`url(#s${uid})`} />
+        {/* lit segments */}
+        <g mask={`url(#m${uid})`}>
+          <path
+            d={path}
+            fill="none"
+            stroke={`url(#g${uid})`}
+            strokeWidth={GW}
+            strokeDasharray={dash}
+            strokeLinecap="round"
+          />
         </g>
 
-        {/* baseline notch — where this member started */}
-        {baseline !== undefined &&
-          (() => {
-            const d = (baseline / 100) * 360
-            const [bx1, by1] = at(d, R_ARC - ARC_W * 0.95)
-            const [bx2, by2] = at(d, R_ARC + ARC_W * 0.95)
-            return (
-              <line
-                x1={bx1}
-                y1={by1}
-                x2={bx2}
-                y2={by2}
-                stroke="rgba(233,250,247,.72)"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-                className="ring__base"
-              />
-            )
-          })()}
+        {/* baseline marker — where this member started */}
+        {baseline !== undefined && (
+          <path
+            d={path}
+            fill="none"
+            stroke="rgba(233,250,247,.8)"
+            strokeWidth={GW * 2.1}
+            strokeLinecap="butt"
+            strokeDasharray={`2 ${perim}`}
+            strokeDashoffset={-((baseline / 100) * perim)}
+            className="hi__base"
+          />
+        )}
 
-        {/* leading edge */}
-        <g className="ring__cap">
-          <circle cx={ex} cy={ey} r={ARC_W * 0.34} fill="#fff" />
+        {/* Light chasing the perimeter — a head plus two lagging trails, all on
+            the gauge path so it tracks the squircle exactly. This replaced a
+            CSS mask-composite ring, which did not clip and let the conic
+            gradient streak across the panel face. */}
+        <g className="hi__chase" style={{ ['--perim' as string]: `${perim}px` }}>
+          {[
+            { lag: 0, o: 0.85, w: 1.15 },
+            { lag: 0.13, o: 0.34, w: 1 },
+            { lag: 0.28, o: 0.13, w: 0.9 },
+          ].map((t) => (
+            <path
+              key={t.lag}
+              d={path}
+              fill="none"
+              stroke="#dffff8"
+              strokeWidth={GW * t.w}
+              strokeLinecap="round"
+              opacity={t.o}
+              strokeDasharray={`${cell * 0.62} ${perim}`}
+              style={{ animationDelay: `${-(11 - t.lag)}s` }}
+            />
+          ))}
         </g>
+
+        {/* inner registration frame */}
+        <rect
+          x={INSET + 20}
+          y={INSET + 20}
+          width={gw - 40}
+          height={gw - 40}
+          rx={Math.max(4, R_GAUGE - 20)}
+          fill="none"
+          stroke="rgba(214,240,238,.055)"
+          strokeWidth="1"
+        />
       </svg>
 
-      {/* instrument sweep — brightens whatever it passes over */}
-      <div className="ring__sweep" aria-hidden="true" />
 
-      <div className="ring__mid">
-        <div className="ring__score num">{Math.round(shown)}</div>
-        <div className="ring__label">Health Intelligence</div>
+      <div className="hi__face">
+        <div className="hi__label">Health Intelligence</div>
+        <div className="hi__read">
+          <span className="hi__score num">{Math.round(shown)}</span>
+          <span className="hi__of num">/100</span>
+        </div>
+        {delta !== undefined && (
+          <div className="hi__delta">
+            <svg width="9" height="9" viewBox="0 0 12 12" aria-hidden="true">
+              <path d="M6 2.2l4 5.2H2l4-5.2z" fill="currentColor" />
+            </svg>
+            +{delta} since baseline
+          </div>
+        )}
+        {history.length > 1 && <PanelSpark data={history} />}
       </div>
     </div>
+  )
+}
+
+/** The score's own history, drawn small on the panel face. */
+function PanelSpark({ data }: { data: number[] }) {
+  const uid = useId().replace(/:/g, '')
+  const w = 112
+  const h = 26
+  const min = Math.min(...data)
+  const max = Math.max(...data)
+  const span = Math.max(max - min, 1)
+  const X = (i: number) => (i / (data.length - 1)) * (w - 4) + 2
+  const Y = (v: number) => h - 4 - ((v - min) / span) * (h - 8)
+  const line = data.map((v, i) => `${i ? 'L' : 'M'}${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join(' ')
+  const last = data[data.length - 1]
+
+  return (
+    <svg viewBox={`0 0 ${w} ${h}`} className="hi__spark" aria-hidden="true">
+      <defs>
+        <linearGradient id={`p${uid}`} x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#2bf0a8" stopOpacity="0.28" />
+          <stop offset="100%" stopColor="#5cf0d8" stopOpacity="1" />
+        </linearGradient>
+        <linearGradient id={`f${uid}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#2bf0a8" stopOpacity="0.2" />
+          <stop offset="100%" stopColor="#2bf0a8" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <path d={`${line} L${X(data.length - 1)},${h} L${X(0)},${h} Z`} fill={`url(#f${uid})`} />
+      <path d={line} fill="none" stroke={`url(#p${uid})`} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx={X(data.length - 1)} cy={Y(last)} r="2.6" fill="#8ffbe4" />
+    </svg>
   )
 }
 
