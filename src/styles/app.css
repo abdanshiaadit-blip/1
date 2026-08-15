@@ -202,7 +202,7 @@
 
 .pad {
   padding: 0 var(--gutter);
-  margin-bottom: var(--s-6);
+  margin-bottom: var(--s-7);
 }
 .pagehead {
   padding: var(--s-3) var(--gutter) var(--s-5);
@@ -235,7 +235,7 @@
   align-items: flex-end;
   justify-content: space-between;
   gap: var(--s-3);
-  margin-bottom: var(--s-3);
+  margin-bottom: var(--s-4);
 }
 .sec__eyebrow {
   margin-bottom: 5px;
@@ -1109,11 +1109,15 @@
   z-index: 1;
 }
 .hero__ringwrap {
+  transition: transform 300ms var(--spring);
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--s-4);
+}
+.hero__ringwrap:active {
+  transform: scale(0.972);
 }
 .hero__delta {
   display: inline-flex;
@@ -1237,7 +1241,11 @@
   display: grid;
   place-items: center;
   color: transparent;
-  transition: all 280ms var(--spring);
+  transition:
+    background-color 200ms var(--ease-out),
+    border-color 200ms var(--ease-out),
+    box-shadow 240ms var(--ease-out),
+    transform 340ms var(--spring);
   margin-top: 1px;
 }
 .today__check.is-on,
@@ -1435,14 +1443,9 @@
 .bsys {
   border-radius: var(--r-3xl);
   padding: var(--s-5) 0 var(--s-3);
-  background:
-    radial-gradient(
-      120% 76% at 50% 0%,
-      color-mix(in srgb, var(--st, var(--accent-brand)) 15%, transparent),
-      transparent 64%
-    ),
-    linear-gradient(177deg, rgba(255, 255, 255, 0.93), rgba(255, 255, 255, 0.76));
-  transition: background 620ms var(--ease-out);
+  position: relative;
+  isolation: isolate;
+  background: linear-gradient(177deg, rgba(255, 255, 255, 0.93), rgba(255, 255, 255, 0.76));
   backdrop-filter: var(--blur-heavy);
   -webkit-backdrop-filter: var(--blur-heavy);
   border: 0.5px solid rgba(255, 255, 255, 0.9);
@@ -1450,6 +1453,24 @@
   overflow: hidden;
   animation: hero-in 700ms var(--spring) both;
 }
+/* background-image does not interpolate, so transitioning the gradient
+   directly snapped between system colours. Painting it with currentColor and
+   transitioning `color` gives a real cross-fade. */
+.bsys::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  color: var(--st, var(--accent-brand));
+  background: radial-gradient(
+    120% 76% at 50% 0%,
+    color-mix(in srgb, currentColor 16%, transparent),
+    transparent 64%
+  );
+  transition: color 620ms var(--ease-out);
+}
+
 .bsys__top {
   display: flex;
   align-items: flex-start;
@@ -1523,6 +1544,9 @@
   font-weight: 650;
   color: var(--st);
 }
+.bsys__open:active {
+  opacity: 0.55;
+}
 .bsys__chev {
   width: 6px;
   height: 6px;
@@ -1585,6 +1609,9 @@
   transition: all 220ms var(--spring);
   white-space: nowrap;
 }
+.filter:active {
+  transform: scale(0.95);
+}
 .filter.is-on {
   background: var(--grad-brand);
   border-color: transparent;
@@ -1603,6 +1630,11 @@
 }
 .bmrow:active {
   background: rgba(6, 42, 38, 0.04);
+}
+/* .bmrow is declared after .row--last at equal specificity, so it re-applied
+   the separator to the final row. */
+.bmrow.row--last {
+  border-bottom: none;
 }
 .bmrow__main {
   flex: 1;
@@ -3105,7 +3137,7 @@
   align-items: center;
   gap: 3px;
   padding: 11px 3px;
-  border-radius: var(--r-md);
+  border-radius: var(--r-lg);
   background: rgba(255, 255, 255, 0.72);
   border: 1.5px solid var(--hairline);
   box-shadow: var(--rim);
@@ -3143,7 +3175,7 @@
 }
 .slot {
   padding: 13px 8px;
-  border-radius: var(--r-cap);
+  border-radius: var(--r-lg);
   background: rgba(255, 255, 255, 0.72);
   border: 1.5px solid var(--hairline);
   box-shadow: var(--rim);

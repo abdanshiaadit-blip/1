@@ -290,11 +290,15 @@ export function Sparkline({
   if (data.length < 2) return null
   const min = Math.min(...data)
   const max = Math.max(...data)
-  const span = max - min || 1
+  // Floor the scale and centre the series. Normalising each sparkline to its
+  // own min/max made a 0.2% move look identical to a 30% move — misleading on
+  // health data. A genuinely flat marker now draws flat, through the middle.
+  const span = Math.max(max - min, Math.abs(max) * 0.1, 1e-6)
+  const lo = (max + min) / 2 - span / 2
   const pad = 3
   const pts = data.map((v, i) => {
     const x = (i / (data.length - 1)) * (w - pad * 2) + pad
-    const y = h - pad - ((v - min) / span) * (h - pad * 2)
+    const y = h - pad - ((v - lo) / span) * (h - pad * 2)
     return [x, y] as const
   })
   const d = pts.map(([x, y], i) => `${i ? 'L' : 'M'}${x.toFixed(1)},${y.toFixed(1)}`).join(' ')
@@ -501,7 +505,7 @@ export function AdherenceGrid({ days, weeks = 6 }: { days: (boolean | null)[]; w
         <span
           key={i}
           className={`agrid__c ${d === true ? 'is-on' : d === false ? 'is-off' : 'is-future'}`}
-          style={{ transitionDelay: `${Math.min(600, i * 9)}ms` }}
+          style={{ animationDelay: `${Math.min(600, i * 9)}ms` }}
         />
       ))}
     </div>
