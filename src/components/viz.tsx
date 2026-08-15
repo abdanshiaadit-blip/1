@@ -520,8 +520,8 @@ export function CycleArc({
   length: number
   size?: number
 }) {
-  const stroke = 13
-  const r = (size - stroke - 12) / 2
+  const stroke = size * 0.068
+  const r = (size - stroke - size * 0.063) / 2
   const cx = size / 2
   const cy = size / 2
   const [on, setOn] = useState(false)
@@ -548,7 +548,7 @@ export function CycleArc({
   const [mx, my] = pt(Math.min(day, length))
 
   return (
-    <div className="carc" style={{ width: size, height: size }}>
+    <div className="carc" style={{ width: size, height: size, ['--carc' as string]: `${size}px` }}>
       <svg width={size} height={size} className="carc__svg">
         <circle cx={cx} cy={cy} r={r} fill="none" stroke="var(--track-soft)" strokeWidth={stroke} />
         {spans.map((s) => (
@@ -568,10 +568,10 @@ export function CycleArc({
         <circle
           cx={mx}
           cy={my}
-          r={on ? 8.5 : 0}
+          r={on ? size * 0.045 : 0}
           fill="#fff"
           stroke="var(--accent-women)"
-          strokeWidth="3.5"
+          strokeWidth={size * 0.018}
           className="carc__mark"
         />
       </svg>

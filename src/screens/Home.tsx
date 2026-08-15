@@ -5,8 +5,9 @@ import {
   Reveal,
   StateDot,
   ListRow,
+  Chip,
 } from '../components/primitives'
-import { IntelligencePanel, LoopStrip, Sparkline, ProgressRing } from '../components/viz'
+import { IntelligencePanel, LoopStrip, Sparkline, CycleArc } from '../components/viz'
 
 export default function Home() {
   const { p, openSheet, setTab, openBooking, done, toggleAction } = useApp()
@@ -106,6 +107,40 @@ export default function Home() {
         </section>
       </Reveal>
 
+      {/* ------------------------------------------------- WOMEN'S HEALTH
+          Third on the screen, directly under Today. For a member whose whole
+          picture is longitudinal women's health, sitting below Movement and
+          Insight buried the pillar. The card carries the connection HUMAN has
+          found, not just a cycle day - that is what makes it worth opening. */}
+      {p.womens && (
+        <Reveal delay={30}>
+          <section className="pad">
+            <SectionHeader
+              title="Women's Health"
+              action="Open"
+              onAction={() => openSheet('womens')}
+            />
+            <GlassCard className="wcard" tone="women" onClick={() => openSheet('womens')}>
+              <div className="wcard__top">
+                <CycleArc day={p.womens.cycleDay} length={p.womens.cycleLength} size={104} />
+                <div className="wcard__l">
+                  <div className="wcard__day num">Day {p.womens.cycleDay}</div>
+                  <div className="wcard__phase">{p.womens.phase} phase</div>
+                  <p className="wcard__note">Next expected {p.womens.nextPredicted}</p>
+                  <Chip state="attention">{p.womens.variability}</Chip>
+                </div>
+              </div>
+              <div className="wcard__cxn">
+                <p className="wcard__stmt">{p.womens.insights[0].statement}</p>
+                <span className="wcard__more">
+                  {p.womens.insights.length} connections tracked
+                </span>
+              </div>
+            </GlassCard>
+          </section>
+        </Reveal>
+      )}
+
       {/* ------------------------------------------------------- LOOP STRIP */}
       <Reveal delay={40}>
         <section className="pad">
@@ -154,29 +189,6 @@ export default function Home() {
           </GlassCard>
         </section>
       </Reveal>
-
-      {/* -------------------------------------------- WOMEN'S HEALTH (contextual) */}
-      {p.womens && (
-        <Reveal delay={90}>
-          <section className="pad">
-            <GlassCard className="wcard" tone="women" onClick={() => openSheet('womens')}>
-              <div className="wcard__l">
-                <div className="t-cap">Your cycle</div>
-                <div className="wcard__day num">Day {p.womens.cycleDay}</div>
-                <div className="wcard__phase">{p.womens.phase} phase</div>
-                <p className="wcard__note">{p.womens.variability} · next expected {p.womens.nextPredicted}</p>
-              </div>
-              <ProgressRing
-                value={p.womens.cycleDay}
-                total={p.womens.cycleLength}
-                size={62}
-                state="attention"
-                label={`${p.womens.cycleDay}`}
-              />
-            </GlassCard>
-          </section>
-        </Reveal>
-      )}
 
       {/* -------------------------------------------------------- UPCOMING */}
       <Reveal delay={100}>

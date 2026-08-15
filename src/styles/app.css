@@ -1298,34 +1298,77 @@
 }
 
 .wcard {
+  display: block;
+  /* Matched to the restraint of the app's other tinted surfaces; at full
+     strength the rose read as candy rather than as a pillar accent. */
+  background:
+    linear-gradient(160deg, rgba(230, 63, 150, 0.085), rgba(255, 255, 255, 0.78) 54%);
+  border-color: rgba(230, 63, 150, 0.17);
+}
+.wcard__top {
   display: flex;
   align-items: center;
   gap: var(--s-4);
-  background:
-    linear-gradient(150deg, rgba(230, 63, 150, 0.13), rgba(230, 63, 150, 0.04) 60%, rgba(255, 255, 255, 0.82));
-  border-color: rgba(230, 63, 150, 0.22);
 }
 .wcard__l {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 .wcard__day {
-  margin-top: 5px;
-  font-size: 24px;
-  font-weight: 680;
-  letter-spacing: -0.028em;
+  font-size: 26px;
+  font-weight: 690;
+  letter-spacing: -0.03em;
+  color: var(--text-1);
 }
 .wcard__phase {
-  font-size: 13px;
-  font-weight: 600;
+  margin-top: 1px;
+  font-size: 13.5px;
+  font-weight: 620;
   color: var(--accent-women);
   text-transform: capitalize;
 }
 .wcard__note {
-  margin-top: 7px;
+  margin-top: 6px;
   font-size: 12px;
   line-height: 1.4;
   color: var(--text-3);
+}
+.wcard__l .chip {
+  margin-top: 9px;
+}
+
+/* The connection HUMAN has found — the reason to open the section. */
+.wcard__cxn {
+  margin-top: var(--s-4);
+  padding-top: var(--s-3);
+  border-top: 0.5px solid rgba(230, 63, 150, 0.14);
+}
+.wcard__stmt {
+  font-size: 13.5px;
+  line-height: 1.45;
+  font-weight: 540;
+  letter-spacing: -0.01em;
+  color: var(--text-1);
+}
+.wcard__more {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 9px;
+  font-size: 12px;
+  font-weight: 640;
+  color: var(--accent-women);
+}
+.wcard__more::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-right: 1.8px solid currentColor;
+  border-top: 1.8px solid currentColor;
+  transform: rotate(45deg);
 }
 
 .bookcta {
@@ -2369,7 +2412,7 @@
   text-align: center;
 }
 .carc__day {
-  font-size: 44px;
+  font-size: calc(var(--carc, 190px) * 0.232);
   font-weight: 340;
   line-height: 1;
   letter-spacing: -0.045em;
@@ -2377,8 +2420,8 @@
   font-family: var(--font-num);
 }
 .carc__of {
-  margin-top: 5px;
-  font-size: 11px;
+  margin-top: 4px;
+  font-size: max(9px, calc(var(--carc, 190px) * 0.058));
   font-weight: 640;
   letter-spacing: 0.06em;
   color: var(--text-3);
