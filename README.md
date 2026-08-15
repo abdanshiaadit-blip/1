@@ -21,6 +21,22 @@ npm run build && npm run preview   # production build
 
 Open on a phone for full-bleed, or on a desktop to see it inside an iPhone frame.
 
+### Offline, no install
+
+```bash
+npm run portable
+```
+
+Produces `HUMAN-app/index.html` — a single self-contained file you open by
+double-clicking. No server, no install, no network. Everything is inlined,
+including the two Inter font subsets the app needs (latin, plus latin-ext for
+the rupee sign).
+
+This exists because a normal Vite build **cannot** be opened from `file://`:
+browsers refuse to load ES modules over it. The portable build bundles to a
+classic script, moves it to the end of `<body>` (classic scripts don't defer),
+and embeds fonts as data URIs since `file://` font requests are blocked too.
+
 ## The idea
 
 Healthcare is good at **measuring** health and bad at helping people **continuously act on it**.

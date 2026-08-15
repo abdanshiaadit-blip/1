@@ -5,3 +5,8 @@ dist-ssr
 .DS_Store
 .vite
 *.tsbuildinfo
+
+# Portable build output (regenerate with: npm run portable)
+dist-portable
+HUMAN-app
+HUMAN-app.zip

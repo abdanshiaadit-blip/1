@@ -8,6 +8,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
+    "portable": "tsc -b && vite build --config vite.config.portable.ts && node scripts/build-portable.mjs",
     "typecheck": "tsc -b --noEmit"
   },
   "dependencies": {

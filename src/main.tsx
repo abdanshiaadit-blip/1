@@ -8,10 +8,14 @@ import './styles/base.css'
 import './styles/app.css'
 import App from './App'
 
+// Not top-level await: the portable build bundles to a classic script, which
+// cannot use it. This branch is dead-code eliminated in production anyway.
 if (import.meta.env.DEV) {
-  const { profiles } = await import('./data')
-  const { validateProfiles } = await import('./data/validate')
-  validateProfiles(profiles)
+  void (async () => {
+    const { profiles } = await import('./data')
+    const { validateProfiles } = await import('./data/validate')
+    validateProfiles(profiles)
+  })()
 }
 
 createRoot(document.getElementById('root')!).render(
