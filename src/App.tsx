@@ -7,6 +7,7 @@ import Health from './screens/Health'
 import Action from './screens/Action'
 import Profile from './screens/Profile'
 import Booking from './screens/Booking'
+import LaunchIntro, { shouldPlayIntro } from './components/LaunchIntro'
 
 const SCREENS = { home: Home, health: Health, action: Action, profile: Profile } as const
 
@@ -15,6 +16,8 @@ function Shell() {
   const Screen = SCREENS[tab]
   const [key, setKey] = useState(0)
   const first = useRef(true)
+  // Decided once on mount so navigating tabs can never re-trigger it.
+  const [intro] = useState(shouldPlayIntro)
 
   // Re-key on tab or persona change so entry animations replay.
   useEffect(() => {
@@ -34,6 +37,9 @@ function Shell() {
       <TabBar />
       <SheetHost />
       {booking && <Booking />}
+      {/* Additive overlay inside the existing `.screen`, so it inherits the
+          device radius and safe areas. Unmounts itself when the sequence ends. */}
+      {intro && <LaunchIntro />}
     </PhoneFrame>
   )
 }
