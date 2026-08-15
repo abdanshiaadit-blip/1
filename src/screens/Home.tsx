@@ -40,12 +40,7 @@ export default function Home() {
           {/* The delta now lives on the panel face, so the panel is a complete
               readout rather than a number needing a caption underneath. */}
           <button type="button" className="hero__panelwrap" onClick={() => openSheet('intel')}>
-            <IntelligencePanel
-              score={p.intel.score}
-              baseline={p.intel.baselineScore}
-              delta={p.intel.delta}
-              history={p.intel.history.map((h) => h.score)}
-            />
+            <IntelligencePanel score={p.intel.score} delta={p.intel.delta} />
           </button>
 
           <div className="hero__rule" />

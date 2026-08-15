@@ -29,33 +29,19 @@ export function useCountUp(target: number, duration = 1400, decimals = 0) {
 }
 
 /* -------------------------------------------------- Intelligence Panel
-   A dark instrument panel — a squircle display set into the light glass card,
-   the way premium hardware pairs a white body with a black screen.
+   The square done minimally: ONE thin stroked squircle, drawn straight onto
+   the hero card, with the readout inside it.
 
-   The score runs as a SEGMENTED GAUGE around the panel's perimeter rather than
-   as a ring, which is the form the square actually wants: a circle centred in
-   a square wastes its corners and reads as a circle in a box.
+   Two earlier attempts failed for opposite reasons. Sixty perimeter segments
+   with a comet read as an LED strip. A dark slab read as an alien object in a
+   light glass app. Both were the same mistake — adding material where the
+   circle-to-square translation only ever needed a different outline.
 
-   Using the square's real estate, the face carries a full readout — label,
-   score, delta, and the score's own history — instead of a lone number.
+   There is no nested surface here: a white card inside a white card is a
+   ghost box. The square is the stroke. */
 
-   Layers:
-     aura     cool bloom escaping around the panel
-     panel    machined dark squircle, rim light, inner shadow, lens reflection
-     gauge    60 perimeter segments; those inside the score are lit
-     sweep    light running the perimeter, confined to the gauge band
-     face     label / score / delta / history
-
-   Geometry is concentric: the gauge inset equals panel radius minus gauge
-   radius, so the two curves stay parallel the whole way round.
-
-   All looping motion is CSS transform/opacity, so it stays composited and
-   prefers-reduced-motion halts it. */
-
-const SEGMENTS = 60
-
-/** Rounded-rect path starting at TOP CENTRE, running clockwise — so the gauge
- *  fills from 12 o'clock like an instrument rather than from a corner. */
+/** Rounded-square path starting at TOP CENTRE, clockwise, so the gauge fills
+ *  from 12 o'clock rather than from a corner. */
 function squirclePath(x: number, y: number, w: number, h: number, r: number) {
   const cx = x + w / 2
   return [
@@ -74,190 +60,62 @@ function squirclePath(x: number, y: number, w: number, h: number, r: number) {
 
 export function IntelligencePanel({
   score,
-  baseline,
   delta,
-  history = [],
-  size = 286,
+  size = 244,
 }: {
   score: number
-  baseline?: number
   delta?: number
-  history?: number[]
   size?: number
 }) {
   const uid = useId().replace(/:/g, '')
+  const SW = 5
+  const pad = SW / 2 + 1
+  const side = size - pad * 2
+  const r = side * 0.29
 
-  const INSET = 11
-  const R_PANEL = size * 0.246
-  const R_GAUGE = R_PANEL - INSET
-  const GW = size * 0.0238
-  const gw = size - INSET * 2
-
-  const path = squirclePath(INSET, INSET, gw, gw, R_GAUGE)
-  const perim = 4 * (gw - 2 * R_GAUGE) + 2 * Math.PI * R_GAUGE
-  const cell = perim / SEGMENTS
-  const dash = `${(cell * 0.6).toFixed(2)} ${(cell * 0.4).toFixed(2)}`
+  const path = squirclePath(pad, pad, side, side, r)
+  const perim = 4 * (side - 2 * r) + 2 * Math.PI * r
 
   const [len, setLen] = useState(0)
-  const shown = useCountUp(score, 1600)
+  const shown = useCountUp(score, 1700)
 
   useEffect(() => {
-    const t = window.setTimeout(() => setLen((score / 100) * perim), 140)
+    const t = window.setTimeout(() => setLen((score / 100) * perim), 200)
     return () => window.clearTimeout(t)
   }, [score, perim])
 
   return (
     <div className="hi" style={{ width: size, height: size }}>
-      <div className="hi__aura" aria-hidden="true" />
-      <div className="hi__panel" aria-hidden="true">
-        <span className="hi__lens" />
-      </div>
+      <div className="hi__glow" aria-hidden="true" />
 
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="hi__svg">
         <defs>
           <linearGradient id={`g${uid}`} x1="4%" y1="96%" x2="96%" y2="4%">
-            <stop offset="0%" stopColor="#2bf0a8" />
-            <stop offset="46%" stopColor="#00d2ea" />
-            <stop offset="100%" stopColor="#5c9bff" />
+            <stop offset="0%" stopColor="#00c98f" />
+            <stop offset="52%" stopColor="#00b8c4" />
+            <stop offset="100%" stopColor="#3f9be8" />
           </linearGradient>
-          {/* Reveals the lit run of segments. A solid stroke on the same path,
-              so segments and progress can never drift out of register. */}
-          <mask id={`m${uid}`} maskUnits="userSpaceOnUse" x="0" y="0" width={size} height={size}>
-            <path
-              d={path}
-              fill="none"
-              stroke="#fff"
-              strokeWidth={GW * 2.4}
-              strokeDasharray={perim}
-              strokeDashoffset={perim - len}
-              style={{ transition: 'stroke-dashoffset 1700ms cubic-bezier(.22,1,.36,1)' }}
-            />
-          </mask>
         </defs>
 
-        {/* unlit segments */}
+        <path d={path} fill="none" stroke="var(--track-soft)" strokeWidth={SW} />
         <path
           d={path}
           fill="none"
-          stroke="rgba(214,240,238,.17)"
-          strokeWidth={GW}
-          strokeDasharray={dash}
+          stroke={`url(#g${uid})`}
+          strokeWidth={SW}
           strokeLinecap="round"
-        />
-
-        {/* lit segments */}
-        <g mask={`url(#m${uid})`}>
-          <path
-            d={path}
-            fill="none"
-            stroke={`url(#g${uid})`}
-            strokeWidth={GW}
-            strokeDasharray={dash}
-            strokeLinecap="round"
-          />
-        </g>
-
-        {/* baseline marker — where this member started */}
-        {baseline !== undefined && (
-          <path
-            d={path}
-            fill="none"
-            stroke="rgba(233,250,247,.8)"
-            strokeWidth={GW * 2.1}
-            strokeLinecap="butt"
-            strokeDasharray={`2 ${perim}`}
-            strokeDashoffset={-((baseline / 100) * perim)}
-            className="hi__base"
-          />
-        )}
-
-        {/* Light chasing the perimeter — a head plus two lagging trails, all on
-            the gauge path so it tracks the squircle exactly. This replaced a
-            CSS mask-composite ring, which did not clip and let the conic
-            gradient streak across the panel face. */}
-        <g className="hi__chase" style={{ ['--perim' as string]: `${perim}px` }}>
-          {[
-            { lag: 0, o: 0.85, w: 1.15 },
-            { lag: 0.13, o: 0.34, w: 1 },
-            { lag: 0.28, o: 0.13, w: 0.9 },
-          ].map((t) => (
-            <path
-              key={t.lag}
-              d={path}
-              fill="none"
-              stroke="#dffff8"
-              strokeWidth={GW * t.w}
-              strokeLinecap="round"
-              opacity={t.o}
-              strokeDasharray={`${cell * 0.62} ${perim}`}
-              style={{ animationDelay: `${-(11 - t.lag)}s` }}
-            />
-          ))}
-        </g>
-
-        {/* inner registration frame */}
-        <rect
-          x={INSET + 20}
-          y={INSET + 20}
-          width={gw - 40}
-          height={gw - 40}
-          rx={Math.max(4, R_GAUGE - 20)}
-          fill="none"
-          stroke="rgba(214,240,238,.055)"
-          strokeWidth="1"
+          strokeDasharray={perim}
+          strokeDashoffset={perim - len}
+          style={{ transition: 'stroke-dashoffset 1700ms cubic-bezier(.22,1,.36,1)' }}
         />
       </svg>
 
-
       <div className="hi__face">
         <div className="hi__label">Health Intelligence</div>
-        <div className="hi__read">
-          <span className="hi__score num">{Math.round(shown)}</span>
-          <span className="hi__of num">/100</span>
-        </div>
-        {delta !== undefined && (
-          <div className="hi__delta">
-            <svg width="9" height="9" viewBox="0 0 12 12" aria-hidden="true">
-              <path d="M6 2.2l4 5.2H2l4-5.2z" fill="currentColor" />
-            </svg>
-            +{delta} since baseline
-          </div>
-        )}
-        {history.length > 1 && <PanelSpark data={history} />}
+        <div className="hi__score num">{Math.round(shown)}</div>
+        {delta !== undefined && <div className="hi__delta">+{delta} since baseline</div>}
       </div>
     </div>
-  )
-}
-
-/** The score's own history, drawn small on the panel face. */
-function PanelSpark({ data }: { data: number[] }) {
-  const uid = useId().replace(/:/g, '')
-  const w = 112
-  const h = 26
-  const min = Math.min(...data)
-  const max = Math.max(...data)
-  const span = Math.max(max - min, 1)
-  const X = (i: number) => (i / (data.length - 1)) * (w - 4) + 2
-  const Y = (v: number) => h - 4 - ((v - min) / span) * (h - 8)
-  const line = data.map((v, i) => `${i ? 'L' : 'M'}${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join(' ')
-  const last = data[data.length - 1]
-
-  return (
-    <svg viewBox={`0 0 ${w} ${h}`} className="hi__spark" aria-hidden="true">
-      <defs>
-        <linearGradient id={`p${uid}`} x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#2bf0a8" stopOpacity="0.28" />
-          <stop offset="100%" stopColor="#5cf0d8" stopOpacity="1" />
-        </linearGradient>
-        <linearGradient id={`f${uid}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#2bf0a8" stopOpacity="0.2" />
-          <stop offset="100%" stopColor="#2bf0a8" stopOpacity="0" />
-        </linearGradient>
-      </defs>
-      <path d={`${line} L${X(data.length - 1)},${h} L${X(0)},${h} Z`} fill={`url(#f${uid})`} />
-      <path d={line} fill="none" stroke={`url(#p${uid})`} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx={X(data.length - 1)} cy={Y(last)} r="2.6" fill="#8ffbe4" />
-    </svg>
   )
 }
 
