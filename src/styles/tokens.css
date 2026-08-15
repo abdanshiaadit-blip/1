@@ -1,0 +1,101 @@
+/* ==========================================================================
+   HUMAN — Design tokens
+   Colour is a communication system, never decoration.
+   ========================================================================== */
+
+:root {
+  /* ---- Canvas ------------------------------------------------------- */
+  --ink-900: #06070a;
+  --ink-850: #090b10;
+  --ink-800: #0d0f15;
+  --ink-700: #12151c;
+  --ink-600: #181c25;
+
+  /* ---- Glass surfaces (iOS 26 material) ----------------------------- */
+  --glass-1: rgba(255, 255, 255, 0.045);
+  --glass-2: rgba(255, 255, 255, 0.07);
+  --glass-3: rgba(255, 255, 255, 0.1);
+  --glass-hi: rgba(255, 255, 255, 0.14); /* top highlight */
+  --hairline: rgba(255, 255, 255, 0.09);
+  --hairline-strong: rgba(255, 255, 255, 0.14);
+
+  /* ---- Text --------------------------------------------------------- */
+  --text-1: rgba(255, 255, 255, 0.97);
+  --text-2: rgba(235, 240, 250, 0.66);
+  --text-3: rgba(225, 232, 245, 0.44);
+  --text-4: rgba(220, 230, 245, 0.28);
+
+  /* ---- Semantic health states --------------------------------------- */
+  --state-optimal: #3ddc9a;
+  --state-optimal-dim: rgba(61, 220, 154, 0.16);
+  --state-stable: #5cb8ff;
+  --state-stable-dim: rgba(92, 184, 255, 0.16);
+  --state-monitor: #ffc95c;
+  --state-monitor-dim: rgba(255, 201, 92, 0.16);
+  --state-attention: #ff9448;
+  --state-attention-dim: rgba(255, 148, 72, 0.16);
+  --state-clinical: #ff6b7a;
+  --state-clinical-dim: rgba(255, 107, 122, 0.16);
+
+  /* ---- Pillar accents ------------------------------------------------ */
+  --accent-women: #ff7eb6;
+  --accent-women-dim: rgba(255, 126, 182, 0.16);
+  --accent-brand: #4fe3c1;
+  --accent-brand-2: #7c8cff;
+  --accent-violet: #a97bff;
+
+  /* ---- Brand gradient (intelligence ring) ---------------------------- */
+  --grad-ring: linear-gradient(135deg, #4fe3c1 0%, #5cb8ff 48%, #a97bff 100%);
+
+  /* ---- Radius -------------------------------------------------------- */
+  --r-sm: 12px;
+  --r-md: 16px;
+  --r-lg: 20px;
+  --r-xl: 28px;
+  --r-2xl: 34px;
+  --r-full: 999px;
+
+  /* ---- Space (4pt grid) ---------------------------------------------- */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 20px;
+  --s-6: 24px;
+  --s-7: 32px;
+  --s-8: 40px;
+  --gutter: 20px;
+
+  /* ---- Elevation ----------------------------------------------------- */
+  --shadow-card: 0 1px 1px rgba(0, 0, 0, 0.3), 0 8px 24px -8px rgba(0, 0, 0, 0.55);
+  --shadow-hero: 0 2px 2px rgba(0, 0, 0, 0.28), 0 24px 60px -20px rgba(0, 0, 0, 0.85);
+  --shadow-sheet: 0 -8px 60px -12px rgba(0, 0, 0, 0.8);
+
+  /* ---- Motion -------------------------------------------------------- */
+  --spring: cubic-bezier(0.22, 1, 0.36, 1);
+  --spring-soft: cubic-bezier(0.32, 0.72, 0.24, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --t-micro: 180ms;
+  --t-card: 380ms;
+  --t-screen: 460ms;
+  --t-hero: 900ms;
+
+  /* ---- Type ---------------------------------------------------------- */
+  --font: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text',
+    'Inter Variable', 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font-num: 'SF Pro Display', -apple-system, 'Inter Variable', 'Inter', system-ui, sans-serif;
+
+  /* ---- Device -------------------------------------------------------- */
+  --device-w: 390px;
+  --device-h: 844px;
+  --tabbar-h: 84px;
+  --statusbar-h: 54px;
+}
+
+/* State helper classes — one source of truth for health-state colour */
+.st-optimal { --st: var(--state-optimal); --st-dim: var(--state-optimal-dim); }
+.st-stable { --st: var(--state-stable); --st-dim: var(--state-stable-dim); }
+.st-monitor { --st: var(--state-monitor); --st-dim: var(--state-monitor-dim); }
+.st-attention { --st: var(--state-attention); --st-dim: var(--state-attention-dim); }
+.st-clinical { --st: var(--state-clinical); --st-dim: var(--state-clinical-dim); }
+.st-women { --st: var(--accent-women); --st-dim: var(--accent-women-dim); }
