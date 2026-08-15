@@ -1,59 +1,77 @@
 /* ==========================================================================
    HUMAN — Design tokens
-   Colour is a communication system, never decoration.
+   Light canvas · iOS 26 Liquid Glass · colour is a communication system.
+
+   Liquid Glass on light needs four things working together:
+     1. a translucent white fill with a strong blur + saturation boost
+     2. a bright specular rim on the top edge (inset highlight)
+     3. a fine dark hairline so the shape still reads against white
+     4. a wide, soft, low-opacity shadow to lift it off the canvas
+   Every glass surface in this app uses that recipe.
    ========================================================================== */
 
 :root {
   /* ---- Canvas ------------------------------------------------------- */
-  --ink-900: #06070a;
-  --ink-850: #090b10;
-  --ink-800: #0d0f15;
-  --ink-700: #12151c;
-  --ink-600: #181c25;
+  --bg-base: #f5f8f7; /* app canvas — white with a faint green cast */
+  --bg-sunk: #e9efee; /* recessed tracks, wells */
+  --surface: #ffffff; /* solid surfaces */
 
-  /* ---- Glass surfaces (iOS 26 material) ----------------------------- */
-  --glass-1: rgba(255, 255, 255, 0.045);
-  --glass-2: rgba(255, 255, 255, 0.07);
-  --glass-3: rgba(255, 255, 255, 0.1);
-  --glass-hi: rgba(255, 255, 255, 0.14); /* top highlight */
-  --hairline: rgba(255, 255, 255, 0.09);
-  --hairline-strong: rgba(255, 255, 255, 0.14);
+  /* ---- Liquid Glass -------------------------------------------------- */
+  --glass-1: rgba(255, 255, 255, 0.66);
+  --glass-2: rgba(255, 255, 255, 0.82);
+  --glass-3: rgba(255, 255, 255, 0.93);
+  --glass-rim: rgba(255, 255, 255, 0.95); /* specular top edge */
+  --blur: blur(30px) saturate(190%);
+  --blur-heavy: blur(44px) saturate(200%);
 
-  /* ---- Text --------------------------------------------------------- */
-  --text-1: rgba(255, 255, 255, 0.97);
-  --text-2: rgba(235, 240, 250, 0.66);
-  --text-3: rgba(225, 232, 245, 0.44);
-  --text-4: rgba(220, 230, 245, 0.28);
+  --hairline: rgba(6, 42, 38, 0.08);
+  --hairline-strong: rgba(6, 42, 38, 0.14);
+  --track: rgba(6, 42, 38, 0.09);
+  --track-soft: rgba(6, 42, 38, 0.055);
 
-  /* ---- Semantic health states --------------------------------------- */
-  --state-optimal: #3ddc9a;
-  --state-optimal-dim: rgba(61, 220, 154, 0.16);
-  --state-stable: #5cb8ff;
-  --state-stable-dim: rgba(92, 184, 255, 0.16);
-  --state-monitor: #ffc95c;
-  --state-monitor-dim: rgba(255, 201, 92, 0.16);
-  --state-attention: #ff9448;
-  --state-attention-dim: rgba(255, 148, 72, 0.16);
-  --state-clinical: #ff6b7a;
-  --state-clinical-dim: rgba(255, 107, 122, 0.16);
+  /* ---- Ink ----------------------------------------------------------- */
+  --text-1: #06231f;
+  --text-2: rgba(6, 35, 31, 0.66);
+  --text-3: rgba(6, 35, 31, 0.58);
+  --text-4: rgba(6, 35, 31, 0.44);
+
+  /* ---- Semantic health states ---------------------------------------- */
+  --state-optimal: #00b478;
+  --state-optimal-dim: rgba(0, 180, 120, 0.14);
+  --state-stable: #00a6c9;
+  --state-stable-dim: rgba(0, 166, 201, 0.14);
+  --state-monitor: #e08c00;
+  --state-monitor-dim: rgba(224, 140, 0, 0.15);
+  --state-attention: #f0602c;
+  --state-attention-dim: rgba(240, 96, 44, 0.13);
+  --state-clinical: #e12d4c;
+  --state-clinical-dim: rgba(225, 45, 76, 0.12);
 
   /* ---- Pillar accents ------------------------------------------------ */
-  --accent-women: #ff7eb6;
-  --accent-women-dim: rgba(255, 126, 182, 0.16);
-  --accent-brand: #4fe3c1;
-  --accent-brand-2: #7c8cff;
-  --accent-violet: #a97bff;
+  --accent-women: #e63f96;
+  --accent-women-dim: rgba(230, 63, 150, 0.12);
+  --accent-brand: #00bd9c;
+  --accent-brand-ink: #007a66; /* brand at text contrast on white */
+  --accent-brand-2: #0a9fdc;
+  --accent-violet: #6d54e8;
 
   /* ---- Brand gradient (intelligence ring) ---------------------------- */
-  --grad-ring: linear-gradient(135deg, #4fe3c1 0%, #5cb8ff 48%, #a97bff 100%);
+  --grad-ring: linear-gradient(135deg, #45d97f 0%, #00c2a6 50%, #0aa2e0 100%);
+  --grad-brand: linear-gradient(135deg, #00c98f, #00b3c4);
 
-  /* ---- Radius -------------------------------------------------------- */
+  /* ---- Ambient colour the glass refracts ----------------------------- */
+  --bloom-1: rgba(0, 201, 143, 0.17);
+  --bloom-2: rgba(10, 162, 224, 0.13);
+  --bloom-3: rgba(109, 84, 232, 0.09);
+
+  /* ---- Radius — concentric: inner = outer − padding ------------------- */
   --r-sm: 12px;
-  --r-md: 16px;
-  --r-lg: 20px;
-  --r-xl: 28px;
-  --r-2xl: 34px;
-  --r-full: 999px;
+  --r-md: 18px;
+  --r-lg: 22px;
+  --r-xl: 26px;
+  --r-2xl: 32px;
+  --r-3xl: 38px;
+  --r-cap: 999px; /* iOS 26 controls are capsules */
 
   /* ---- Space (4pt grid) ---------------------------------------------- */
   --s-1: 4px;
@@ -67,9 +85,11 @@
   --gutter: 20px;
 
   /* ---- Elevation ----------------------------------------------------- */
-  --shadow-card: 0 1px 1px rgba(0, 0, 0, 0.3), 0 8px 24px -8px rgba(0, 0, 0, 0.55);
-  --shadow-hero: 0 2px 2px rgba(0, 0, 0, 0.28), 0 24px 60px -20px rgba(0, 0, 0, 0.85);
-  --shadow-sheet: 0 -8px 60px -12px rgba(0, 0, 0, 0.8);
+  --shadow-card: 0 1px 2px rgba(6, 42, 38, 0.05), 0 10px 26px -12px rgba(6, 42, 38, 0.16);
+  --shadow-hero: 0 2px 6px rgba(6, 42, 38, 0.05), 0 26px 54px -20px rgba(6, 42, 38, 0.24);
+  --shadow-float: 0 2px 8px rgba(6, 42, 38, 0.07), 0 16px 36px -12px rgba(6, 42, 38, 0.26);
+  --shadow-sheet: 0 -10px 60px -14px rgba(6, 42, 38, 0.26);
+  --rim: inset 0 1px 0 var(--glass-rim);
 
   /* ---- Motion -------------------------------------------------------- */
   --spring: cubic-bezier(0.22, 1, 0.36, 1);
@@ -88,7 +108,7 @@
   /* ---- Device -------------------------------------------------------- */
   --device-w: 390px;
   --device-h: 844px;
-  --tabbar-h: 84px;
+  --tabbar-h: 92px;
   --statusbar-h: 54px;
 }
 

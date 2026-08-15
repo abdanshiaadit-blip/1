@@ -80,6 +80,10 @@ React 19 · TypeScript · Vite. No UI framework, no chart library, no animation 
 component, visualization and motion curve is hand-built so the interaction model stays exactly
 as designed. Inter is self-hosted; Apple devices render SF Pro first.
 
+Light canvas with iOS 26 Liquid Glass: translucent surfaces over a near-white ground, a
+floating capsule tab bar with content scrolling beneath it, capsule controls, concentric
+radii, and ambient colour blooms behind the content so the glass has something to refract.
+
 ```
 docs/PRODUCT-ARCHITECTURE.md   product source of truth
 src/data/                      domain model + two full member profiles

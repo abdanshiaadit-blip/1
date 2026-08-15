@@ -285,11 +285,27 @@ App
 
 ### 7.1 Foundation
 Premium **native iPhone** application. Not a web dashboard, not responsive marketing.
-Reference points: Apple Health data clarity + Apple product polish + iOS 26 glass/material
+Reference points: Apple Health data clarity + Apple product polish + iOS 26 Liquid Glass
 + premium healthcare restraint + human warmth.
 
-Dark canvas, chosen deliberately: glass, gradient strokes, glow and data colour all read
-strongest against deep ink, and it keeps a colourful data layer sophisticated rather than loud.
+**Light canvas.** A near-white ground (`#f5f8f7`) with colour carried by the content, not by
+the background. Health data reads more clinical and more trustworthy on white, and the green
+and teal palette stays lively without tipping into decoration.
+
+**Liquid Glass.** Every floating surface uses the same four-part recipe, because on a light
+ground any one of them alone reads as a flat white panel:
+
+1. a translucent white fill (`--glass-1/2/3`)
+2. a strong backdrop blur with a saturation boost (`--blur`, `--blur-heavy`)
+3. a bright specular rim on the top edge (`--rim`)
+4. a fine dark hairline plus a wide, soft shadow to lift it off the canvas
+
+Two low-opacity colour blooms sit behind the content (`.screen::before/after`). They exist so
+the glass has something to refract — without them the material is invisible.
+
+**iOS 26 specifics implemented:** a detached floating capsule tab bar with content scrolling
+visibly beneath it; capsule controls throughout (`--r-cap`); concentric corner radii; bold
+large titles; glass sheets with 38px top radii.
 
 ### 7.2 Colour as a communication system
 
@@ -301,10 +317,27 @@ strongest against deep ink, and it keeps a colourful data layer sophisticated ra
 | Attention | needs focus now | `--state-attention` orange |
 | Clinical | discuss with a clinician | `--state-clinical` coral |
 | Women's health | pillar accent | `--accent-women` rose |
-| Brand | intelligence ring | teal → violet gradient |
+| Brand | intelligence ring | green → teal → sky gradient |
 
 Colour always carries meaning. No decorative gradients, no neon, no rainbow, no gaming
 aesthetic, no "AI" visuals.
+
+Two tones of the brand exist because white demands it: `--accent-brand` (#00bd9c) for fills
+and strokes, and `--accent-brand-ink` (#007a66) for text, which needs the extra contrast.
+
+### 7.2b Women's health visual language
+
+The pillar gets its own treatment rather than inheriting the generic card language:
+
+- **Cycle arc** — a phase-segmented ring (menstrual · follicular · ovulatory · luteal) whose
+  geometry is derived from *this member's* cycle length, ovulation ≈ length − 14. A 38-day
+  cycle draws its own arcs rather than a generic 28-day template. The current phase is at full
+  opacity, the rest recede, and a live day marker sits on the ring.
+- **Connection chart** — two series that moved together, each normalised to its own range and
+  labelled *"Shapes compare; values do not."* This is the differentiator made visible: the
+  claim is drawn, not asserted, and the honesty about independent axes is part of the design.
+- **Cycle-length chart** — bars against a drawn 35-day clinical reference line, so the
+  threshold the copy mentions is something you can see.
 
 ### 7.3 Type
 System stack (`-apple-system, "SF Pro Display", Inter`).

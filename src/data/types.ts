@@ -198,6 +198,14 @@ export interface CycleInsight {
   statement: string
   linkedMarkerIds: string[]
   caveat: string
+  /** Two series that moved together, drawn as a connection chart.
+   *  Each is normalised to its own range — the shapes are comparable,
+   *  the absolute values are not. */
+  pair?: {
+    axis: string[]
+    a: { label: string; values: number[]; unit: string }
+    b: { label: string; values: number[]; unit: string }
+  }
 }
 
 export interface WomensHealth {

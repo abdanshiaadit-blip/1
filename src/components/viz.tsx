@@ -56,9 +56,9 @@ export function IntelligenceRing({
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="ring__svg">
         <defs>
           <linearGradient id={`g${gid}`} x1="0%" y1="100%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#4fe3c1" />
-            <stop offset="48%" stopColor="#5cb8ff" />
-            <stop offset="100%" stopColor="#a97bff" />
+            <stop offset="0%" stopColor="#45d97f" />
+            <stop offset="50%" stopColor="#00c2a6" />
+            <stop offset="100%" stopColor="#0aa2e0" />
           </linearGradient>
           <filter id={`b${gid}`} x="-60%" y="-60%" width="220%" height="220%">
             <feGaussianBlur stdDeviation="7" />
@@ -70,7 +70,7 @@ export function IntelligenceRing({
           cy={size / 2}
           r={r}
           fill="none"
-          stroke="rgba(255,255,255,.065)"
+          stroke="rgba(6,42,38,.075)"
           strokeWidth={stroke}
         />
         {/* glow pass */}
@@ -85,7 +85,7 @@ export function IntelligenceRing({
           strokeDasharray={c}
           strokeDashoffset={c - len}
           filter={`url(#b${gid})`}
-          opacity="0.55"
+          opacity="0.42"
           transform={`rotate(-90 ${size / 2} ${size / 2})`}
           style={{ transition: 'stroke-dashoffset 1500ms cubic-bezier(.22,1,.36,1)' }}
         />
@@ -146,7 +146,7 @@ export function ProgressRing({
           cy={size / 2}
           r={r}
           fill="none"
-          stroke="rgba(255,255,255,.09)"
+          stroke="var(--track)"
           strokeWidth={stroke}
         />
         <circle
@@ -270,14 +270,14 @@ export function TrendChart({
               y={Y(band.high)}
               width={w}
               height={Math.max(2, Y(band.low) - Y(band.high))}
-              fill="rgba(61,220,154,.055)"
+              fill="rgba(0,180,120,.1)"
             />
             <line
               x1="0"
               x2={w}
               y1={Y(band.high)}
               y2={Y(band.high)}
-              stroke="rgba(61,220,154,.34)"
+              stroke="rgba(0,180,120,.42)"
               strokeWidth="1"
               strokeDasharray="3 4"
             />
@@ -286,7 +286,7 @@ export function TrendChart({
               x2={w}
               y1={Y(band.low)}
               y2={Y(band.low)}
-              stroke="rgba(61,220,154,.34)"
+              stroke="rgba(0,180,120,.42)"
               strokeWidth="1"
               strokeDasharray="3 4"
             />
@@ -313,7 +313,7 @@ export function TrendChart({
             cx={X(i)}
             cy={Y(p.value)}
             r={i === points.length - 1 ? 4.2 : 3}
-            fill={i === points.length - 1 ? 'var(--st)' : 'var(--ink-800)'}
+            fill={i === points.length - 1 ? 'var(--st)' : '#fff'}
             stroke="var(--st)"
             strokeWidth="2"
             className={`tchart__pt ${on ? 'is-on' : ''}`}
@@ -478,41 +478,210 @@ export function SystemViz({ series, state, label }: { series: number[]; state: H
   )
 }
 
-/* ------------------------------------------------------------ CycleWheel */
+/* ------------------------------------------------------------- CycleArc
+   Phase-segmented cycle ring with a live day marker. Phases are derived
+   from cycle length (ovulation ≈ length − 14), so an irregular 38-day
+   cycle renders its own geometry rather than a generic 28-day template. */
 
-export function CycleWheel({ day, length, size = 132 }: { day: number; length: number; size?: number }) {
-  const stroke = 9
-  const r = (size - stroke) / 2
-  const c = 2 * Math.PI * r
-  const pct = Math.min(1, day / length)
-  const [len, setLen] = useState(0)
+export const CYCLE_PHASES = [
+  { id: 'menstrual', name: 'Menstrual', color: '#e0356f' },
+  { id: 'follicular', name: 'Follicular', color: '#f9a8c9' },
+  { id: 'ovulatory', name: 'Ovulatory', color: '#00bd9c' },
+  { id: 'luteal', name: 'Luteal', color: '#f2739f' },
+] as const
+
+function phaseSpans(length: number) {
+  const ov = Math.max(8, length - 14)
+  return [
+    { ...CYCLE_PHASES[0], from: 0, to: 5 },
+    { ...CYCLE_PHASES[1], from: 5, to: ov - 2 },
+    { ...CYCLE_PHASES[2], from: ov - 2, to: ov + 2 },
+    { ...CYCLE_PHASES[3], from: ov + 2, to: length },
+  ]
+}
+
+export function CycleArc({
+  day,
+  length,
+  size = 190,
+}: {
+  day: number
+  length: number
+  size?: number
+}) {
+  const stroke = 13
+  const r = (size - stroke - 12) / 2
+  const cx = size / 2
+  const cy = size / 2
+  const [on, setOn] = useState(false)
+
   useEffect(() => {
-    const t = window.setTimeout(() => setLen(pct * c), 120)
+    const t = window.setTimeout(() => setOn(true), 140)
     return () => window.clearTimeout(t)
-  }, [pct, c])
+  }, [])
+
+  // −90° puts day 0 at the top; a 1.2° gap keeps segments visually distinct.
+  const angle = (d: number) => (d / length) * 360 - 90
+  const pt = (d: number, radius = r) => {
+    const a = (angle(d) * Math.PI) / 180
+    return [cx + radius * Math.cos(a), cy + radius * Math.sin(a)] as const
+  }
+  const arc = (from: number, to: number) => {
+    const [x1, y1] = pt(from)
+    const [x2, y2] = pt(to)
+    const large = to - from > length / 2 ? 1 : 0
+    return `M${x1.toFixed(2)},${y1.toFixed(2)} A${r},${r} 0 ${large} 1 ${x2.toFixed(2)},${y2.toFixed(2)}`
+  }
+
+  const spans = phaseSpans(length)
+  const [mx, my] = pt(Math.min(day, length))
 
   return (
-    <div className="cwheel" style={{ width: size, height: size }}>
-      <svg width={size} height={size}>
-        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="rgba(255,255,255,.08)" strokeWidth={stroke} />
+    <div className="carc" style={{ width: size, height: size }}>
+      <svg width={size} height={size} className="carc__svg">
+        <circle cx={cx} cy={cy} r={r} fill="none" stroke="var(--track-soft)" strokeWidth={stroke} />
+        {spans.map((s) => (
+          <path
+            key={s.id}
+            d={arc(s.from + 0.18, s.to - 0.18)}
+            fill="none"
+            stroke={s.color}
+            strokeWidth={stroke}
+            strokeLinecap="round"
+            pathLength={1}
+            className={`carc__seg ${on ? 'is-on' : ''}`}
+            opacity={s.id === spans.find((x) => day >= x.from && day < x.to)?.id ? 1 : 0.42}
+          />
+        ))}
+        {/* live day marker */}
         <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={r}
-          fill="none"
+          cx={mx}
+          cy={my}
+          r={on ? 8.5 : 0}
+          fill="#fff"
           stroke="var(--accent-women)"
-          strokeWidth={stroke}
-          strokeLinecap="round"
-          strokeDasharray={c}
-          strokeDashoffset={c - len}
-          transform={`rotate(-90 ${size / 2} ${size / 2})`}
-          style={{ transition: 'stroke-dashoffset 1100ms cubic-bezier(.22,1,.36,1)' }}
+          strokeWidth="3.5"
+          className="carc__mark"
         />
       </svg>
-      <div className="cwheel__mid">
-        <div className="cwheel__day num">{day}</div>
-        <div className="t-cap">of ~{length}</div>
+      <div className="carc__mid">
+        <div className="carc__day num">{day}</div>
+        <div className="carc__of">of ~{length}</div>
       </div>
+    </div>
+  )
+}
+
+/* ------------------------------------------------------ ConnectionChart
+   Two series that moved together. Each is normalised to its own range, so
+   the shapes are comparable and the absolute values deliberately are not —
+   the chart shows co-movement, and claims nothing about cause. */
+
+export function ConnectionChart({
+  pair,
+}: {
+  pair: {
+    axis: string[]
+    a: { label: string; values: number[]; unit: string }
+    b: { label: string; values: number[]; unit: string }
+  }
+}) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [on, setOn] = useState(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          setOn(true)
+          io.disconnect()
+        }
+      },
+      { threshold: 0.3 },
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
+
+  const w = 300
+  const h = 96
+  const padX = 8
+  const padY = 14
+
+  const norm = (vals: number[]) => {
+    const lo = Math.min(...vals)
+    const hi = Math.max(...vals)
+    const span = hi - lo || 1
+    return vals.map((v) => (v - lo) / span)
+  }
+  const X = (i: number, n: number) => (i / Math.max(1, n - 1)) * (w - padX * 2) + padX
+  const Y = (t: number) => h - padY - t * (h - padY * 2)
+
+  const line = (vals: number[]) =>
+    norm(vals)
+      .map((t, i) => `${i ? 'L' : 'M'}${X(i, vals.length).toFixed(1)},${Y(t).toFixed(1)}`)
+      .join(' ')
+
+  const series = [
+    { ...pair.a, color: 'var(--accent-women)' },
+    { ...pair.b, color: 'var(--accent-brand-2)' },
+  ]
+
+  return (
+    <div className="cxn" ref={ref}>
+      <div className="cxn__keys">
+        {series.map((s) => (
+          <span key={s.label} className="cxn__key">
+            <i style={{ background: s.color }} />
+            {s.label}
+            <b className="num">
+              {s.values[0]} → {s.values[s.values.length - 1]}
+              <em>{s.unit}</em>
+            </b>
+          </span>
+        ))}
+      </div>
+      <svg viewBox={`0 0 ${w} ${h}`} className="cxn__svg">
+        {series.map((s, si) => {
+          const t = norm(s.values)
+          return (
+            <g key={s.label}>
+              <path
+                d={line(s.values)}
+                fill="none"
+                stroke={s.color}
+                strokeWidth="2.4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className={`cxn__line ${on ? 'is-on' : ''}`}
+                pathLength={1}
+                style={{ transitionDelay: `${si * 220}ms` }}
+              />
+              {t.map((v, i) => (
+                <circle
+                  key={i}
+                  cx={X(i, s.values.length)}
+                  cy={Y(v)}
+                  r={i === t.length - 1 ? 4 : 2.8}
+                  fill={i === t.length - 1 ? s.color : '#fff'}
+                  stroke={s.color}
+                  strokeWidth="2"
+                  className={`cxn__pt ${on ? 'is-on' : ''}`}
+                  style={{ transitionDelay: `${520 + si * 220 + i * 60}ms` }}
+                />
+              ))}
+            </g>
+          )
+        })}
+      </svg>
+      <div className="cxn__axis">
+        {pair.axis.map((d) => (
+          <span key={d}>{d}</span>
+        ))}
+      </div>
+      <p className="cxn__note">Each line is scaled to its own range. Shapes compare; values do not.</p>
     </div>
   )
 }

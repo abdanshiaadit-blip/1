@@ -69,24 +69,29 @@ export function TabBar() {
   const { tab, setTab } = useApp()
   const tabs: TabId[] = ['home', 'health', 'action', 'profile']
   return (
-    <nav className="tabbar" role="tablist">
-      {tabs.map((t) => (
-        <button
-          key={t}
-          type="button"
-          role="tab"
-          aria-selected={tab === t}
-          className={`tabbar__b ${tab === t ? 'is-on' : ''}`}
-          onClick={() => setTab(t)}
-        >
-          <svg viewBox="0 0 24 24" width="25" height="25" fill="none" stroke="currentColor" strokeWidth="1.8">
-            {ICONS[t]}
-          </svg>
-          <span>{LABELS[t]}</span>
-        </button>
-      ))}
+    <>
+      {/* iOS 26: a detached glass capsule floating over the content, not a bar
+          welded to the bottom edge. */}
+      <nav className="tabbar" role="tablist">
+        {tabs.map((t) => (
+          <button
+            key={t}
+            type="button"
+            role="tab"
+            aria-selected={tab === t}
+            className={`tabbar__b ${tab === t ? 'is-on' : ''}`}
+            onClick={() => setTab(t)}
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9">
+              {ICONS[t]}
+            </svg>
+            <span>{LABELS[t]}</span>
+          </button>
+        ))}
+      </nav>
+      {/* Sibling of the bar, not a child — it belongs to the screen edge. */}
       <div className="homebar" aria-hidden="true" />
-    </nav>
+    </>
   )
 }
 

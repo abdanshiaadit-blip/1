@@ -15,7 +15,9 @@ import {
   RangeBar,
   AdherenceGrid,
   SystemViz,
-  CycleWheel,
+  CycleArc,
+  ConnectionChart,
+  CYCLE_PHASES,
   ProgressRing,
 } from './viz'
 import { LOOP_STAGES } from '../data/types'
@@ -63,6 +65,12 @@ function SheetRouter({ sheet, depth }: { sheet: SheetRef; depth: number }) {
 }
 
 type SP = { onClose: () => void; depth: number }
+
+/* Cycle-chart geometry. Shared by the bars and the 35-day reference line so
+   the two cannot drift apart. Mirrors .wcyc__track / .wcyc label heights. */
+const CYCLE_TRACK_H = 104
+const CYCLE_LABELS_H = 36
+const CYCLE_MAX = 50
 
 /* ================================================== Health Intelligence */
 
@@ -579,30 +587,60 @@ function WomensSheet({ onClose, depth }: SP) {
   return (
     <Sheet title="Women's Health" eyebrow="Longitudinal view" onClose={onClose} depth={depth}>
       <div className="sh st-women">
-        <div className="wtop">
-          <CycleWheel day={w.cycleDay} length={w.cycleLength} />
-          <div className="wtop__side">
-            <div className="wtop__phase">{w.phase}</div>
-            <div className="t-foot">Last period {w.lastPeriod}</div>
-            <div className="t-foot">Next expected {w.nextPredicted}</div>
-            <Chip state="attention">{w.variability}</Chip>
+        {/* ---- Cycle hero ------------------------------------------------ */}
+        <div className="whero">
+          <div className="whero__top">
+            <CycleArc day={w.cycleDay} length={w.cycleLength} />
+            <div className="whero__side">
+              <div className="t-cap">Current phase</div>
+              <div className="whero__phase">{w.phase}</div>
+              <div className="whero__kv">
+                <span>Last period</span>
+                <strong>{w.lastPeriod}</strong>
+              </div>
+              <div className="whero__kv">
+                <span>Next expected</span>
+                <strong>{w.nextPredicted}</strong>
+              </div>
+              <Chip state="attention">{w.variability}</Chip>
+            </div>
+          </div>
+          <div className="wphases">
+            {CYCLE_PHASES.map((ph) => (
+              <span key={ph.id} className={`wphase ${w.phase === ph.id ? 'is-now' : ''}`}>
+                <i style={{ background: ph.color }} />
+                {ph.name}
+              </span>
+            ))}
           </div>
         </div>
 
         <h3 className="sh__h">Your cycles</h3>
-        <div className="wcycles">
-          {w.recentCycles.map((c) => (
-            <div key={c.month} className={`wcyc st-${c.state}`}>
-              <span className="wcyc__bar" style={{ height: `${(c.length / 50) * 100}%` }} />
-              <span className="wcyc__n num">{c.length}</span>
-              <span className="t-cap">{c.month}</span>
+        <GlassCard className="wchart">
+          <div className="wchart__plot">
+            {/* Clinical reference the copy below refers to, drawn rather than described. */}
+            <div className="wchart__ref" style={{ bottom: `${CYCLE_LABELS_H + (35 / CYCLE_MAX) * CYCLE_TRACK_H}px` }}>
+              <span>35 days</span>
             </div>
-          ))}
-        </div>
-        <p className="t-foot">
-          Cycle length over six months. A cycle consistently longer than 35 days is worth discussing
-          with a gynaecologist.
-        </p>
+            <div className="wcycles">
+              {w.recentCycles.map((c) => (
+                <div key={c.month} className={`wcyc st-${c.state}`}>
+                  {/* Fixed-height track so the bar's percentage encodes cycle
+                      length instead of being flex-shrunk to a uniform height. */}
+                  <span className="wcyc__track">
+                    <span className="wcyc__bar" style={{ height: `${(c.length / CYCLE_MAX) * 100}%` }} />
+                  </span>
+                  <span className="wcyc__n num">{c.length}</span>
+                  <span className="t-cap">{c.month}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <p className="t-foot">
+            Six months of cycle length. A cycle consistently longer than 35 days is worth discussing
+            with a gynaecologist.
+          </p>
+        </GlassCard>
 
         <h3 className="sh__h">Connections over time</h3>
         <p className="t-body">
@@ -613,6 +651,7 @@ function WomensSheet({ onClose, depth }: SP) {
           {w.insights.map((ins) => (
             <GlassCard key={ins.id} className="conn">
               <p className="conn__s">{ins.statement}</p>
+              {ins.pair && <ConnectionChart pair={ins.pair} />}
               <div className="conn__markers">
                 {ins.linkedMarkerIds.map((m) => {
                   const mk = L.marker(m)

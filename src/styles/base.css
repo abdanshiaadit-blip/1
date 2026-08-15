@@ -22,7 +22,7 @@ body {
 
 body {
   font-family: var(--font);
-  background: #000;
+  background: var(--bg-base);
   color: var(--text-1);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -53,24 +53,23 @@ button {
   display: grid;
   place-items: center;
   background:
-    radial-gradient(120% 90% at 50% -10%, #131a26 0%, #0a0c12 45%, #050609 100%);
+    radial-gradient(110% 80% at 50% -10%, #ffffff 0%, #eaf2f0 44%, #dfe9e8 100%);
   overflow: hidden;
 }
 
 .stage::before {
-  /* ambient brand bloom behind the device */
   content: '';
   position: absolute;
-  width: 780px;
-  height: 780px;
+  width: 820px;
+  height: 820px;
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    rgba(79, 227, 193, 0.09) 0%,
-    rgba(124, 140, 255, 0.06) 40%,
+    rgba(0, 201, 143, 0.16) 0%,
+    rgba(10, 162, 224, 0.1) 42%,
     transparent 68%
   );
-  filter: blur(24px);
+  filter: blur(30px);
   pointer-events: none;
 }
 
@@ -83,13 +82,13 @@ button {
   width: var(--device-w);
   height: var(--device-h);
   border-radius: 56px;
-  background: var(--ink-900);
+  background: #0d1211;
   box-shadow:
-    0 0 0 2px #2a2f3a,
-    0 0 0 11px #0e1116,
-    0 0 0 12px #333944,
-    0 40px 90px -20px rgba(0, 0, 0, 0.9),
-    0 10px 30px -10px rgba(0, 0, 0, 0.7);
+    0 0 0 2px #d9e2e1,
+    0 0 0 11px #f2f6f5,
+    0 0 0 12px #c9d5d3,
+    0 44px 90px -24px rgba(6, 42, 38, 0.34),
+    0 12px 30px -12px rgba(6, 42, 38, 0.22);
   overflow: hidden;
   isolation: isolate;
   animation: device-in 900ms var(--spring) both;
@@ -106,7 +105,7 @@ button {
 .device__btn {
   position: absolute;
   width: 3px;
-  background: linear-gradient(180deg, #2c313b, #454b58 40%, #2c313b);
+  background: linear-gradient(180deg, #cfdad8, #eef3f2 40%, #cfdad8);
   border-radius: 3px;
   z-index: 60;
 }
@@ -120,15 +119,40 @@ button {
   inset: 0;
   border-radius: 56px;
   overflow: hidden;
-  background:
-    radial-gradient(120% 70% at 50% 0%, #10141d 0%, #0a0c11 46%, #06070a 100%);
+  background: var(--bg-base);
   display: flex;
   flex-direction: column;
 }
 
+/* Ambient colour blooms. Liquid Glass needs something behind it to refract —
+   without these the glass surfaces read as flat white panels. */
+.screen::before,
+.screen::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(46px);
+}
+.screen::before {
+  width: 340px;
+  height: 340px;
+  top: -90px;
+  right: -110px;
+  background: radial-gradient(circle, var(--bloom-1), transparent 68%);
+}
+.screen::after {
+  width: 300px;
+  height: 300px;
+  top: 210px;
+  left: -130px;
+  background: radial-gradient(circle, var(--bloom-2), transparent 68%);
+}
+
 /* Full-bleed on real phones */
 @media (max-width: 460px), (max-height: 880px) and (pointer: coarse) {
-  .stage { background: var(--ink-900); }
+  .stage { background: var(--bg-base); }
   .stage::before { display: none; }
   .device {
     width: 100vw;
@@ -148,39 +172,41 @@ button {
 .t-display {
   font-size: 34px;
   line-height: 1.06;
-  font-weight: 700;
-  letter-spacing: -0.028em;
+  font-weight: 730;
+  letter-spacing: -0.032em;
+  color: var(--text-1);
 }
 .t-title {
   font-size: 22px;
   line-height: 1.18;
-  font-weight: 650;
-  letter-spacing: -0.02em;
+  font-weight: 690;
+  letter-spacing: -0.024em;
+  color: var(--text-1);
 }
 .t-headline {
   font-size: 17px;
   line-height: 1.28;
-  font-weight: 620;
-  letter-spacing: -0.012em;
+  font-weight: 640;
+  letter-spacing: -0.014em;
 }
 .t-body {
   font-size: 15px;
-  line-height: 1.45;
+  line-height: 1.46;
   font-weight: 450;
-  letter-spacing: -0.006em;
+  letter-spacing: -0.008em;
   color: var(--text-2);
 }
 .t-foot {
   font-size: 13px;
-  line-height: 1.4;
-  font-weight: 480;
+  line-height: 1.42;
+  font-weight: 470;
   color: var(--text-3);
-  letter-spacing: -0.002em;
+  letter-spacing: -0.004em;
 }
 .t-cap {
   font-size: 11px;
   line-height: 1.3;
-  font-weight: 640;
+  font-weight: 680;
   letter-spacing: 0.07em;
   text-transform: uppercase;
   color: var(--text-3);
@@ -200,6 +226,8 @@ button {
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   overscroll-behavior-y: contain;
+  position: relative;
+  z-index: 1;
 }
 .scroll::-webkit-scrollbar {
   display: none;

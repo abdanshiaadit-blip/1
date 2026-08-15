@@ -904,7 +904,9 @@ export const meera: Profile = {
     cycleLength: 38,
     avgLength: 38,
     variability: '±6 days over 6 cycles',
-    phase: 'luteal',
+    // Day 19 of a ~38-day cycle: ovulation sits around day 24, so this is
+    // late follicular, not luteal.
+    phase: 'follicular',
     lastPeriod: '28 Jul 2026',
     nextPredicted: '4 Sep 2026',
     recentCycles: [
@@ -930,6 +932,11 @@ export const meera: Profile = {
         linkedMarkerIds: ['insulin', 'shbg', 'testo_f'],
         caveat:
           'These are known to interact, but HUMAN cannot tell you which is driving which — and will not name a condition. This is a pattern to take to a specialist.',
+        pair: {
+          axis: ['Mar 25', 'Jul 25', 'Nov 25', 'Mar 26', 'Jul 26'],
+          a: { label: 'Cycle length', values: [31, 34, 36, 41, 38], unit: 'days' },
+          b: { label: 'Fasting insulin', values: [15.1, 16.2, 17.0, 18.0, 18.6], unit: 'µIU/mL' },
+        },
       },
       {
         id: 'w2',
@@ -938,6 +945,11 @@ export const meera: Profile = {
         linkedMarkerIds: ['ferritin', 'hb'],
         caveat:
           'Consistent across five paired points in your own data. It is an association, not proof, and the cause of the heavier bleeding still needs assessing.',
+        pair: {
+          axis: ['Mar 25', 'Jul 25', 'Nov 25', 'Mar 26', 'Jul 26'],
+          a: { label: 'Ferritin', values: [26, 22, 19, 16, 14], unit: 'ng/mL' },
+          b: { label: 'Flow heaviness (self-logged)', values: [1, 2, 2, 3, 4], unit: '/ 5' },
+        },
       },
       {
         id: 'w3',
@@ -946,6 +958,11 @@ export const meera: Profile = {
         linkedMarkerIds: ['ferritin', 'tsh_f'],
         caveat:
           'This is a sequencing decision to make your September results easier to interpret. It is not a statement about what is causing what.',
+        pair: {
+          axis: ['Mar 25', 'Jul 25', 'Nov 25', 'Mar 26', 'Jul 26'],
+          a: { label: 'Ferritin', values: [26, 22, 19, 16, 14], unit: 'ng/mL' },
+          b: { label: 'TSH', values: [2.9, 3.2, 3.5, 3.8, 4.1], unit: 'mIU/L' },
+        },
       },
     ],
     lifeStage: 'Reproductive years · not currently trying to conceive',
