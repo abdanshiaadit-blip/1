@@ -44,7 +44,9 @@ export default function Health() {
 
       {/* --------------------------------- ONE unified body-systems card */}
       <section className="pad">
-        <div className="bsys">
+        {/* The card's ambient wash tracks the active system's state, so swiping
+            shifts its colour — the material responds to the data. */}
+        <div className={`bsys ${active.id === 'women' ? 'st-women' : `st-${active.state}`}`}>
           <div className="bsys__top">
             <div>
               <div className="t-cap">Body systems</div>

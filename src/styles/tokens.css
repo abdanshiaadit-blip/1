@@ -85,9 +85,20 @@
   --gutter: 20px;
 
   /* ---- Elevation ----------------------------------------------------- */
-  --shadow-card: 0 1px 2px rgba(6, 42, 38, 0.05), 0 10px 26px -12px rgba(6, 42, 38, 0.16);
-  --shadow-hero: 0 2px 6px rgba(6, 42, 38, 0.05), 0 26px 54px -20px rgba(6, 42, 38, 0.24);
-  --shadow-float: 0 2px 8px rgba(6, 42, 38, 0.07), 0 16px 36px -12px rgba(6, 42, 38, 0.26);
+  /* Three-layer falloff: contact, near, ambient. A single blur reads flat, and
+     the shadow is tinted with the canvas green rather than neutral grey. */
+  --shadow-card:
+    0 0.5px 1px rgba(6, 42, 38, 0.05),
+    0 2px 6px -1px rgba(6, 42, 38, 0.05),
+    0 14px 30px -12px rgba(6, 42, 38, 0.16);
+  --shadow-hero:
+    0 1px 2px rgba(6, 42, 38, 0.05),
+    0 7px 16px -5px rgba(6, 42, 38, 0.08),
+    0 32px 64px -22px rgba(6, 42, 38, 0.26);
+  --shadow-float:
+    0 1px 2px rgba(6, 42, 38, 0.06),
+    0 6px 14px -4px rgba(6, 42, 38, 0.1),
+    0 22px 44px -14px rgba(6, 42, 38, 0.28);
   --shadow-sheet: 0 -10px 60px -14px rgba(6, 42, 38, 0.26);
   --rim: inset 0 1px 0 var(--glass-rim);
 

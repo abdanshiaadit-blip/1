@@ -28,82 +28,188 @@ export function useCountUp(target: number, duration = 1400, decimals = 0) {
   return v
 }
 
-/* --------------------------------------------------- Intelligence Ring */
+/* --------------------------------------------------- Intelligence Ring
+   The product's visual identity. Four things make it feel like a made object
+   rather than a progress bar:
+
+   1. A recessed track, so the score arc reads as raised out of a groove.
+   2. A second, thinner arc at the BASELINE score. The gap between the two arcs
+      is the improvement — the "+11" is visible, not just stated.
+   3. A specular highlight that orbits forever, masked to the score arc so the
+      light only travels through the coloured material.
+   4. A breathing aura behind it. Transform + opacity only, so the permanent
+      animation stays on the compositor.
+
+   All looping motion is CSS, so prefers-reduced-motion halts it globally. */
 
 export function IntelligenceRing({
   score,
-  size = 208,
+  baseline,
+  size = 212,
   stroke = 15,
 }: {
   score: number
+  baseline?: number
   size?: number
   stroke?: number
 }) {
-  const gid = useId().replace(/:/g, '')
+  const uid = useId().replace(/:/g, '')
+  const cx = size / 2
   const r = (size - stroke) / 2
   const c = 2 * Math.PI * r
+
+  // Baseline arc sits just inside the main stroke, with a hairline gap.
+  const rBase = r - stroke / 2 - 6
+  const cBase = 2 * Math.PI * rBase
+
   const [len, setLen] = useState(0)
+  const [lenBase, setLenBase] = useState(0)
   const shown = useCountUp(score, 1500)
 
   useEffect(() => {
-    const t = window.setTimeout(() => setLen((score / 100) * c), 120)
-    return () => window.clearTimeout(t)
-  }, [score, c])
+    const a = window.setTimeout(() => setLen((score / 100) * c), 120)
+    const b = window.setTimeout(() => setLenBase(((baseline ?? 0) / 100) * cBase), 620)
+    return () => {
+      window.clearTimeout(a)
+      window.clearTimeout(b)
+    }
+  }, [score, c, baseline, cBase])
+
+  // Endpoint cap, in SVG coordinates (0deg at 12 o'clock).
+  const endA = ((score / 100) * 360 - 90) * (Math.PI / 180)
+  const ex = cx + r * Math.cos(endA)
+  const ey = cx + r * Math.sin(endA)
 
   return (
     <div className="ring" style={{ width: size, height: size }}>
-      <div className="ring__glow" aria-hidden="true" />
+      <div className="ring__aura" aria-hidden="true" />
+
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="ring__svg">
         <defs>
-          <linearGradient id={`g${gid}`} x1="0%" y1="100%" x2="100%" y2="0%">
+          <linearGradient id={`g${uid}`} x1="0%" y1="100%" x2="100%" y2="0%">
             <stop offset="0%" stopColor="#45d97f" />
             <stop offset="50%" stopColor="#00c2a6" />
             <stop offset="100%" stopColor="#0aa2e0" />
           </linearGradient>
-          <filter id={`b${gid}`} x="-60%" y="-60%" width="220%" height="220%">
-            <feGaussianBlur stdDeviation="7" />
+
+          {/* Soft bloom for the glow pass and the endpoint cap. */}
+          <filter id={`b${uid}`} x="-60%" y="-60%" width="220%" height="220%">
+            <feGaussianBlur stdDeviation="6" />
+          </filter>
+
+          {/* Confines the travelling highlight to the score arc only. */}
+          <mask id={`m${uid}`}>
+            <circle
+              cx={cx}
+              cy={cx}
+              r={r}
+              fill="none"
+              stroke="#fff"
+              strokeWidth={stroke}
+              strokeLinecap="round"
+              strokeDasharray={c}
+              strokeDashoffset={c - len}
+              transform={`rotate(-90 ${cx} ${cx})`}
+              style={{ transition: 'stroke-dashoffset 1500ms cubic-bezier(.22,1,.36,1)' }}
+            />
+          </mask>
+
+          <radialGradient id={`s${uid}`}>
+            <stop offset="0%" stopColor="#fff" stopOpacity="0.95" />
+            <stop offset="55%" stopColor="#fff" stopOpacity="0.35" />
+            <stop offset="100%" stopColor="#fff" stopOpacity="0" />
+          </radialGradient>
+
+          {/* Inner shadow that makes the empty track look cut into the card. */}
+          <filter id={`i${uid}`}>
+            <feOffset dy="1" />
+            <feGaussianBlur stdDeviation="1.2" result="o" />
+            <feComposite in="SourceGraphic" in2="o" operator="out" />
           </filter>
         </defs>
 
+        {/* recessed track */}
+        <circle cx={cx} cy={cx} r={r} fill="none" stroke="rgba(6,42,38,.07)" strokeWidth={stroke} />
         <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={r}
+          cx={cx}
+          cy={cx}
+          r={r + stroke / 2 - 0.5}
           fill="none"
-          stroke="rgba(6,42,38,.075)"
-          strokeWidth={stroke}
+          stroke="rgba(6,42,38,.05)"
+          strokeWidth="1"
         />
+
+        {/* baseline arc — the gap to the main arc is the improvement */}
+        {baseline !== undefined && (
+          <circle
+            cx={cx}
+            cy={cx}
+            r={rBase}
+            fill="none"
+            stroke="rgba(0,189,156,.38)"
+            strokeWidth="3.5"
+            strokeLinecap="round"
+            strokeDasharray={cBase}
+            strokeDashoffset={cBase - lenBase}
+            transform={`rotate(-90 ${cx} ${cx})`}
+            style={{ transition: 'stroke-dashoffset 1300ms cubic-bezier(.22,1,.36,1)' }}
+          />
+        )}
+
         {/* glow pass */}
         <circle
-          cx={size / 2}
-          cy={size / 2}
+          cx={cx}
+          cy={cx}
           r={r}
           fill="none"
-          stroke={`url(#g${gid})`}
+          stroke={`url(#g${uid})`}
           strokeWidth={stroke}
           strokeLinecap="round"
           strokeDasharray={c}
           strokeDashoffset={c - len}
-          filter={`url(#b${gid})`}
-          opacity="0.42"
-          transform={`rotate(-90 ${size / 2} ${size / 2})`}
+          filter={`url(#b${uid})`}
+          opacity="0.4"
+          transform={`rotate(-90 ${cx} ${cx})`}
           style={{ transition: 'stroke-dashoffset 1500ms cubic-bezier(.22,1,.36,1)' }}
         />
+
         {/* crisp pass */}
         <circle
-          cx={size / 2}
-          cy={size / 2}
+          cx={cx}
+          cy={cx}
           r={r}
           fill="none"
-          stroke={`url(#g${gid})`}
+          stroke={`url(#g${uid})`}
           strokeWidth={stroke}
           strokeLinecap="round"
           strokeDasharray={c}
           strokeDashoffset={c - len}
-          transform={`rotate(-90 ${size / 2} ${size / 2})`}
+          transform={`rotate(-90 ${cx} ${cx})`}
           style={{ transition: 'stroke-dashoffset 1500ms cubic-bezier(.22,1,.36,1)' }}
         />
+
+        {/* Travelling specular highlight, clipped to the arc. An ellipse rather
+            than a circle: wider than tall means it smears ALONG the stroke and
+            reads as light moving through it, not a ball rolling around it. */}
+        <g mask={`url(#m${uid})`} className="ring__shine">
+          <ellipse
+            cx={cx}
+            cy={stroke / 2 + 1}
+            rx={stroke * 3.1}
+            ry={stroke * 1.05}
+            fill={`url(#s${uid})`}
+          />
+        </g>
+
+        {/* Endpoint cap. The halo is white, not brand-coloured: the gradient's
+            hue at the cap depends on the score, so any fixed colour would
+            clash. White reads as light and matches every position. */}
+        <g className="ring__cap">
+          <circle cx={ex} cy={ey} r={stroke * 0.72} fill="#fff" filter={`url(#b${uid})`} opacity="0.85" />
+          <circle cx={ex} cy={ey} r={stroke * 0.23} fill="#fff" />
+        </g>
       </svg>
+
       <div className="ring__mid">
         <div className="ring__score num">{Math.round(shown)}</div>
         <div className="ring__label">Health Intelligence</div>

@@ -77,18 +77,22 @@ button {
    Device frame — realistic iPhone shell on desktop, full bleed on mobile
    -------------------------------------------------------------------------- */
 
+/* Black titanium hardware. Layered rings read as: screen bezel → polished
+   chamfer → body → outer edge, which is what sells it as a physical object. */
 .device {
   position: relative;
   width: var(--device-w);
   height: var(--device-h);
   border-radius: 56px;
-  background: #0d1211;
+  background: #000;
   box-shadow:
-    0 0 0 2px #d9e2e1,
-    0 0 0 11px #f2f6f5,
-    0 0 0 12px #c9d5d3,
-    0 44px 90px -24px rgba(6, 42, 38, 0.34),
-    0 12px 30px -12px rgba(6, 42, 38, 0.22);
+    0 0 0 2px #0a0c0c,
+    0 0 0 3px #3d4444,
+    0 0 0 12px #141817,
+    0 0 0 13px #454c4b,
+    0 0 0 14px #1c2120,
+    0 50px 100px -26px rgba(6, 42, 38, 0.46),
+    0 16px 38px -14px rgba(6, 42, 38, 0.3);
   overflow: hidden;
   isolation: isolate;
   animation: device-in 900ms var(--spring) both;
@@ -105,14 +109,14 @@ button {
 .device__btn {
   position: absolute;
   width: 3px;
-  background: linear-gradient(180deg, #cfdad8, #eef3f2 40%, #cfdad8);
-  border-radius: 3px;
+  background: linear-gradient(180deg, #232928, #545c5b 45%, #232928);
+  border-radius: 2px;
   z-index: 60;
 }
-.device__btn--silent { left: -15px; top: 116px; height: 32px; }
-.device__btn--up { left: -15px; top: 172px; height: 62px; }
-.device__btn--down { left: -15px; top: 248px; height: 62px; }
-.device__btn--power { right: -15px; top: 200px; height: 96px; }
+.device__btn--silent { left: -17px; top: 116px; height: 32px; }
+.device__btn--up { left: -17px; top: 172px; height: 62px; }
+.device__btn--down { left: -17px; top: 248px; height: 62px; }
+.device__btn--power { right: -17px; top: 200px; height: 96px; }
 
 .screen {
   position: absolute;

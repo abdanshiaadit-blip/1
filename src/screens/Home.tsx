@@ -32,10 +32,13 @@ export default function Home() {
       {/* ------------------------------------------------------- HERO CARD */}
       <section className="pad">
         <div className="hero">
+          {/* A slow-drifting colour field behind the glass. This is what the
+              hero's material refracts — without it the card is a flat panel. */}
+          <div className="hero__field" aria-hidden="true" />
           <div className="hero__sheen" aria-hidden="true" />
 
           <button type="button" className="hero__ringwrap" onClick={() => openSheet('intel')}>
-            <IntelligenceRing score={p.intel.score} />
+            <IntelligenceRing score={p.intel.score} baseline={p.intel.baselineScore} />
             <div className="hero__delta">
               <svg width="11" height="11" viewBox="0 0 12 12" aria-hidden="true">
                 <path d="M6 2.2l4 5.2H2l4-5.2z" fill="currentColor" />
