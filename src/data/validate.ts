@@ -58,10 +58,90 @@ export function validateProfiles(profiles: Record<string, Profile>) {
       check(markers.has(m), `womens connected → unknown marker "${m}"`),
     )
 
+    /* ---- Biological Age ------------------------------------------------
+       The estimate is the primary metric on HOME, so an incoherent one is
+       worse than a missing one: it would read as authoritative and be wrong. */
+    const b = p.bioAge
+    check(b.chronological === p.user.age, `bioAge.chronological ${b.chronological} != user.age ${p.user.age}`)
+    check(
+      Math.abs(b.delta - (b.estimate - b.chronological)) < 0.051,
+      `bioAge.delta ${b.delta} does not equal estimate − chronological (${(b.estimate - b.chronological).toFixed(1)})`,
+    )
+    check(b.history.length > 1, 'bioAge history needs at least two points')
+    const lastPoint = b.history[b.history.length - 1]
+    check(
+      Math.abs(lastPoint.estimate - b.estimate) < 0.051,
+      `bioAge history ends at ${lastPoint.estimate}, but estimate is ${b.estimate}`,
+    )
+    check(
+      Math.abs(b.history[0].estimate - b.baseline.estimate) < 0.051,
+      'bioAge history does not start at the stated baseline',
+    )
+    b.systems.forEach((sa) => {
+      check(systems.has(sa.systemId), `bioAge system → unknown system "${sa.systemId}"`)
+      check(
+        Math.abs(sa.delta - (sa.estimate - b.chronological)) < 0.051,
+        `bioAge system "${sa.systemId}" delta ${sa.delta} does not match its estimate`,
+      )
+      sa.signalIds.forEach((m) =>
+        check(markers.has(m), `bioAge system "${sa.systemId}" → unknown marker "${m}"`),
+      )
+      check(
+        sa.drivers.some((d) => d.kind === 'positive'),
+        `bioAge system "${sa.systemId}" has no positive contributor`,
+      )
+    })
+    // Every body system should carry an age, or the detail view is incomplete.
+    p.systems.forEach((sys) =>
+      check(
+        b.systems.some((sa) => sa.systemId === sys.id),
+        `system "${sys.id}" has no biological-age estimate`,
+      ),
+    )
+
+    /* ---- AI Coach -------------------------------------------------------
+       Every reference is a deep link. A dangling one renders a dead chip. */
+    const refOk = (r: { kind: string; id?: string }, where: string) => {
+      switch (r.kind) {
+        case 'biomarker': return check(!!r.id && markers.has(r.id), `${where} → unknown marker "${r.id}"`)
+        case 'system':
+          return check(
+            !!r.id && (systems as Set<string>).has(r.id),
+            `${where} → unknown system "${r.id}"`,
+          )
+        case 'systemage':
+          return check(
+            !!r.id && b.systems.some((sa) => sa.systemId === r.id),
+            `${where} → unknown system age "${r.id}"`,
+          )
+        case 'priority':
+        case 'retest':
+          return check(!!r.id && priorities.has(r.id), `${where} → unknown priority "${r.id}"`)
+        case 'experiment':
+          return check(!!r.id && experiments.has(r.id), `${where} → unknown experiment "${r.id}"`)
+        case 'readout':
+          return check(
+            !!r.id && p.experiments.some((e) => e.id === r.id && e.readout),
+            `${where} → "${r.id}" has no readout`,
+          )
+        case 'womens':
+          return check(!!p.womens, `${where} → women's health referenced but absent`)
+        default:
+          return
+      }
+    }
+    p.coach.opener.refs.forEach((r) => refOk(r, 'coach opener'))
+    const promptIds = new Set<string>()
+    p.coach.prompts.forEach((q) => {
+      check(!promptIds.has(q.id), `duplicate coach prompt id "${q.id}"`)
+      promptIds.add(q.id)
+      check(q.answer.blocks.length > 1, `coach prompt "${q.id}" has fewer than two blocks`)
+      q.answer.refs.forEach((r) => refOk(r, `coach prompt "${q.id}"`))
+    })
+
     // Home renders p.priorities[0] and the first unfinished experiment.
     check(p.priorities.some((x) => x.rank === 1), 'no rank-1 priority')
     check(p.experiments.some((e) => !e.readout), 'no active experiment')
-    void experiments
   }
 
   if (problems.length) {

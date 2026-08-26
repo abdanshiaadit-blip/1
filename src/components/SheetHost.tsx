@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { useApp, useLookups, type SheetRef } from '../state/app'
 import {
   Sheet,
@@ -19,8 +20,14 @@ import {
   ConnectionChart,
   CYCLE_PHASES,
   ProgressRing,
+  IntelligencePanel,
+  BioAgeDial,
+  AgeDelta,
+  AgeBar,
+  AgeTrend,
+  splitAge,
 } from './viz'
-import { LOOP_STAGES } from '../data/types'
+import { LOOP_STAGES, type CoachAnswer, type CoachRef, type AgeTrend as AgeTrendKind } from '../data/types'
 import { panels } from '../data/panels'
 
 export default function SheetHost() {
@@ -39,6 +46,9 @@ function SheetRouter({ sheet, depth }: { sheet: SheetRef; depth: number }) {
   const props = { onClose: closeSheet, depth }
   switch (sheet.kind) {
     case 'intel': return <IntelSheet {...props} />
+    case 'bioage': return <BioAgeSheet {...props} />
+    case 'systemage': return <SystemAgeSheet id={sheet.id!} {...props} />
+    case 'coach': return <CoachSheet {...props} />
     case 'loop': return <LoopSheet {...props} />
     case 'priority': return <PrioritySheet id={sheet.id!} {...props} />
     case 'nextup': return <NextUpSheet {...props} />
@@ -79,12 +89,24 @@ function IntelSheet({ onClose, depth }: SP) {
   return (
     <Sheet title="Health Intelligence" eyebrow="How this number works" onClose={onClose} depth={depth}>
       <div className="sh">
-        <div className="sh__big num">
-          {p.intel.score}
-          <span className="sh__bigsub">from {p.intel.baselineScore} at baseline</span>
+        {/* The instrument moved here when Biological Age took the Home hero.
+            Health Intelligence still deserves the object — one level down. */}
+        <div className="hisheet">
+          <IntelligencePanel score={p.intel.score} delta={p.intel.delta} size={208} />
         </div>
 
         <p className="t-body">{p.intel.methodNote}</p>
+
+        <GlassCard className="sh__box sh__box--muted">
+          <div className="t-cap">How it relates to your biological age</div>
+          <p className="t-body">
+            They answer different questions. Biological age asks{' '}
+            <strong>how is your body doing relative to your years</strong>. Health Intelligence asks{' '}
+            <strong>how complete and actionable your health picture is</strong> — how much HUMAN can
+            actually see, and how much of it you are acting on. Biological age is the outcome;
+            this is the supporting context.
+          </p>
+        </GlassCard>
 
         <h3 className="sh__h">What is contributing right now</h3>
         <GlassCard className="list">
@@ -113,6 +135,480 @@ function IntelSheet({ onClose, depth }: SP) {
           This score is a HUMAN construct built for this prototype. It is not a validated clinical
           instrument, it is not diagnostic, and it should not be compared between people. Use it to
           watch your own direction of travel.
+        </SafetyNote>
+      </div>
+    </Sheet>
+  )
+}
+
+/* ==========================================================================
+   BIOLOGICAL AGE
+   "Where am I?" — one estimate, the comparison that gives it meaning, the
+   direction it has travelled, and then the same question one level down:
+   "where specifically?"
+   ========================================================================== */
+
+const TREND_LABEL: Record<AgeTrendKind, string> = {
+  improving: 'Improving',
+  holding: 'Holding',
+  drifting: 'Drifting',
+}
+
+/** Big number with the decimal set smaller. Honest precision without the
+ *  decimal shouting as loudly as the years. */
+function AgeFigure({ value, className = '' }: { value: number; className?: string }) {
+  const { int, dec } = splitAge(value)
+  return (
+    <span className={`agefig num ${className}`}>
+      {int}
+      <span className="agefig__dec">.{dec}</span>
+    </span>
+  )
+}
+
+function BioAgeSheet({ onClose, depth }: SP) {
+  const { p, openSheet } = useApp()
+  const b = p.bioAge
+  const L = useLookups()
+
+  return (
+    <Sheet title="Biological Age" eyebrow="Estimated" onClose={onClose} depth={depth}>
+      <div className="sh">
+        <div className="bahero">
+          <BioAgeDial estimate={b.estimate} chronological={b.chronological} size={212} />
+          <div className="bahero__meta">
+            <div className="t-cap">Chronological age</div>
+            <div className="bahero__chrono num">{b.chronological}</div>
+            <AgeDelta delta={b.delta} />
+          </div>
+        </div>
+
+        <p className="t-body">{b.summary}</p>
+
+        {/* ---- direction of travel ------------------------------------- */}
+        <h3 className="sh__h">Since you joined HUMAN</h3>
+        <GlassCard className="sh__box">
+          <AgeTrend history={b.history} />
+          <Divider />
+          <div className="kv">
+            <span>At baseline · {b.baseline.date}</span>
+            <strong className="num">
+              {b.baseline.estimate.toFixed(1)} vs {b.baseline.chronological}
+            </strong>
+          </div>
+          <div className="kv">
+            <span>Previous assessment · {b.previousDate}</span>
+            <strong className="num">{b.previous.toFixed(1)}</strong>
+          </div>
+          <div className="kv">
+            <span>Now</span>
+            <strong className="num">
+              {b.estimate.toFixed(1)} vs {b.chronological}
+            </strong>
+          </div>
+          <Divider />
+          <p className="t-foot">{b.basis}</p>
+        </GlassCard>
+
+        {/* ---- system-level estimates ---------------------------------- */}
+        <h3 className="sh__h">Your health systems</h3>
+        <p className="t-body">
+          The overall figure answers where you are. Each system answers where, specifically — and
+          each one is built from the markers and signals already in your record.
+        </p>
+
+        <div className="agebar__legend">
+          <span className="t-cap">Younger</span>
+          <span className="t-cap agebar__now">your age {b.chronological}</span>
+          <span className="t-cap">Older</span>
+        </div>
+
+        <div className="sysages">
+          {b.systems.map((sa, i) => {
+            const sys = L.system(sa.systemId)
+            const tone = sa.delta < -0.15 ? 'is-younger' : sa.delta > 0.15 ? 'is-older' : 'is-flat'
+            return (
+              <button
+                key={sa.systemId}
+                type="button"
+                className={`sysage ${tone}`}
+                style={{ animationDelay: `${60 + i * 55}ms` }}
+                onClick={() => openSheet('systemage', sa.systemId)}
+              >
+                <div className="sysage__top">
+                  <span className="sysage__name">{sys?.name ?? sa.systemId}</span>
+                  <AgeFigure value={sa.estimate} className="sysage__age" />
+                </div>
+                <div className="sysage__meta">
+                  <AgeDelta delta={sa.delta} compact />
+                  <span className="sysage__trend">{TREND_LABEL[sa.trend]}</span>
+                </div>
+                <AgeBar estimate={sa.estimate} chronological={b.chronological} keys={false} />
+                <p className="sysage__interp">{sa.interpretation}</p>
+                <span className="sysage__chev" aria-hidden="true" />
+              </button>
+            )
+          })}
+        </div>
+
+        {/* ---- supporting metric --------------------------------------- */}
+        <h3 className="sh__h">Supporting intelligence</h3>
+        <GlassCard className="hisupport" onClick={() => openSheet('intel')}>
+          <div className="hisupport__row">
+            <div>
+              <div className="t-cap">Health Intelligence</div>
+              <div className="hisupport__num num">{p.intel.score}</div>
+            </div>
+            <Chip state="optimal">+{p.intel.delta} since baseline</Chip>
+          </div>
+          <p className="t-body">
+            How complete and actionable your health picture is — how much HUMAN can see, and how
+            much of it you are acting on. It supports the estimate above rather than competing
+            with it.
+          </p>
+          <span className="hisupport__more">How this number works</span>
+        </GlassCard>
+
+        <Button full variant="secondary" onClick={() => openSheet('coach')}>
+          Ask HUMAN about this
+        </Button>
+
+        <SafetyNote>{b.methodNote}</SafetyNote>
+      </div>
+    </Sheet>
+  )
+}
+
+/* ============================================ Biological age, one system */
+
+function SystemAgeSheet({ id, onClose, depth }: SP & { id: string }) {
+  const { p, openSheet } = useApp()
+  const L = useLookups()
+  const sa = L.systemAge(id)
+  const sys = L.system(id)
+  if (!sa || !sys) return null
+
+  const b = p.bioAge
+  const markers = sa.signalIds.map((m) => L.marker(m)).filter(Boolean)
+  const positives = sa.drivers.filter((d) => d.kind === 'positive')
+  const opportunities = sa.drivers.filter((d) => d.kind === 'opportunity')
+  const tone = sa.delta < -0.15 ? 'is-younger' : sa.delta > 0.15 ? 'is-older' : 'is-flat'
+
+  return (
+    <Sheet title={sys.name} eyebrow="Biological age by system" onClose={onClose} depth={depth}>
+      <div className={`sh ${sys.id === 'women' ? 'st-women' : `st-${sys.state}`}`}>
+        <div className={`sahead ${tone}`}>
+          <div className="sahead__cell">
+            <div className="t-cap">Estimated age</div>
+            <AgeFigure value={sa.estimate} className="sahead__age" />
+          </div>
+          <div className="sahead__cell sahead__cell--end">
+            <div className="t-cap">Trend</div>
+            <div className="sahead__trend">{TREND_LABEL[sa.trend]}</div>
+            <AgeDelta delta={sa.delta} compact />
+          </div>
+        </div>
+
+        <AgeBar estimate={sa.estimate} chronological={b.chronological} />
+
+        <h3 className="sh__hlead">{sa.interpretation}</h3>
+
+        <GlassCard className="sh__box">
+          <div className="kv">
+            <span>Since {b.previousDate}</span>
+            <strong className="num">
+              {Math.abs(sa.since) < 0.05
+                ? 'No change'
+                : `${Math.abs(sa.since).toFixed(1)} years ${sa.since < 0 ? 'younger' : 'older'}`}
+            </strong>
+          </div>
+          <div className="kv">
+            <span>Your chronological age</span>
+            <strong className="num">{b.chronological}</strong>
+          </div>
+        </GlassCard>
+
+        {/* ---- why this estimate --------------------------------------- */}
+        <h3 className="sh__h">Why this estimate?</h3>
+        <p className="t-body">{sa.why}</p>
+
+        <div className="drivers">
+          {positives.length > 0 && (
+            <div className="drivers__group">
+              <div className="t-cap drivers__label">Positive contributors</div>
+              {positives.map((d) => (
+                <div key={d.label} className="driver driver--pos">
+                  <span className="driver__mark" aria-hidden="true">
+                    +
+                  </span>
+                  <div>
+                    <div className="driver__t">{d.label}</div>
+                    <p className="driver__d">{d.detail}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {opportunities.length > 0 && (
+            <div className="drivers__group">
+              <div className="t-cap drivers__label">Opportunity</div>
+              {opportunities.map((d) => (
+                <div key={d.label} className="driver driver--opp">
+                  <span className="driver__mark" aria-hidden="true">
+                    !
+                  </span>
+                  <div>
+                    <div className="driver__t">{d.label}</div>
+                    <p className="driver__d">{d.detail}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* ---- the signals behind it ----------------------------------- */}
+        {markers.length > 0 && (
+          <>
+            <h3 className="sh__h">Markers behind this estimate</h3>
+            <GlassCard className="list">
+              {markers.map((m, i) => (
+                <ListRow
+                  key={m!.id}
+                  title={m!.name}
+                  sub={m!.deltaLabel}
+                  value={
+                    <span className={`num st-${m!.state}`}>
+                      {m!.value}
+                      <em>{m!.unit}</em>
+                    </span>
+                  }
+                  state={m!.state}
+                  onClick={() => openSheet('biomarker', m!.id)}
+                  last={i === markers.length - 1}
+                />
+              ))}
+            </GlassCard>
+          </>
+        )}
+
+        {sa.lifestyleSignals.length > 0 && (
+          <>
+            <h3 className="sh__h">Other signals HUMAN used</h3>
+            <GlassCard className="list">
+              {sa.lifestyleSignals.map((sig, i) => (
+                <ListRow
+                  key={sig.label}
+                  title={sig.label}
+                  value={<span className="num">{sig.value}</span>}
+                  state={sig.state}
+                  last={i === sa.lifestyleSignals.length - 1}
+                />
+              ))}
+            </GlassCard>
+            <p className="t-foot">
+              Wearable and logged signals are supporting evidence. They move faster than blood
+              markers, so HUMAN reads them as early direction rather than as a result.
+            </p>
+          </>
+        )}
+
+        <Button full variant="secondary" onClick={() => openSheet('system', sys.id)}>
+          Open the {sys.name.toLowerCase()} system
+        </Button>
+
+        <SafetyNote>
+          A system-level age is a HUMAN estimate built from the signals listed above. It is not a
+          measurement of that organ, it is not a diagnosis, and it cannot tell you why a system is
+          where it is — only what HUMAN can currently see.
+        </SafetyNote>
+      </div>
+    </Sheet>
+  )
+}
+
+/* ==========================================================================
+   HUMAN AI COACH
+   Not a chatbot. The premise is that HUMAN already knows you, so the surface
+   opens with what it can see and what that means for you — and every answer
+   deep-links back into the record it came from.
+   ========================================================================== */
+
+function useOpenRef() {
+  const { openSheet } = useApp()
+  return (r: CoachRef) => {
+    switch (r.kind) {
+      case 'biomarker': return openSheet('biomarker', r.id)
+      case 'system': return openSheet('system', r.id)
+      case 'systemage': return openSheet('systemage', r.id)
+      case 'priority': return openSheet('priority', r.id)
+      case 'experiment': return openSheet('experiment', r.id)
+      case 'readout': return openSheet('readout', r.id)
+      case 'retest': return openSheet('retest', r.id)
+      case 'bioage': return openSheet('bioage')
+      case 'womens': return openSheet('womens')
+      case 'passport': return openSheet('passport')
+    }
+  }
+}
+
+/** One coach turn. Short answer first, then the same five moves every time:
+ *  why → what matters → what to do → when to reassess. Never a wall. */
+function CoachTurn({ answer }: { answer: CoachAnswer }) {
+  const openRef = useOpenRef()
+  return (
+    <div className="ctalk ctalk--coach">
+      <span className="ctalk__av" aria-hidden="true">
+        <i />
+        <i />
+        <i />
+      </span>
+      <div className="ctalk__body">
+        <p className="ctalk__short">{answer.short}</p>
+
+        <div className="cblocks">
+          {answer.blocks.map((blk, i) => (
+            <div key={blk.label} className="cblock" style={{ animationDelay: `${120 + i * 90}ms` }}>
+              <div className="cblock__l">{blk.label}</div>
+              <p className="cblock__b">{blk.body}</p>
+            </div>
+          ))}
+        </div>
+
+        {answer.refs.length > 0 && (
+          <div className="crefs">
+            <span className="t-cap crefs__l">From your record</span>
+            <div className="crefs__row">
+              {answer.refs.map((r) => (
+                <button
+                  key={`${r.kind}-${r.id ?? r.label}`}
+                  type="button"
+                  className="cref"
+                  onClick={() => openRef(r)}
+                >
+                  {r.label}
+                  <span className="cref__chev" aria-hidden="true" />
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {answer.safety && <SafetyNote>{answer.safety}</SafetyNote>}
+      </div>
+    </div>
+  )
+}
+
+function CoachSheet({ onClose, depth }: SP) {
+  const { p, coachAsked, coachPending, askCoach, resetCoach } = useApp()
+  const L = useLookups()
+  const c = p.coach
+  const endRef = useRef<HTMLDivElement>(null)
+
+  const asked = coachAsked.map((id) => L.coachPrompt(id)).filter(Boolean)
+  const remaining = c.prompts.filter((x) => !coachAsked.includes(x.id))
+
+  // Keep the newest turn in view. Scrolls the sheet body, nothing above it.
+  useEffect(() => {
+    if (coachAsked.length === 0) return
+    const t = window.setTimeout(
+      () => endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }),
+      60,
+    )
+    return () => window.clearTimeout(t)
+  }, [coachAsked.length, coachPending])
+
+  return (
+    <Sheet title="AI Coach" eyebrow="HUMAN" onClose={onClose} depth={depth}>
+      <div className="sh coachsh">
+        <p className="coach__tag">{c.contextLine}</p>
+
+        {/* ---- what HUMAN can see -------------------------------------- */}
+        <GlassCard className="coachctx">
+          <div className="t-cap">Your health right now</div>
+          <p className="coachctx__head">{c.headline}</p>
+          <div className="coachctx__grid">
+            {c.context.map((k) => (
+              <div key={k.label} className="coachctx__cell">
+                <span className="coachctx__l">{k.label}</span>
+                <span className="coachctx__v">{k.value}</span>
+              </div>
+            ))}
+          </div>
+          <p className="t-foot">
+            Answers are drawn from your own record. Nothing shared with your Care Circle is used,
+            and nothing here leaves your profile.
+          </p>
+        </GlassCard>
+
+        {/* ---- the conversation ---------------------------------------- */}
+        <div className="cthread">
+          <CoachTurn answer={c.opener} />
+
+          {asked.map((q) => (
+            <div key={q!.id} className="cturn">
+              <div className="ctalk ctalk--you">
+                <p>{q!.question}</p>
+              </div>
+              {coachPending === q!.id ? (
+                <div className="ctalk ctalk--coach">
+                  <span className="ctalk__av is-thinking" aria-hidden="true">
+                    <i />
+                    <i />
+                    <i />
+                  </span>
+                  <div className="ctalk__body">
+                    <span className="ctyping" aria-label="HUMAN is answering">
+                      <i />
+                      <i />
+                      <i />
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <CoachTurn answer={q!.answer} />
+              )}
+            </div>
+          ))}
+          <div ref={endRef} />
+        </div>
+
+        {/* ---- suggestions --------------------------------------------- */}
+        {remaining.length > 0 ? (
+          <div className="csugg">
+            <span className="t-cap">
+              {coachAsked.length === 0 ? 'Ask HUMAN' : 'Or ask'}
+            </span>
+            <div className="csugg__row">
+              {remaining.map((q) => (
+                <button key={q.id} type="button" className="csugg__b" onClick={() => askCoach(q.id)}>
+                  {q.chip}
+                  <span className="csugg__chev" aria-hidden="true" />
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <Button full variant="secondary" onClick={resetCoach}>
+            Start over
+          </Button>
+        )}
+
+        <GlassCard className="sh__box sh__box--caveat">
+          <div className="t-cap">What this is, in this prototype</div>
+          <p className="t-body">
+            The Coach's answers are written against {p.user.firstName}'s record and are
+            deterministic — there is no live model behind this build. The point being demonstrated
+            is the context: assessments, trends, protocols, adherence and outcomes in one place,
+            answering "what does this mean for me?" rather than "what is this biomarker?".
+          </p>
+        </GlassCard>
+
+        <SafetyNote>
+          HUMAN does not diagnose conditions, prescribe treatment, or replace your clinician. Where
+          something needs medical review it will say so and prepare a summary for that conversation.
         </SafetyNote>
       </div>
     </Sheet>

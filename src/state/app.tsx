@@ -2,7 +2,9 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from 'react'
@@ -13,6 +15,9 @@ export type TabId = 'home' | 'health' | 'action' | 'profile'
 
 export type SheetKind =
   | 'intel'
+  | 'bioage'
+  | 'systemage'
+  | 'coach'
   | 'loop'
   | 'priority'
   | 'nextup'
@@ -56,6 +61,14 @@ interface AppValue {
   bookingPanel: string | undefined
   done: Record<string, boolean>
   toggleAction: (id: string) => void
+  /* ---- AI Coach conversation ---------------------------------------
+     Held in app state rather than inside the sheet so the thread survives
+     closing and reopening the Coach, and so Home / Health / the Biological
+     Age sheet can open the Coach on a specific question. */
+  coachAsked: string[]
+  coachPending: string | null
+  askCoach: (promptId: string) => void
+  resetCoach: () => void
 }
 
 const Ctx = createContext<AppValue | null>(null)
@@ -67,16 +80,40 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [booking, setBooking] = useState(false)
   const [bookingPanel, setBookingPanel] = useState<string | undefined>()
   const [done, setDone] = useState<Record<string, boolean>>({})
+  const [coachAsked, setCoachAsked] = useState<string[]>([])
+  const [coachPending, setCoachPending] = useState<string | null>(null)
+  const coachTimer = useRef<number | undefined>(undefined)
 
   const p = profiles[persona]
 
-  const setPersona = useCallback((next: PersonaId) => {
-    setPersonaRaw(next)
-    setSheets([])
-    setBooking(false)
-    setDone({})
-    setTabRaw('home')
+  // The Coach "thinks" briefly before answering. Deterministic content, a
+  // human-feeling beat — never a fake token stream.
+  const askCoach = useCallback((promptId: string) => {
+    setCoachAsked((a) => (a.includes(promptId) ? a : [...a, promptId]))
+    setCoachPending(promptId)
+    window.clearTimeout(coachTimer.current)
+    coachTimer.current = window.setTimeout(() => setCoachPending(null), 900)
   }, [])
+
+  const resetCoach = useCallback(() => {
+    window.clearTimeout(coachTimer.current)
+    setCoachAsked([])
+    setCoachPending(null)
+  }, [])
+
+  useEffect(() => () => window.clearTimeout(coachTimer.current), [])
+
+  const setPersona = useCallback(
+    (next: PersonaId) => {
+      setPersonaRaw(next)
+      setSheets([])
+      setBooking(false)
+      setDone({})
+      setTabRaw('home')
+      resetCoach()
+    },
+    [resetCoach],
+  )
 
   const setTab = useCallback((t: TabId) => {
     setSheets([])
@@ -117,6 +154,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
       bookingPanel,
       done,
       toggleAction,
+      coachAsked,
+      coachPending,
+      askCoach,
+      resetCoach,
     }),
     [
       persona,
@@ -134,6 +175,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
       bookingPanel,
       done,
       toggleAction,
+      coachAsked,
+      coachPending,
+      askCoach,
+      resetCoach,
     ],
   )
 
@@ -159,6 +204,8 @@ export function useLookups() {
       action: (id: string) => p.actions.find((x) => x.id === id),
       insight: (id: string) => p.insights.find((x) => x.id === id),
       member: (id: string) => p.careCircle.find((x) => x.id === id),
+      systemAge: (id: string) => p.bioAge.systems.find((s) => s.systemId === id),
+      coachPrompt: (id: string) => p.coach.prompts.find((x) => x.id === id),
     }),
     [p],
   )

@@ -62,6 +62,556 @@ export const aadit: Profile = {
       'Health Intelligence is a HUMAN composite of your body systems, weighted by how much each currently influences your long-term risk profile. It is a prototype construct for tracking your own change over time — not a validated clinical instrument, and not comparable between people.',
   },
 
+  /* ---------------------------------------------------------------------
+     Biological Age — the primary outcome on HOME.
+     Baseline Jun 2025: 35.6 against a chronological 33 — 2.6 years OLDER.
+     Now: 32.2 against 34 — 1.8 years younger. The gap has closed by 4.4
+     years across three loop cycles, which is the whole thesis in one number.
+     --------------------------------------------------------------------- */
+  bioAge: {
+    chronological: 34,
+    estimate: 32.2,
+    delta: -1.8,
+    previous: 33.3,
+    previousDate: '20 Mar 2026',
+    baseline: { date: 'Jun 2025', estimate: 35.6, chronological: 33 },
+    trend: 'improving',
+    headline: '1.8 years younger than your age',
+    summary:
+      'Your current estimate reflects the health signals HUMAN has available across your health profile. At baseline you estimated 2.6 years older than your age; you now estimate 1.8 years younger.',
+    basis: '68 markers across 4 assessments since June 2025, alongside 14 months of wearable and logged signals.',
+    methodNote:
+      'Your biological age is an estimate based on the health signals currently available to HUMAN. It is not a medical diagnosis, it is not a clinically validated instrument, and it does not predict disease or lifespan. A move of this size over 14 months reflects how responsive the estimate is to the signals HUMAN holds — read the direction of travel, not the exact figure.',
+    history: [
+      { date: 'Jun 25', estimate: 35.6, chronological: 33, event: 'Baseline assessment' },
+      { date: 'Sep 25', estimate: 35.2, chronological: 33 },
+      { date: 'Dec 25', estimate: 34.5, chronological: 33, event: 'Cycle 1 review' },
+      { date: 'Mar 26', estimate: 33.3, chronological: 34 },
+      { date: 'Jul 26', estimate: 32.2, chronological: 34, event: 'Cycle 2 retest' },
+    ],
+    systems: [
+      {
+        systemId: 'metabolic',
+        estimate: 36.2,
+        delta: 2.2,
+        trend: 'improving',
+        since: -1.6,
+        interpretation: 'The one area currently estimating older than you are — and the one moving fastest.',
+        why: 'Your metabolic estimate is influenced by the health signals currently available to HUMAN, including your glucose markers, lipid profile, activity and sleep timing. HbA1c at 5.9% and fasting insulin at 14.2 hold it above your chronological age; four consecutive falls in both, and a much higher evening step count, are what have pulled it down 1.6 years since March.',
+        signalIds: ['hba1c', 'insulin', 'trig', 'hdl', 'glucose'],
+        lifestyleSignals: [
+          { label: 'Evening step count', value: '3,180 · from 1,240', state: 'optimal' },
+          { label: 'Post-dinner walks', value: '18 of 30 sessions', state: 'monitor' },
+          { label: 'Sleep timing consistency', value: '±92 min', state: 'monitor' },
+        ],
+        drivers: [
+          {
+            kind: 'positive',
+            label: 'Regular post-meal movement',
+            detail: 'Evening steps up from 1,240 to 3,180 a day since the Dinner Walk Protocol began.',
+          },
+          {
+            kind: 'positive',
+            label: 'Improved glucose markers',
+            detail: 'HbA1c 6.2 → 5.9% and fasting glucose 111 → 104 mg/dL across four measurements.',
+          },
+          {
+            kind: 'opportunity',
+            label: 'Fasting insulin still well above optimal',
+            detail: '14.2 µIU/mL sits inside the lab range but far above the 3–8 we would consider optimal.',
+          },
+          {
+            kind: 'opportunity',
+            label: 'Inconsistent sleep timing',
+            detail: 'Your sleep midpoint moves ±92 minutes across the week, which is associated with poorer glucose handling.',
+          },
+        ],
+      },
+      {
+        systemId: 'nutritional',
+        estimate: 35.4,
+        delta: 1.4,
+        trend: 'drifting',
+        since: 0.6,
+        interpretation: 'Your current nutrition-related signals are an opportunity for improvement.',
+        why: 'This estimate is shaped mainly by vitamin D at 18 ng/mL, B12 at the low end of range and a mildly raised homocysteine. Iron stores are comfortable. Supplementation only began in July, after your last draw, so nothing here has been re-measured yet.',
+        signalIds: ['vitd', 'b12', 'homocysteine', 'ferritin'],
+        lifestyleSignals: [
+          { label: 'Vitamin D3 adherence', value: 'Weekly · 4 of 6 doses', state: 'optimal' },
+          { label: 'Direct sun exposure', value: 'Low · indoor work', state: 'monitor' },
+        ],
+        drivers: [
+          {
+            kind: 'positive',
+            label: 'Repletion already underway',
+            detail: 'Weekly vitamin D3 and daily B12 started 14 July, on schedule.',
+          },
+          {
+            kind: 'opportunity',
+            label: 'Vitamin D in the deficient range',
+            detail: '18 ng/mL at your last draw, below the 30 ng/mL usually taken as sufficiency.',
+          },
+          {
+            kind: 'opportunity',
+            label: 'B12 low-normal with raised homocysteine',
+            detail: '246 pg/mL alongside homocysteine 14.2 µmol/L — a pattern often seen together.',
+          },
+        ],
+      },
+      {
+        systemId: 'cardiovascular',
+        estimate: 34.8,
+        delta: 0.8,
+        trend: 'improving',
+        since: -0.8,
+        interpretation: 'Close to your age, held there by particle count rather than by cholesterol.',
+        why: 'ApoB at 104 mg/dL and an elevated Lp(a) are what keep this estimate above your chronological age. Your LDL, blood pressure and falling hs-CRP pull the other way. Lp(a) is largely inherited and is treated here as fixed context, not as something the estimate expects you to change.',
+        signalIds: ['apob', 'lpa', 'ldl', 'hscrp'],
+        lifestyleSignals: [
+          { label: 'Resting heart rate', value: '62 bpm · −6', state: 'optimal' },
+          { label: 'Aerobic minutes', value: '148 / week', state: 'stable' },
+        ],
+        drivers: [
+          {
+            kind: 'positive',
+            label: 'Inflammation trending down',
+            detail: 'hs-CRP 3.1 → 2.4 mg/L across three measurements.',
+          },
+          {
+            kind: 'positive',
+            label: 'ApoB falling with your metabolic work',
+            detail: '112 → 104 mg/dL since baseline, without a separate cardiovascular plan.',
+          },
+          {
+            kind: 'opportunity',
+            label: 'Elevated Lp(a) — inherited, not modifiable',
+            detail: '42 mg/dL. It will not respond to your plan, and it raises the value of everything that will.',
+          },
+        ],
+      },
+      {
+        systemId: 'sleep',
+        estimate: 34.4,
+        delta: 0.4,
+        trend: 'drifting',
+        since: 0.5,
+        interpretation: 'Enough hours. It is the timing that moves this estimate.',
+        why: 'Duration averages 6h 54m, which is adequate. The variability is the signal: your sleep midpoint moves by more than 90 minutes across the week, and that has widened slightly since March.',
+        signalIds: [],
+        lifestyleSignals: [
+          { label: 'Average duration', value: '6h 54m', state: 'stable' },
+          { label: 'Midpoint variability', value: '±92 min', state: 'monitor' },
+          { label: 'Lights out by 11:30pm', value: '14 of 30 nights', state: 'monitor' },
+        ],
+        drivers: [
+          {
+            kind: 'positive',
+            label: 'Duration is adequate and rising',
+            detail: '6h 41m → 6h 54m since the current protocol began.',
+          },
+          {
+            kind: 'opportunity',
+            label: 'Irregular sleep timing',
+            detail: 'A ±92 minute midpoint swing across the week, wider than it was in March.',
+          },
+        ],
+      },
+      {
+        systemId: 'liver',
+        estimate: 33.9,
+        delta: -0.1,
+        trend: 'improving',
+        since: -1.7,
+        interpretation: 'On track — and the fastest-improving system in your profile.',
+        why: 'ALT and GGT are mildly raised, consistent with the grade 1 fatty liver reported in 2024. Both have fallen substantially since baseline, and AST is back inside range. Liver fat in this pattern moves with metabolic health, so your current plan is doing this work too.',
+        signalIds: ['alt', 'ast', 'ggt'],
+        lifestyleSignals: [{ label: 'Alcohol', value: 'Rare', state: 'optimal' }],
+        drivers: [
+          {
+            kind: 'positive',
+            label: 'ALT down a quarter since baseline',
+            detail: '61 → 46 U/L across five measurements.',
+          },
+          {
+            kind: 'positive',
+            label: 'AST back inside range',
+            detail: '41 → 32 U/L.',
+          },
+          {
+            kind: 'opportunity',
+            label: 'ALT and GGT not yet in the optimal band',
+            detail: 'ALT 46 U/L against an optimal 10–30. Improving, not finished.',
+          },
+        ],
+      },
+      {
+        systemId: 'hormonal',
+        estimate: 30.6,
+        delta: -3.4,
+        trend: 'holding',
+        since: -0.4,
+        interpretation: 'A strength, with cortisol worth keeping an eye on.',
+        why: 'Total testosterone at 512 ng/dL sits comfortably in the optimal band and has risen slowly since baseline. Morning cortisol has drifted upward across three measurements — still in range, but it is the one thing holding this estimate from going lower.',
+        signalIds: ['testo', 'cortisol'],
+        lifestyleSignals: [{ label: 'Reported work load', value: 'High · self-logged', state: 'monitor' }],
+        drivers: [
+          {
+            kind: 'positive',
+            label: 'Testosterone in the optimal band',
+            detail: '486 → 512 ng/dL since baseline.',
+          },
+          {
+            kind: 'opportunity',
+            label: 'Cortisol drifting upward',
+            detail: '16.8 → 19.4 µg/dL across three morning draws. In range, but the direction matters.',
+          },
+        ],
+      },
+      {
+        systemId: 'thyroid',
+        estimate: 29.2,
+        delta: -4.8,
+        trend: 'holding',
+        since: -0.1,
+        interpretation: 'Currently one of your strongest health areas.',
+        why: 'TSH at 2.4 mIU/L and free T4 at 1.24 ng/dL are both in the middle of range and have been steady across four measurements. With your mother’s hypothyroidism we keep this on an annual check rather than dropping it.',
+        signalIds: ['tsh', 'ft4'],
+        lifestyleSignals: [],
+        drivers: [
+          {
+            kind: 'positive',
+            label: 'Stable across four measurements',
+            detail: 'TSH 2.6 → 2.4 mIU/L with no drift in either direction.',
+          },
+          {
+            kind: 'opportunity',
+            label: 'Family history keeps it on the schedule',
+            detail: 'A first-degree relative with hypothyroidism is why this stays measured yearly rather than dropped.',
+          },
+        ],
+      },
+      {
+        systemId: 'recovery',
+        estimate: 27.9,
+        delta: -6.1,
+        trend: 'improving',
+        since: -2.3,
+        interpretation: 'Your fitness signals are the strongest thing in your profile right now.',
+        why: 'This estimate is built from wearable signals rather than blood: resting heart rate, heart-rate variability and activity. Your resting heart rate has fallen 6 bpm since the dinner walks began and HRV has edged up. These are supporting signals, not lab results, and HUMAN weights them accordingly.',
+        signalIds: [],
+        lifestyleSignals: [
+          { label: 'Resting heart rate', value: '62 bpm · from 68', state: 'optimal' },
+          { label: 'HRV', value: '54 ms · +6', state: 'optimal' },
+          { label: 'Evening step count', value: '3,180 / day', state: 'optimal' },
+        ],
+        drivers: [
+          {
+            kind: 'positive',
+            label: 'Resting heart rate down 6 bpm',
+            detail: '68 → 62 bpm since 17 July, alongside the Dinner Walk Protocol.',
+          },
+          {
+            kind: 'positive',
+            label: 'HRV rising',
+            detail: '48 → 54 ms over the same window.',
+          },
+          {
+            kind: 'opportunity',
+            label: 'Wearable signals are supporting evidence only',
+            detail: 'They move faster than blood markers, so HUMAN reads them as early direction rather than as a result.',
+          },
+        ],
+      },
+    ],
+  },
+
+  /* ---------------------------------------------------------------------
+     AI Coach — deterministic answers written against Aadit's own record.
+     Every answer names real values from this profile. Nothing here claims
+     access to data the prototype does not hold.
+     --------------------------------------------------------------------- */
+  coach: {
+    headline: 'Metabolic health is still your biggest opportunity — and it is the one that is moving.',
+    cta: 'Your metabolic health is improving. Want to understand why?',
+    contextLine: 'Your health, understood in context.',
+    context: [
+      { label: 'Blood assessments', value: '4 since Jun 2025 · 68 markers' },
+      { label: 'Biological age', value: '32.2 estimated · 8 systems' },
+      { label: 'Experiments', value: '2 run · 30 days of adherence logged' },
+      { label: 'Wearables', value: 'Apple Watch · sleep, heart rate, steps' },
+      { label: 'History', value: 'Fatty liver 2024 · family history · supplements' },
+      { label: 'Care Circle', value: '2 people · not used in your answers' },
+    ],
+    opener: {
+      short:
+        'Aadit — your estimated biological age fell to 32.2 at your July assessment, 1.8 years below your chronological age. Metabolic health is still the system estimating oldest, and it is the one your current plan is working on.',
+      blocks: [
+        {
+          label: 'Where you are',
+          body: 'Week 5 of 6 of the Dinner Walk Protocol, 18 of 30 sessions logged. Your plan review is on 28 August and the Metabolic Follow-up is due 2 September.',
+        },
+        {
+          label: 'What I would ask me',
+          body: 'Pick one of the questions below. I have your full record open — assessments, trends, experiments, adherence and what happened last time.',
+        },
+      ],
+      refs: [
+        { kind: 'bioage', label: 'Biological Age' },
+        { kind: 'experiment', id: 'e_dinner_walk', label: 'Dinner Walk Protocol' },
+      ],
+    },
+    prompts: [
+      {
+        id: 'q_bioage',
+        question: 'Why did my biological age change?',
+        chip: 'Why did my biological age change?',
+        answer: {
+          short:
+            'Your estimate fell 1.1 years since March, to 32.2. The largest single change was in your recovery signals, with metabolic and liver close behind. Two systems moved the other way.',
+          blocks: [
+            {
+              label: 'Why it changed',
+              body: 'Recovery moved 2.3 years younger — resting heart rate 68 → 62 bpm and HRV 48 → 54 ms since the dinner walks began. Liver moved 1.7 years younger as ALT fell to 46 U/L, and metabolic moved 1.6 years younger on a fourth consecutive fall in HbA1c and fasting glucose.',
+            },
+            {
+              label: 'What moved the wrong way',
+              body: 'Nutritional drifted 0.6 years older — vitamin D at 18 ng/mL was still deficient at your July draw. Sleep drifted 0.5 years older as your midpoint variability widened to ±92 minutes.',
+            },
+            {
+              label: 'What matters',
+              body: 'Metabolic still estimates 2.2 years above your chronological age, so it remains the system with the most room in it. Your recovery gains are wearable signals — encouraging, and faster-moving than blood.',
+            },
+            {
+              label: 'What to do',
+              body: 'Nothing new. Finish the Dinner Walk Protocol — you have 12 days and 12 sessions left — and keep the weekly vitamin D3 going.',
+            },
+            {
+              label: 'When to reassess',
+              body: 'Plan review 28 August. The Metabolic Follow-up on 2 September is what will actually update the metabolic and nutritional parts of this estimate.',
+            },
+          ],
+          refs: [
+            { kind: 'bioage', label: 'Biological Age detail' },
+            { kind: 'systemage', id: 'metabolic', label: 'Metabolic age' },
+            { kind: 'systemage', id: 'recovery', label: 'Recovery age' },
+            { kind: 'biomarker', id: 'vitd', label: 'Vitamin D' },
+          ],
+          safety:
+            'Biological age here is a HUMAN estimate built from the signals available to it, not a measurement and not a diagnosis. Treat the direction as the signal rather than the decimal.',
+        },
+      },
+      {
+        id: 'q_focus',
+        question: 'What should I focus on this month?',
+        chip: 'What should I focus on this month?',
+        answer: {
+          short:
+            'Finish what you started. Twelve days and twelve walk sessions remain, and the whole point of the September retest is to read a completed protocol rather than a half-run one.',
+          blocks: [
+            {
+              label: 'Why this and not something else',
+              body: 'HUMAN found four things worth acting on. Three are deliberately held back: your particle-count risk shares a root cause with this one, vitamin D repletion needs no daily decision from you, and sleep timing has one light action folded into the current plan.',
+            },
+            {
+              label: 'What matters most',
+              body: 'Adherence, not intensity. You are at 18 of 30 sessions. A marker that does not move after 60% adherence tells us something very different from one that does not move after 95% — and only one of those is worth acting on.',
+            },
+            {
+              label: 'What to do',
+              body: 'Walk after dinner five evenings a week for the next twelve days. Keep eating dal or sabzi before rice. Keep Sunday’s vitamin D3. Change nothing else — if several things move at once, September tells us nothing.',
+            },
+            {
+              label: 'When to reassess',
+              body: 'Review 28 August, retest 2 September. Your particle-count priority is queued for promotion at that review.',
+            },
+          ],
+          refs: [
+            { kind: 'priority', id: 'p_metabolic', label: 'Metabolic Reset' },
+            { kind: 'experiment', id: 'e_dinner_walk', label: 'Dinner Walk Protocol' },
+            { kind: 'priority', id: 'p_cardio', label: 'What is being held back' },
+          ],
+        },
+      },
+      {
+        id: 'q_experiment',
+        question: 'Is my Dinner Walk Protocol working?',
+        chip: 'Is my current experiment working?',
+        answer: {
+          short:
+            'The early signals are encouraging, but HUMAN needs the September measurement before concluding that the protocol is responsible for the change.',
+          blocks: [
+            {
+              label: 'What you actually did',
+              body: 'You have followed the protocol on 18 of the 30 days elapsed — 60% adherence, with a current 3-day streak. Evening step count rose from 1,240 to 3,180 a day over the same window.',
+            },
+            {
+              label: 'What moved alongside it',
+              body: 'Resting heart rate fell from 68 to 62 bpm and sleep duration edged up from 6h 41m to 6h 54m. Your self-rated energy went from 3.1 to 3.8 out of 5.',
+            },
+            {
+              label: 'What that does and does not mean',
+              body: 'These changes coincided with the protocol. Resting heart rate usually responds to sustained aerobic activity before blood markers do, so this is the sort of early movement we would expect if it is working — it is not evidence that it is. Nothing here has been re-measured in blood yet.',
+            },
+            {
+              label: 'What to do',
+              body: 'Continue unchanged to 28 August. At 60% adherence, pushing the remaining twelve sessions matters more than anything else you could add.',
+            },
+            {
+              label: 'When to reassess',
+              body: 'Readout at the 28 August review, then the Metabolic Follow-up on 2 September. HbA1c reflects roughly three months of glucose, so early September is the first point where a new value carries real information.',
+            },
+          ],
+          refs: [
+            { kind: 'experiment', id: 'e_dinner_walk', label: 'Protocol & adherence' },
+            { kind: 'readout', id: 'e_chai_done', label: 'Your last readout' },
+            { kind: 'retest', id: 'p_metabolic', label: 'September retest' },
+          ],
+          safety:
+            'This is a structured observation of your own data over a fixed window, not a controlled trial. It can show what moved together. It cannot establish what caused what.',
+        },
+      },
+      {
+        id: 'q_bloods',
+        question: 'Explain my latest blood test.',
+        chip: 'Explain my latest blood test.',
+        answer: {
+          short:
+            'Your 2 July panel — 68 markers — showed the fourth consecutive improvement in your metabolic and liver markers, with vitamin D still the clearest outstanding deficiency.',
+          blocks: [
+            {
+              label: 'What looks good',
+              body: 'Thyroid is steady and comfortably in range across four tests. Testosterone sits in the optimal band. Ferritin, AST and LDL are all where we would want them.',
+            },
+            {
+              label: 'What changed',
+              body: 'HbA1c 6.0 → 5.9%. Fasting glucose 106 → 104 mg/dL. ALT 49 → 46 U/L. ApoB 106 → 104 mg/dL. Every one of those moved in the right direction, and none of them moved dramatically — which is what sustained change usually looks like.',
+            },
+            {
+              label: 'What deserves attention',
+              body: 'Fasting insulin at 14.2 µIU/mL is inside the lab range but well above optimal. Triglycerides at 186 with HDL at 38 is the insulin-resistance pattern we are targeting. Vitamin D at 18 ng/mL is in the deficient range.',
+            },
+            {
+              label: 'What matters most',
+              body: 'Insulin. It is the marker that usually moves years before glucose does, and it is the reason HUMAN made metabolic health your priority even though no single number on this panel looks alarming.',
+            },
+            {
+              label: 'What to do next',
+              body: 'No change to the plan. The vitamin D3 you started on 14 July is already the answer to the nutritional finding — it just has not been re-measured yet.',
+            },
+            {
+              label: 'When to retest',
+              body: 'Metabolic Follow-up on 2 September: HbA1c, glucose, insulin, triglycerides, HDL, ALT, AST, GGT, vitamin D, B12 and hs-CRP. Twelve markers, not sixty-eight.',
+            },
+          ],
+          refs: [
+            { kind: 'biomarker', id: 'insulin', label: 'Fasting insulin' },
+            { kind: 'biomarker', id: 'hba1c', label: 'HbA1c' },
+            { kind: 'biomarker', id: 'vitd', label: 'Vitamin D' },
+            { kind: 'retest', id: 'p_metabolic', label: 'What gets retested' },
+          ],
+          safety:
+            'A prediabetes-range HbA1c together with an elevated Lp(a) and a father diagnosed at 47 is worth a physician review at your next consultation. HUMAN organises and explains results; it does not diagnose, and it does not replace that conversation.',
+        },
+      },
+      {
+        id: 'q_retest',
+        question: 'What should I retest, and when?',
+        chip: 'What should I retest?',
+        answer: {
+          short:
+            'Eleven markers on 2 September. Not the full panel, and not sooner.',
+          blocks: [
+            {
+              label: 'Why that date',
+              body: 'HbA1c reflects roughly three months of average glucose. Your last draw was 2 July, so anything before late August would largely re-read the same period. Vitamin D takes eight to twelve weeks of supplementation to plateau, and you started on 14 July — the two schedules land in the same week.',
+            },
+            {
+              label: 'Why not everything',
+              body: 'Retesting all 68 markers would cost you more and tell you less. Lp(a) is genetic and will not have moved. Thyroid has been stable across four tests. Re-measuring only what your plan targets is what makes a change interpretable rather than noise.',
+            },
+            {
+              label: 'What to do',
+              body: 'Book the Metabolic Follow-up for the morning of 2 September, fasting, home collection. It is 12 markers and ₹1,499.',
+            },
+            {
+              label: 'When to reassess',
+              body: 'Results in 24 hours. That readout closes cycle 3 and decides whether your particle-count priority gets promoted.',
+            },
+          ],
+          refs: [
+            { kind: 'retest', id: 'p_metabolic', label: 'Metabolic Follow-up' },
+            { kind: 'biomarker', id: 'lpa', label: 'Why Lp(a) is not retested' },
+          ],
+        },
+      },
+      {
+        id: 'q_lpa',
+        question: 'What does my Lp(a) actually mean for me?',
+        chip: 'What does my Lp(a) mean?',
+        answer: {
+          short:
+            'It is elevated at 42 mg/dL, it is largely inherited, and nothing in your plan will change it. It is context, not a target.',
+          blocks: [
+            {
+              label: 'Why it is in your record at all',
+              body: 'Lp(a) is set largely by your genes and stays broadly stable through life. HUMAN measured it once so that we know it. It is rarely included in routine Indian health packages, and elevated levels are more prevalent in South Asian populations.',
+            },
+            {
+              label: 'What it changes',
+              body: 'It does not change what you do. It changes how seriously HUMAN treats everything you can change. With an elevated Lp(a) and a grandfather who had a heart attack at 58, your ApoB, insulin and blood pressure carry more weight than the numbers alone would suggest.',
+            },
+            {
+              label: 'What to do',
+              body: 'Nothing specific to Lp(a). Continue the metabolic work — ApoB has already fallen from 112 to 104 mg/dL without a separate cardiovascular plan.',
+            },
+            {
+              label: 'When to reassess',
+              body: 'Not scheduled for retest. It is included in the Cardiovascular Deep Dive if your clinician wants a fuller picture.',
+            },
+          ],
+          refs: [
+            { kind: 'biomarker', id: 'lpa', label: 'Lipoprotein(a)' },
+            { kind: 'biomarker', id: 'apob', label: 'ApoB' },
+            { kind: 'systemage', id: 'cardiovascular', label: 'Cardiovascular age' },
+          ],
+          safety:
+            'An elevated Lp(a) alongside your family history is worth raising with a physician. It does not mean an event is coming, and HUMAN cannot tell you your cardiovascular risk — a clinician can put this in context properly.',
+        },
+      },
+      {
+        id: 'q_learned',
+        question: 'What have you learned about me so far?',
+        chip: 'What have you learned about me?',
+        answer: {
+          short:
+            'Three things, across three loop cycles. The most useful one is about how you stick to protocols, not about your blood.',
+          blocks: [
+            {
+              label: 'What holds for you',
+              body: 'Protocols attached to an existing daily habit have held far better than ones needing a new time slot — dinner walk 60% and chai reduction 84%, against morning gym 31% in cycle 1. That is why your current plan hangs off dinner rather than off 6am.',
+            },
+            {
+              label: 'What moves together',
+              body: 'Your HbA1c has moved most in the periods when your evening step count was highest, and your ALT falls alongside your triglycerides rather than independently.',
+            },
+            {
+              label: 'What that does not mean',
+              body: 'These are observations about one person over a small number of measurements. They do not establish cause — other things changed in every one of those windows.',
+            },
+            {
+              label: 'What to do',
+              body: 'When we design cycle 4 in September, we will attach it to an existing habit by default rather than asking you to build a new one.',
+            },
+          ],
+          refs: [
+            { kind: 'readout', id: 'e_chai_done', label: 'Sugar-in-Chai readout' },
+            { kind: 'passport', label: 'Health Passport' },
+          ],
+        },
+      },
+    ],
+  },
+
   loop: {
     stage: 'ACT',
     stageSince: '17 Jul 2026',

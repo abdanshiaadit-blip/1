@@ -28,8 +28,37 @@ export default function Profile() {
         </GlassCard>
       </section>
 
-      {/* ----------------------------------------------------------- HEALTH */}
+      {/* --------------------------------------------------------- AI COACH
+          The Coach's home. It is not health intelligence — it is the surface
+          you talk to, which is why it sits beside Care Circle rather than in
+          the Health tab. Home carries the contextual entry point. */}
       <Reveal>
+        <section className="pad">
+          <SectionHeader title="HUMAN AI Coach" />
+          <button type="button" className="coachcta coachcta--profile" onClick={() => openSheet('coach')}>
+            <span className="coachcta__head">
+              <span className="coachcta__orb" aria-hidden="true">
+                <i />
+                <i />
+                <i />
+              </span>
+              <span className="t-cap coachcta__eyebrow">Your health, in context</span>
+            </span>
+            <span className="coachcta__line">{p.coach.cta}</span>
+            <span className="coachcta__go">
+              Talk to HUMAN
+              <i aria-hidden="true" />
+            </span>
+          </button>
+          <p className="hint">
+            The Coach reads your own record — assessments, trends, protocols, adherence and
+            outcomes. It never uses anything your Care Circle has shared with you.
+          </p>
+        </section>
+      </Reveal>
+
+      {/* ----------------------------------------------------------- HEALTH */}
+      <Reveal delay={20}>
         <section className="pad">
           <SectionHeader title="Your health context" />
           <p className="hint hint--top">

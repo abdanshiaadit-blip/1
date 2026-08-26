@@ -11,7 +11,7 @@ import {
   Chip,
   STATE_LABEL,
 } from '../components/primitives'
-import { SystemViz, Sparkline, TrendChart } from '../components/viz'
+import { SystemViz, Sparkline, TrendChart, AgeTrend, AgeDelta, splitAge } from '../components/viz'
 import type { SystemId } from '../data/types'
 
 export default function Health() {
@@ -21,6 +21,7 @@ export default function Health() {
 
   const systems = p.systems
   const active = systems[page]
+  const bio = p.bioAge
 
   const markers =
     group === 'all' ? p.biomarkers : p.biomarkers.filter((b) => b.systemId === group)
@@ -85,10 +86,48 @@ export default function Health() {
         </div>
       </section>
 
-      {/* ------------------------------------------ Health Intelligence trend */}
+      {/* ------------------------------------------------------ Biological Age
+          The primary outcome, sitting directly under the systems it is built
+          from. Tapping it opens the full estimate and every system's own age. */}
       <Reveal>
         <section className="pad">
-          <SectionHeader title="Health Intelligence" action="Method" onAction={() => openSheet('intel')} />
+          <SectionHeader
+            eyebrow="Primary outcome"
+            title="Biological Age"
+            action="Open"
+            onAction={() => openSheet('bioage')}
+          />
+          <GlassCard className="bagecard" onClick={() => openSheet('bioage')}>
+            <div className="bagecard__row">
+              <div className="bagecard__num num">
+                {splitAge(bio.estimate).int}
+                <span className="bagecard__dec">.{splitAge(bio.estimate).dec}</span>
+              </div>
+              <div className="bagecard__side">
+                <div className="t-foot">Estimated · you are {bio.chronological}</div>
+                <AgeDelta delta={bio.delta} />
+              </div>
+            </div>
+            <AgeTrend history={bio.history} height={132} />
+            <span className="bagecard__more">
+              {bio.systems.length} health systems, each with its own estimate
+            </span>
+          </GlassCard>
+        </section>
+      </Reveal>
+
+      {/* --------------------------------- Health Intelligence — supporting
+          Moved out of the Home hero when Biological Age took the primary
+          position. It answers a different question — how complete and
+          actionable your health picture is — so it stays, one level down. */}
+      <Reveal delay={20}>
+        <section className="pad">
+          <SectionHeader
+            eyebrow="Supporting metric"
+            title="Health Intelligence"
+            action="Method"
+            onAction={() => openSheet('intel')}
+          />
           <GlassCard className="intelcard">
             <div className="intelcard__row">
               <div>

@@ -7,7 +7,7 @@ import {
   ListRow,
   Chip,
 } from '../components/primitives'
-import { IntelligencePanel, LoopStrip, Sparkline, CycleArc } from '../components/viz'
+import { BioAgeDial, AgeDelta, LoopStrip, Sparkline, CycleArc } from '../components/viz'
 
 export default function Home() {
   const { p, openSheet, setTab, openBooking, done, toggleAction } = useApp()
@@ -18,6 +18,7 @@ export default function Home() {
   const isDone = done[todayAction.id] ?? todayAction.doneToday
   const insight = p.insights[0]
   const movers = p.systems.slice(0, 3)
+  const bio = p.bioAge
 
   return (
     <div className="scroll screen__scroll">
@@ -38,10 +39,24 @@ export default function Home() {
           <div className="hero__field" aria-hidden="true" />
           <div className="hero__sheen" aria-hidden="true" />
 
-          {/* The delta now lives on the panel face, so the panel is a complete
-              readout rather than a number needing a caption underneath. */}
-          <button type="button" className="hero__panelwrap" onClick={() => openSheet('intel')}>
-            <IntelligencePanel score={p.intel.score} delta={p.intel.delta} />
+          {/* Biological Age is the primary outcome: one number, the comparison
+              that makes it mean something, and one line of interpretation.
+              Nothing else. It has to land in about two seconds. */}
+          <button type="button" className="hero__panelwrap" onClick={() => openSheet('bioage')}>
+            <BioAgeDial estimate={bio.estimate} chronological={bio.chronological} />
+
+            <div className="hero__agemeta">
+              <span className="hero__chrono num">
+                {bio.chronological}
+                <em>chronological</em>
+              </span>
+              <AgeDelta delta={bio.delta} />
+            </div>
+
+            <span className="hero__ageopen">
+              View Biological Age
+              <span className="hero__agechev" aria-hidden="true" />
+            </span>
           </button>
 
           <div className="hero__rule" />
@@ -104,6 +119,29 @@ export default function Home() {
               </div>
             </div>
           </GlassCard>
+        </section>
+      </Reveal>
+
+      {/* ------------------------------------------------------- AI COACH
+          Compact and contextual. Home is not a chat dashboard — this is one
+          line of context and one way in. */}
+      <Reveal delay={20}>
+        <section className="pad">
+          <button type="button" className="coachcta" onClick={() => openSheet('coach')}>
+            <span className="coachcta__head">
+              <span className="coachcta__orb" aria-hidden="true">
+                <i />
+                <i />
+                <i />
+              </span>
+              <span className="t-cap coachcta__eyebrow">HUMAN AI Coach</span>
+            </span>
+            <span className="coachcta__line">{p.coach.cta}</span>
+            <span className="coachcta__go">
+              Ask HUMAN
+              <i aria-hidden="true" />
+            </span>
+          </button>
         </section>
       </Reveal>
 

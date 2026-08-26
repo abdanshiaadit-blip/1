@@ -20,16 +20,29 @@ MEASURE → UNDERSTAND → PRIORITIZE → ACT → RE-MEASURE → LEARN → ADAPT
 The blood test is the **entry point**. The membership owns the **relationship**.
 The loop creates **ongoing value**. The longitudinal record creates the **moat**.
 
-Every screen must be traceable to one of four user questions:
+Every screen must be traceable to one of five user questions:
 
 | # | Question | Owned by |
 |---|---|---|
+| 0 | **Am I getting healthier or less healthy over time?** | **HOME (Biological Age)** |
 | 1 | What is happening with my health? | HEALTH |
 | 2 | What matters most right now? | HOME (surface) + ACTION (depth) |
 | 3 | What should I do about it? | ACTION |
 | 4 | Is what I'm doing actually working? | ACTION (readout) + HEALTH (trend) |
 
-**If a proposed feature does not answer one of these four questions, it does not ship.**
+**If a proposed feature does not answer one of these five questions, it does not ship.**
+
+Question 0 is the outcome the other four exist to move. It was added when
+**HUMAN Biological Age** replaced Health Intelligence as the Home hero: "81 · Health
+Intelligence" is abstract and needs explaining, "32.2 against a chronological 34" does not.
+Health Intelligence still exists and still matters — it answers *how complete and actionable
+is my health picture* — but it is supporting context, one level down.
+
+| Metric | Question | Position |
+|---|---|---|
+| **Biological Age** | Where am I? Am I improving? | **Primary.** Home hero, Health primary outcome |
+| Biological Age by system | Where, specifically? | Biological Age detail → system detail |
+| Health Intelligence | How complete and actionable is my picture? | Secondary. Health → supporting metric, and inside Biological Age detail |
 
 ---
 
@@ -81,6 +94,8 @@ Everything below L3 is progressive disclosure.
 | **Health Passport** (5.6) | HEALTH | Timeline + records, reachable from HOME | Longitudinal timeline, not a document vault |
 | **Outcome Intelligence** (5.7) | HEALTH + ACTION | "What we've learned about you" module; experiment readouts | Explicit non-causal framing everywhere |
 | **HUMAN Care Circle** (5.8) | PROFILE | Members, per-category sharing, sensitive locks | Relationship layer, not a social feed |
+| **HUMAN Biological Age** (5.9) | HOME + HEALTH | Home hero → detail sheet → per-system age → system detail | The primary outcome. Always framed as an *estimate* |
+| **HUMAN AI Coach** (5.10) | PROFILE (home) + HOME (entry) | Contextual card on HOME, dedicated surface from PROFILE, "Ask HUMAN about this" from Biological Age | Not a tab, not a chatbot. It answers *what does this mean for me* |
 | **Blood test booking** | Modal flow | Enterable from HOME, HEALTH, ACTION | Full-screen stack, not a tab |
 | Membership / billing | PROFILE | | |
 | Devices / wearables | PROFILE | Signals feed HEALTH + ACTION | |
@@ -88,8 +103,14 @@ Everything below L3 is progressive disclosure.
 
 ### 2.2 What deliberately does NOT exist
 
-No "Insights" tab. No "Labs" tab. No "Chat" tab. No AI assistant persona.
+No "Insights" tab. No "Labs" tab. No "Chat" tab. No fifth tab of any kind.
 No feature directory on HOME. No hamburger menu. No dashboard of everything.
+
+**No generic AI assistant.** The AI Coach is not an "ask me anything" box and does not get a
+tab. It has no free-text field in the prototype: it opens with what HUMAN already knows about
+this member and offers the questions that record can actually answer. The differentiator is
+context, not conversation — every answer deep-links back into the biomarker, system,
+experiment or retest it was drawn from.
 
 ---
 
@@ -103,8 +124,9 @@ Calm, premium, intentional. It is **not** a feature directory.
 | Order | Block | Level | Content |
 |---|---|---|---|
 | 1 | Brand header | — | `HUMAN` wordmark + one-line promise |
-| 2 | **Hero Card** | L1 | Health Intelligence ring (81) · `↑ +11 since baseline` · stage `ACT` · priority `Metabolic Reset` · one-line description · current experiment · next review date |
+| 2 | **Hero Card** | L1 | **Biological Age dial (32.2)** · `34 chronological` · `↓ 1.8 years younger` · `View Biological Age →` · stage `ACT` · priority `Metabolic Reset` · one-line description · current experiment · next review date |
 | 3 | Today | L2 | The single most important action + why + streak progress |
+| 3b | **AI Coach** | L2 | One contextual line and one way in. Compact — HOME is not a chatbot dashboard |
 | 4 | Loop strip | L1 | 7-stage spine, current stage lit, tappable → explainer |
 | 5 | Movement | L3 | 2–3 key signals trending, sparklines |
 | 6 | One insight | L4 | A single rotating observation, never a wall |
@@ -114,9 +136,10 @@ Calm, premium, intentional. It is **not** a feature directory.
 | 10 | Passport | — | "Your health since 2021" — one line into the timeline |
 
 **Hero Card rules (non-negotiable):**
-- The ring is the visual identity of HUMAN — large, animated stroke, soft gradient, glass reflection, subtle glow, count-up number.
-- It carries **only**: score, delta, stage, priority, one description line, experiment, next review.
-- It carries **none** of: the eight differentiator names, feature lists, biomarker counts, marketing copy.
+- The dial is the visual identity of HUMAN — large, animated stroke, soft gradient, glass reflection, subtle glow, count-up number.
+- It carries **only**: biological age, chronological comparison, one line of interpretation, one affordance into the detail, then stage, priority, one description line, experiment, next review.
+- It carries **none** of: the differentiator names, feature lists, biomarker counts, marketing copy, explanatory paragraphs about what biological age is.
+- The concept must land in about **two seconds**. Anything that needs explaining lives behind the tap.
 - Confidence through simplicity.
 
 ### HEALTH — `/health`
@@ -126,14 +149,15 @@ Answers: *What is my body doing?* Evidence and history.
 | Order | Block | Content |
 |---|---|---|
 | 1 | **Unified Body Systems card** | ONE premium swipeable object. Nine panels: Metabolic · Cardiovascular · Hormonal · Nutritional · Liver · Thyroid · Women's Health · Recovery · Sleep. Scroll-snap paging, dots, per-panel state + key markers + mini visualization. **Not** nine separate cards. |
-| 2 | Health Intelligence trend | Score over time with test events marked |
+| 2 | **Biological Age** — primary outcome | Estimate, comparison, and the estimate-vs-chronological trend since baseline → detail sheet |
+| 3 | Health Intelligence — supporting metric | Score over time with test events marked. Deliberately quieter than the block above it |
 | 3 | Biomarker trends | Grouped by system, state dot + value + direction → detail sheet |
 | 4 | What we've learned | Outcome-intelligence module, non-causal language |
 | 5 | Health Passport | Timeline preview → full passport |
 | 6 | Reports & records | Lab reports, prescriptions, imaging |
 | 7 | Retest | What's due, when, why |
 
-**Sub-screens:** System detail · Biomarker detail (chart, range band, meaning, India context, influences, linked action) · Health Passport (full timeline + filters) · Women's Health space · Report viewer.
+**Sub-screens:** **Biological Age detail** (estimate, chronological comparison, trend since baseline, per-system ages, supporting Health Intelligence) · **System age detail** (estimated age, trend, *why this estimate*, positive contributors and opportunities, the markers and lifestyle signals behind it) · System detail · Biomarker detail (chart, range band, meaning, India context, influences, linked action) · Health Passport (full timeline + filters) · Women's Health space · Report viewer.
 
 ### ACTION — `/action`
 
@@ -154,8 +178,13 @@ Answers: *What should I do today? Is it working?*
 
 Identity, settings, account, relationships. **No health intelligence.**
 
-Identity card · Health goals · Medical history · Family history · Medications & supplements ·
-Connected devices · **Care Circle** · Privacy & data · Membership · Notifications · Account.
+Identity card · **HUMAN AI Coach** · Health goals · Medical history · Family history ·
+Medications & supplements · Connected devices · **Care Circle** · Privacy & data ·
+Membership · Notifications · Account.
+
+The AI Coach lives here rather than in HEALTH because it is not a metric — it is the surface
+you talk to, and it belongs beside Care Circle in the relationship layer. HOME carries the
+contextual entry point; PROFILE is its address.
 
 ### BLOOD TEST FLOW — modal stack
 
@@ -227,13 +256,38 @@ Panel         id, name, markerCount, price, turnaround, forWhom, includes[]
 Booking       id, panelId, date, slot, mode(home|lab), status
 
 Learning      id, statement, basis, caveat            ← outcome intelligence
+
+BioAge        chronological, estimate, delta, previous, previousDate,
+              baseline{date, estimate, chronological}, trend, headline, summary,
+              basis, methodNote, history[{date, estimate, chronological, event?}],
+              systems[SystemAge]
+
+SystemAge     systemId, estimate, delta, trend, since, interpretation, why,
+              signalIds[], lifestyleSignals[{label, value, state}],
+              drivers[{kind(positive|opportunity), label, detail}]
+
+Coach         headline, cta, contextLine, context[{label, value}],
+              opener[CoachAnswer], prompts[CoachPrompt]
+
+CoachPrompt   id, question, chip, answer[CoachAnswer]
+
+CoachAnswer   short, blocks[{label, body}], refs[CoachRef], safety?
+
+CoachRef      kind(biomarker|system|systemage|priority|experiment|readout|
+                   bioage|womens|retest|passport), id?, label
 ```
 
 ### 5.1 Relationships that make HUMAN one system
 
 ```
 Biomarker ──belongs to──▶ BodySystem ──contributes to──▶ HealthIntelligence
-    │                                                          │
+    │                          │                               │
+    │                          └──has an──▶ SystemAge ──rolls up to──▶ BioAge
+    │                                            │                       │
+    │                                            └─── AI Coach reads ───┘
+    │                                                       ▲
+    │                    every other entity below ──────────┘
+    │
     └──is evidence for──▶ Priority ◀──ranked by── Decision Engine
                              │
                              ├──produces──▶ DailyAction  (what to do today)
@@ -250,6 +304,53 @@ Experiment ──tracks──▶ Signals ──compared at──▶ Review ─�
 
 **Nothing in the app is an orphan.** Every card links backward to evidence and
 forward to an action. That is what makes it feel like one system rather than a feature list.
+
+`src/data/validate.ts` enforces this at dev time: every `SystemAge` must resolve to a real
+body system and to real markers, every body system must carry an age, `delta` must equal
+`estimate − chronological` on both the overall figure and every system, the history must start
+at the stated baseline and end at the current estimate, and **every AI Coach reference must
+resolve to a real biomarker, system, priority, experiment or readout**. A dangling coach
+reference would render a dead chip, and a coach that cites data the profile does not hold is
+the one thing this feature must never do.
+
+### 5.2 Biological Age — what it is and is not
+
+The estimate is a **prototype construct**, exactly as Health Intelligence is. The product
+rules are binding on every surface that renders it:
+
+- It is always called an **estimate**. Never a measurement, never a result.
+- It never claims exact body age, guaranteed outcomes, disease prediction, lifespan
+  prediction, or a causal conclusion.
+- It is never described as clinically validated, because it is not.
+- Every detail surface carries: *"Your biological age is an estimate based on the health
+  signals currently available to HUMAN. It is not a medical diagnosis."*
+- The **direction of travel** is the product claim, not the decimal. The Aadit profile moves
+  from 2.6 years older than his age to 1.8 years younger across three loop cycles; the copy
+  says explicitly that a move of that size reflects how responsive the estimate is to the
+  signals HUMAN holds.
+- The two personas deliberately disagree. Aadit estimates **younger** and improving; Meera
+  estimates **older** and drifting, and the Coach says so plainly and explains that nothing
+  has been re-measured since her protocol began. HUMAN does not flatter the number.
+
+### 5.3 AI Coach — what makes it not a chatbot
+
+The premise is **HUMAN knows you**. The surface therefore opens with what HUMAN can see —
+assessments, biological age, experiments, adherence, wearables, history — and states what it
+is *not* using (anything shared through Care Circle). Answers follow one shape, every time:
+
+```
+short answer → why → what matters → what to do → when to reassess
+```
+
+Never a wall of text. Every answer ends in **references** that deep-link into the record it
+was drawn from, which is the proof that the context is real. Causal language is forbidden:
+answers say *coincided with*, *appears to have improved*, *needs another measurement* — never
+*proved*, *caused* or *guaranteed*. Concerning findings route to a clinician and offer to
+prepare a summary for that appointment.
+
+Answers are **deterministic content authored against each profile**. There is no model behind
+this build, and the Coach surface says so in-product rather than implying an inference engine
+that does not exist.
 
 ---
 
@@ -273,11 +374,18 @@ App
 **Primitives** `GlassCard` `SectionHeader` `Chip` `Button` `ListRow` `StateDot` `Sheet`
 `Pager` `PageDots` `Reveal` `Divider` `Stat`
 
-**Visualization** `IntelligenceRing` `ProgressRing` `Sparkline` `TrendChart` `RangeBar`
-`AdherenceGrid` `SystemViz` `CycleWheel` `LoopStrip` `TimelineRail`
+**Visualization** `IntelligencePanel` `BioAgeDial` `AgeDelta` `AgeBar` `AgeTrend`
+`ProgressRing` `Sparkline` `TrendChart` `RangeBar` `AdherenceGrid` `SystemViz` `CycleArc`
+`ConnectionChart` `LoopStrip`
 
-**Composites** `HeroCard` `TodayCard` `PriorityCard` `ExperimentCard` `BodySystemsCard`
-`BiomarkerRow` `InsightCard` `CareCircleRow` `PassportPreview` `PanelCard`
+**Composites** `HeroCard` `TodayCard` `CoachCta` `PriorityCard` `ExperimentCard`
+`BodySystemsCard` `BiomarkerRow` `InsightCard` `CareCircleRow` `PassportPreview` `PanelCard`
+
+`BioAgeDial` deliberately reuses `IntelligencePanel`'s geometry — the same stroked squircle,
+glow and face — so Biological Age reads as the same instrument HUMAN always had. Only the
+meaning of the arc changes: it is **symmetric about twelve o'clock**, which is the member's
+chronological age, and travels anticlockwise for younger and clockwise for older, one half
+turn per eight years. You read the direction before you read the number.
 
 ---
 
@@ -381,7 +489,11 @@ Forbidden: diagnosis, causal claims from observational data, guarantees, fake ce
 
 Every experiment readout must state what was **observed** and carry an explicit caveat that
 observation is not proof of cause. The Health Intelligence score must be labelled a
-**prototype composite**, not a validated clinical instrument. Any finding above a defined
+**prototype composite**, not a validated clinical instrument. The same applies to
+**Biological Age** and to every system-level age (see §5.2): estimate, never measurement;
+direction of travel, never a prediction. **AI Coach answers are bound by all of the above** —
+it explains, organises and prioritises; it does not diagnose, prescribe, or replace a
+clinician, and it routes concerning findings to one. Any finding above a defined
 threshold must surface a clinician-discussion prompt. Emergency-grade findings recommend
 immediate care.
 
@@ -419,6 +531,9 @@ each is cheap to change because it is isolated in content or a single component.
 | 10 | Who signs off retest cadence clinically? | Prototype uses conservative published intervals; real product needs clinical governance |
 | 11 | Pricing GST treatment | Shown inclusive, labelled as planning assumption |
 | 12 | Localisation | English only in prototype; Hindi + regional flagged as roadmap |
+| 13 | How is biological age computed? | Not specified, and deliberately not exposed — §5.2 forbids showing a formula. The prototype uses hand-authored, internally consistent estimates per system that roll up to a plausible overall figure. A real product needs a published, validated method before this number can ship |
+| 14 | Does the AI Coach need a free-text field? | Assumed **no** for the prototype. Suggested questions demonstrate the context without implying an inference capability that is not there. A real product would add free text once there is a model and a safety layer behind it |
+| 15 | May the Coach read Care Circle data? | Assumed **no**, and stated in-product. Data shared *with* a member by someone else is not theirs to be reasoned over without that person's separate consent |
 
 ---
 
@@ -432,6 +547,16 @@ An investor opening the app should, without explanation, understand:
 4. HUMAN helps me track it.
 5. HUMAN learns over time.
 6. HUMAN can become my long-term health system.
+
+And the complete loop should be readable in one sitting:
+
+| Surface | Question it answers |
+|---|---|
+| Biological Age | Where am I? |
+| Biological Age by system | Where, specifically? |
+| AI Coach | What does this mean for **me**? |
+| Personal Experiments | What should I try? |
+| Retesting | Did it work? |
 
 And it must never feel like a collection of features.
 It must feel like **one intelligent health system**.

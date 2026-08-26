@@ -696,3 +696,335 @@ export function ConnectionChart({
     </div>
   )
 }
+
+/* ==========================================================================
+   BIOLOGICAL AGE
+   The same stroked-squircle instrument as the Health Intelligence panel,
+   because Biological Age has to look like it has always been part of HUMAN.
+
+   What the stroke means is different, and deliberately so: the gauge is
+   SYMMETRIC about twelve o'clock. Twelve o'clock is your chronological age.
+   The arc travels anticlockwise when the estimate is younger and clockwise
+   when it is older, one half-turn per eight years. You can read the direction
+   before you read the number — which is the whole point of the metric.
+   ========================================================================== */
+
+/** Years of gap that fill a half turn. Eight is wide enough that a realistic
+ *  estimate never pins the gauge, and tight enough that a year is visible. */
+const AGE_SPAN = 8
+
+/** Split an age into whole years and one decimal, via the rounded tenth so a
+ *  float like 32.999999 can never render as "32.10". */
+export function splitAge(v: number) {
+  const tenths = Math.round(v * 10)
+  return { int: Math.floor(tenths / 10), dec: tenths % 10 }
+}
+
+export function BioAgeDial({
+  estimate,
+  chronological,
+  size = 228,
+  label = 'Biological age',
+}: {
+  estimate: number
+  chronological: number
+  size?: number
+  label?: string
+}) {
+  const uid = useId().replace(/:/g, '')
+  const SW = 5
+  const pad = SW / 2 + 1
+  const side = size - pad * 2
+  const r = side * 0.29
+
+  const path = squirclePath(pad, pad, side, side, r)
+  const perim = 4 * (side - 2 * r) + 2 * Math.PI * r
+
+  const delta = estimate - chronological
+  const younger = delta < 0
+  const frac = Math.min(1, Math.abs(delta) / AGE_SPAN) / 2
+
+  const [len, setLen] = useState(0)
+  const shown = useCountUp(estimate, 1700, 1)
+
+  useEffect(() => {
+    const t = window.setTimeout(() => setLen(frac * perim), 200)
+    return () => window.clearTimeout(t)
+  }, [frac, perim])
+
+  const { int, dec } = splitAge(shown)
+
+  return (
+    <div className={`hi bage ${younger ? 'is-younger' : 'is-older'}`} style={{ width: size, height: size }}>
+      <div className="hi__glow bage__glow" aria-hidden="true" />
+
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="hi__svg">
+        <defs>
+          <linearGradient id={`b${uid}`} x1="4%" y1="96%" x2="96%" y2="4%">
+            {younger ? (
+              /* Reversed against the Health Intelligence ramp, because the arc
+                 is mirrored: this puts brand green at the drawn tip, so a
+                 younger estimate reads green rather than blue. */
+              <>
+                <stop offset="0%" stopColor="#3f9be8" />
+                <stop offset="48%" stopColor="#00b8c4" />
+                <stop offset="100%" stopColor="#00c98f" />
+              </>
+            ) : (
+              <>
+                <stop offset="0%" stopColor="#e08c00" />
+                <stop offset="60%" stopColor="#ef7a3a" />
+                <stop offset="100%" stopColor="#f0602c" />
+              </>
+            )}
+          </linearGradient>
+        </defs>
+
+        <path d={path} fill="none" stroke="var(--track-soft)" strokeWidth={SW} />
+
+        {/* Twelve o'clock: your chronological age. The arc is measured from here. */}
+        <line
+          x1={size / 2}
+          y1={pad - 4.5}
+          x2={size / 2}
+          y2={pad + 4.5}
+          stroke="var(--hairline-strong)"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+
+        {/* Mirrored for a younger estimate, so the same clockwise geometry
+            draws anticlockwise. The squircle is symmetric about this axis. */}
+        <path
+          d={path}
+          fill="none"
+          stroke={`url(#b${uid})`}
+          strokeWidth={SW}
+          strokeLinecap="round"
+          strokeDasharray={perim}
+          strokeDashoffset={perim - len}
+          transform={younger ? `translate(${size},0) scale(-1,1)` : undefined}
+          style={{ transition: 'stroke-dashoffset 1700ms cubic-bezier(.22,1,.36,1)' }}
+        />
+      </svg>
+
+      <div className="hi__face">
+        <div className="hi__label">{label}</div>
+        <div className="bage__score num">
+          {int}
+          <span className="bage__dec">.{dec}</span>
+        </div>
+        <div className="bage__unit">years</div>
+      </div>
+    </div>
+  )
+}
+
+/* ----------------------------------------------------------- Delta pill
+   One component so "3.4 years younger" reads identically everywhere. */
+
+export function AgeDelta({
+  delta,
+  suffix = true,
+  compact,
+}: {
+  delta: number
+  suffix?: boolean
+  compact?: boolean
+}) {
+  const abs = Math.abs(delta)
+  const flat = abs < 0.15
+  const younger = delta < 0
+  const tone = flat ? 'is-flat' : younger ? 'is-younger' : 'is-older'
+  const years = abs === 1 ? 'year' : 'years'
+
+  return (
+    <span className={`agedelta ${tone} ${compact ? 'agedelta--sm' : ''}`}>
+      {!flat && (
+        <svg width="9" height="11" viewBox="0 0 9 11" aria-hidden="true" className="agedelta__a">
+          <path
+            d={younger ? 'M4.5 1v9M1 6.6l3.5 3.4L8 6.6' : 'M4.5 10V1M1 4.4L4.5 1 8 4.4'}
+            stroke="currentColor"
+            strokeWidth="1.7"
+            fill="none"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      )}
+      <span className="num">
+        {flat ? 'On track' : `${abs.toFixed(1)} ${years}`}
+      </span>
+      {!flat && suffix && <em>{younger ? 'younger' : 'older'}</em>}
+    </span>
+  )
+}
+
+/* -------------------------------------------------------------- Age bar
+   Where a system's estimate sits against the chronological age. The tick is
+   the member's real age; the bar runs from it to the estimate. */
+
+export function AgeBar({
+  estimate,
+  chronological,
+  span = AGE_SPAN,
+  keys = true,
+}: {
+  estimate: number
+  chronological: number
+  span?: number
+  /** The legend repeats badly down a list — show it once, above. */
+  keys?: boolean
+}) {
+  const [on, setOn] = useState(false)
+  useEffect(() => {
+    const t = window.setTimeout(() => setOn(true), 160)
+    return () => window.clearTimeout(t)
+  }, [])
+
+  const delta = estimate - chronological
+  const clamped = Math.max(-span, Math.min(span, delta))
+  const mid = 50
+  const width = on ? (Math.abs(clamped) / span) * 50 : 0
+  const left = clamped < 0 ? mid - width : mid
+
+  return (
+    <div className={`agebar ${delta < 0 ? 'is-younger' : delta > 0.15 ? 'is-older' : 'is-flat'}`}>
+      <div className="agebar__track">
+        <span
+          className="agebar__fill"
+          style={{ left: `${left}%`, width: `${width}%` }}
+        />
+        <span className="agebar__tick" style={{ left: `${mid}%` }} />
+      </div>
+      {keys && (
+        <div className="agebar__keys">
+          <span className="t-cap">−{span}y</span>
+          <span className="t-cap agebar__now">your age {chronological}</span>
+          <span className="t-cap">+{span}y</span>
+        </div>
+      )}
+    </div>
+  )
+}
+
+/* ------------------------------------------------------------ Age trend
+   Two series on one axis, and here the axes genuinely are shared — both are
+   years, so unlike ConnectionChart the values are directly comparable. The
+   dashed line is the member's chronological age; the solid line is the
+   estimate. Where the solid line crosses under the dashed one is the moment
+   the estimate went from older to younger. */
+
+export function AgeTrend({
+  history,
+  height = 156,
+}: {
+  history: { date: string; estimate: number; chronological: number; event?: string }[]
+  height?: number
+}) {
+  const gid = useId().replace(/:/g, '')
+  const ref = useRef<SVGSVGElement>(null)
+  const [on, setOn] = useState(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          setOn(true)
+          io.disconnect()
+        }
+      },
+      { threshold: 0.25 },
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
+
+  const w = 320
+  const h = height
+  const padX = 12
+  const padY = 22
+
+  const all = history.flatMap((p) => [p.estimate, p.chronological])
+  const lo = Math.min(...all)
+  const hi = Math.max(...all)
+  const pad = (hi - lo) * 0.28 || 1
+  const min = lo - pad
+  const max = hi + pad
+  const span = max - min || 1
+
+  const X = (i: number) => (i / Math.max(1, history.length - 1)) * (w - padX * 2) + padX
+  const Y = (v: number) => h - padY - ((v - min) / span) * (h - padY * 2)
+
+  const line = (key: 'estimate' | 'chronological') =>
+    history.map((p, i) => `${i ? 'L' : 'M'}${X(i).toFixed(1)},${Y(p[key]).toFixed(1)}`).join(' ')
+
+  const last = history[history.length - 1]
+  const younger = last.estimate < last.chronological
+
+  return (
+    <div className={`agetrend ${younger ? 'is-younger' : 'is-older'}`}>
+      <div className="agetrend__keys">
+        <span className="agetrend__key agetrend__key--est">
+          <i /> Estimated biological age
+        </span>
+        <span className="agetrend__key agetrend__key--chr">
+          <i /> Your chronological age
+        </span>
+      </div>
+
+      <svg ref={ref} viewBox={`0 0 ${w} ${h}`} className="agetrend__svg" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id={`t${gid}`} x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="var(--state-attention)" />
+            <stop offset="100%" stopColor={younger ? 'var(--accent-brand)' : 'var(--state-attention)'} />
+          </linearGradient>
+        </defs>
+
+        <path
+          d={line('chronological')}
+          fill="none"
+          stroke="var(--text-4)"
+          strokeWidth="1.6"
+          strokeDasharray="4 4"
+          strokeLinecap="round"
+        />
+
+        <path
+          d={line('estimate')}
+          fill="none"
+          stroke={`url(#t${gid})`}
+          strokeWidth="2.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className={`agetrend__line ${on ? 'is-on' : ''}`}
+          pathLength={1}
+        />
+
+        {history.map((p, i) => (
+          <circle
+            key={p.date}
+            cx={X(i)}
+            cy={Y(p.estimate)}
+            r={i === history.length - 1 ? 4.4 : 3}
+            fill={i === history.length - 1 ? (younger ? 'var(--accent-brand)' : 'var(--state-attention)') : '#fff'}
+            stroke={younger && i === history.length - 1 ? 'var(--accent-brand)' : 'var(--state-attention)'}
+            strokeWidth="2"
+            className={`agetrend__pt ${on ? 'is-on' : ''}`}
+            style={{ transitionDelay: `${460 + i * 90}ms` }}
+          />
+        ))}
+      </svg>
+
+      <div className="agetrend__axis">
+        {history.map((p) => (
+          <span key={p.date} className="t-cap">
+            {p.date}
+          </span>
+        ))}
+      </div>
+    </div>
+  )
+}

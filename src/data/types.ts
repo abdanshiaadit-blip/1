@@ -266,6 +266,8 @@ export interface Report {
 export interface Profile {
   user: User
   intel: HealthIntel
+  bioAge: BioAge
+  coach: Coach
   loop: LoopState
   systems: BodySystem[]
   biomarkers: Biomarker[]
@@ -278,4 +280,126 @@ export interface Profile {
   careCircle: CareMember[]
   insights: Insight[]
   reports: Report[]
+}
+
+/* ==========================================================================
+   Biological Age — the primary outcome
+   An ESTIMATE derived from the signals HUMAN already holds. It is not a
+   measurement, and every surface that renders it says so.
+   ========================================================================== */
+
+export type AgeTrend = 'improving' | 'holding' | 'drifting'
+
+/** A contributor to a system's estimate. Positive contributors and
+ *  opportunities are the same shape so a system can be read at a glance. */
+export interface AgeDriver {
+  kind: 'positive' | 'opportunity'
+  label: string
+  detail: string
+}
+
+export interface SystemAge {
+  systemId: SystemId
+  /** Estimated age for this system, in years. One decimal. */
+  estimate: number
+  /** estimate − chronological. Negative = younger than chronological. */
+  delta: number
+  trend: AgeTrend
+  /** Movement since the previous assessment, in years. Negative = younger. */
+  since: number
+  /** One line. Never a diagnosis. */
+  interpretation: string
+  /** Plain-language answer to "why this estimate?" */
+  why: string
+  /** Biomarkers HUMAN actually used. Only the relevant ones. */
+  signalIds: string[]
+  /** Non-blood signals — wearable, logged, lifestyle. */
+  lifestyleSignals: { label: string; value: string; state: HealthState }[]
+  drivers: AgeDriver[]
+}
+
+export interface BioAge {
+  chronological: number
+  /** Estimated biological age, one decimal. */
+  estimate: number
+  /** estimate − chronological. Negative = younger. */
+  delta: number
+  /** Estimate at the previous assessment. */
+  previous: number
+  previousDate: string
+  /** Estimate at the Day-0 baseline, with the chronological age at the time. */
+  baseline: { date: string; estimate: number; chronological: number }
+  trend: AgeTrend
+  /** One line under the number. Reads in about two seconds. */
+  headline: string
+  /** Two sentences at most, shown at the top of the detail view. */
+  summary: string
+  /** What the estimate is and is not. Rendered inside a SafetyNote. */
+  methodNote: string
+  /** What the estimate was built from — count, not a formula. */
+  basis: string
+  history: { date: string; estimate: number; chronological: number; event?: string }[]
+  systems: SystemAge[]
+}
+
+/* ==========================================================================
+   HUMAN AI Coach
+   Deterministic prototype answers written against this member's own record.
+   Every answer is composed of the same five moves: short answer, why, what
+   matters, what to do, when to reassess.
+   ========================================================================== */
+
+export type CoachRefKind =
+  | 'biomarker'
+  | 'system'
+  | 'systemage'
+  | 'priority'
+  | 'experiment'
+  | 'readout'
+  | 'bioage'
+  | 'womens'
+  | 'retest'
+  | 'passport'
+
+export interface CoachRef {
+  kind: CoachRefKind
+  id?: string
+  label: string
+}
+
+export interface CoachBlock {
+  label: string
+  body: string
+}
+
+export interface CoachAnswer {
+  /** The one-line answer. Everything else expands on it. */
+  short: string
+  blocks: CoachBlock[]
+  /** Deep links into the record the answer was drawn from. */
+  refs: CoachRef[]
+  /** Shown as a SafetyNote when the answer touches clinical territory. */
+  safety?: string
+}
+
+export interface CoachPrompt {
+  id: string
+  question: string
+  /** Short form for the suggestion chips. */
+  chip: string
+  answer: CoachAnswer
+}
+
+export interface Coach {
+  /** "Your metabolic health is currently your biggest opportunity." */
+  headline: string
+  /** The compact contextual line on the Home and Profile entry points.
+   *  Deliberately shorter than the headline — those cards stay two lines. */
+  cta: string
+  contextLine: string
+  /** What HUMAN actually holds for this member — the basis of every answer. */
+  context: { label: string; value: string }[]
+  /** The opening turn. Always present, never part of the asked log. */
+  opener: CoachAnswer
+  prompts: CoachPrompt[]
 }

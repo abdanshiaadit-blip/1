@@ -64,6 +64,593 @@ export const meera: Profile = {
       'Health Intelligence is a HUMAN composite of your body systems, weighted by how much each currently influences your long-term risk profile. It is a prototype construct for tracking your own change over time — not a validated clinical instrument, and not comparable between people.',
   },
 
+  /* ---------------------------------------------------------------------
+     Biological Age — the honest counterpart to Aadit's profile.
+     Meera estimates OLDER than her age, and the gap has widened slowly at
+     every assessment. Nothing has been re-measured since the Iron Absorption
+     Protocol began on 21 July, so the estimate has had nothing to respond to.
+     HUMAN says so rather than flattering the number.
+     --------------------------------------------------------------------- */
+  bioAge: {
+    chronological: 31,
+    estimate: 33.3,
+    delta: 2.3,
+    previous: 32.9,
+    previousDate: '18 Mar 2026',
+    baseline: { date: 'Mar 2025', estimate: 32.0, chronological: 30 },
+    trend: 'drifting',
+    headline: '2.3 years older than your age',
+    summary:
+      'Your current estimate reflects the health signals HUMAN has available across your health profile. It has moved slowly upward at every assessment since you joined — iron, thyroid and insulin are the three threads doing most of that work.',
+    basis: '44 markers across 4 assessments since March 2025, alongside 14 months of cycle, wearable and symptom logs.',
+    methodNote:
+      'Your biological age is an estimate based on the health signals currently available to HUMAN. It is not a medical diagnosis, it is not a clinically validated instrument, and it does not predict disease or lifespan. It is most useful as a direction of travel across your own assessments.',
+    history: [
+      { date: 'Mar 25', estimate: 32.0, chronological: 30, event: 'Baseline assessment' },
+      { date: 'Jul 25', estimate: 32.3, chronological: 30 },
+      { date: 'Nov 25', estimate: 32.6, chronological: 31, event: 'Cycle 1 review' },
+      { date: 'Mar 26', estimate: 32.9, chronological: 31 },
+      { date: 'Jul 26', estimate: 33.3, chronological: 31, event: 'Cycle 2 retest' },
+    ],
+    systems: [
+      {
+        systemId: 'nutritional',
+        estimate: 35.4,
+        delta: 4.4,
+        trend: 'holding',
+        since: 0.2,
+        interpretation: 'Your current nutrition-related signals are the clearest opportunity in your profile.',
+        why: 'This estimate is driven mainly by iron. Ferritin at 14 ng/mL has fallen at every one of five measurements and haemoglobin has followed it down. Vitamin D moved the other way — twelve weeks of weekly dosing took it from 16 to 24 ng/mL — which is why the estimate held rather than rising further.',
+        signalIds: ['ferritin', 'hb', 'vitd', 'b12'],
+        lifestyleSignals: [
+          { label: 'Iron protocol adherence', value: '19 of 21 doses', state: 'optimal' },
+          { label: 'Fatigue logged', value: 'Most days · 5 months', state: 'attention' },
+          { label: 'Chai timing', value: '21 of 30 days between meals', state: 'monitor' },
+        ],
+        drivers: [
+          {
+            kind: 'positive',
+            label: 'Vitamin D responded to repletion',
+            detail: '16 → 24 ng/mL across twelve weeks at 41 of 42 scheduled doses.',
+          },
+          {
+            kind: 'positive',
+            label: 'Iron protocol adherence is high',
+            detail: '19 of 21 alternate-day doses since 21 July.',
+          },
+          {
+            kind: 'opportunity',
+            label: 'Ferritin falling at every measurement',
+            detail: '26 → 22 → 19 → 16 → 14 ng/mL since March 2025. The cause of the loss still needs assessing.',
+          },
+          {
+            kind: 'opportunity',
+            label: 'Haemoglobin at the bottom of range',
+            detail: 'Consistent with the fatigue and breathlessness you have been logging since March.',
+          },
+        ],
+      },
+      {
+        systemId: 'women',
+        estimate: 34.8,
+        delta: 3.8,
+        trend: 'drifting',
+        since: 0.4,
+        interpretation: 'Four signals appear to be moving together — this is a pattern for a specialist, not a conclusion.',
+        why: 'Your average cycle length has grown from 31 to 38 days across 14 months. Over the same window fasting insulin rose, SHBG fell and available testosterone rose. HUMAN can show you that these moved together. It cannot tell you which is driving which, and it will not name a condition.',
+        signalIds: ['insulin', 'shbg', 'testo_f', 'amh', 'lh'],
+        lifestyleSignals: [
+          { label: 'Average cycle length', value: '38 days · from 31', state: 'attention' },
+          { label: 'Cycle variability', value: '±6 days over 6 cycles', state: 'attention' },
+          { label: 'Heavier flow logged', value: '3 of last 4 cycles', state: 'attention' },
+        ],
+        drivers: [
+          {
+            kind: 'positive',
+            label: 'Fourteen months of consistent logging',
+            detail: 'Six cycles, symptoms and flow recorded alongside five blood draws — which is what made the pattern visible at all.',
+          },
+          {
+            kind: 'opportunity',
+            label: 'Cycle length lengthening',
+            detail: '31 → 34 → 36 → 41 → 38 days. Two of the last four cycles exceeded 40 days.',
+          },
+          {
+            kind: 'opportunity',
+            label: 'Heavier bleeding alongside falling iron',
+            detail: 'Every cycle logged as heavier was followed by a lower ferritin at the next measurement.',
+          },
+        ],
+      },
+      {
+        systemId: 'recovery',
+        estimate: 33.9,
+        delta: 2.9,
+        trend: 'drifting',
+        since: 0.7,
+        interpretation: 'The wearable signals line up with the fatigue you have been reporting.',
+        why: 'Built from wearable signals rather than blood. Heart-rate variability has fallen from 48 to 38 ms across the year and resting heart rate has crept up. HRV moves for many reasons, so HUMAN reads it as supporting evidence — but it aligns with both your iron status and your own energy logs.',
+        signalIds: [],
+        lifestyleSignals: [
+          { label: 'HRV', value: '38 ms · from 48', state: 'monitor' },
+          { label: 'Resting heart rate', value: '71 bpm · from 74', state: 'stable' },
+          { label: 'Self-rated energy', value: '3.4 / 5 · from 2.9', state: 'stable' },
+        ],
+        drivers: [
+          {
+            kind: 'positive',
+            label: 'Self-rated energy has started to rise',
+            detail: '2.9 → 3.4 out of 5 since the iron protocol began.',
+          },
+          {
+            kind: 'positive',
+            label: 'Resting heart rate down 3 bpm',
+            detail: '74 → 71 bpm alongside twice-weekly strength sessions.',
+          },
+          {
+            kind: 'opportunity',
+            label: 'HRV still falling',
+            detail: '48 → 38 ms over 14 months, and flat since the protocol started.',
+          },
+        ],
+      },
+      {
+        systemId: 'hormonal',
+        estimate: 33.4,
+        delta: 2.4,
+        trend: 'drifting',
+        since: 0.5,
+        interpretation: 'Androgens at the upper end with low SHBG — a pattern, not a diagnosis.',
+        why: 'Total testosterone sits at the top of the female range while SHBG, the protein that binds it, is low — so more is biologically available than the total suggests. AMH is high at 5.8 ng/mL. These interact with the cycle picture and belong in a specialist conversation.',
+        signalIds: ['testo_f', 'shbg', 'amh', 'lh', 'fsh'],
+        lifestyleSignals: [
+          { label: 'Strength sessions', value: '1.8 / week · from 0', state: 'optimal' },
+        ],
+        drivers: [
+          {
+            kind: 'positive',
+            label: 'Twice-weekly strength training started',
+            detail: 'Resistance training has the most consistent effect on insulin sensitivity, which is the shared thread here.',
+          },
+          {
+            kind: 'opportunity',
+            label: 'SHBG low with high available androgen',
+            detail: 'The total testosterone alone would read as unremarkable. Read next to SHBG it does not.',
+          },
+          {
+            kind: 'opportunity',
+            label: 'AMH high and rising slowly',
+            detail: '5.2 → 5.8 ng/mL across five measurements.',
+          },
+        ],
+      },
+      {
+        systemId: 'metabolic',
+        estimate: 33.2,
+        delta: 2.2,
+        trend: 'drifting',
+        since: 0.6,
+        interpretation: 'Insulin is higher than your glucose suggests, and it is still rising.',
+        why: 'Your HbA1c and fasting glucose look ordinary and would be reported as normal anywhere. Fasting insulin at 18.6 µIU/mL is well above optimal and has risen at every measurement. Insulin usually moves years before glucose does, which is why this system estimates above your age despite unremarkable glucose.',
+        signalIds: ['insulin', 'hba1c_f', 'glucose_f', 'trig_f'],
+        lifestyleSignals: [
+          { label: 'Strength sessions', value: '7 of 12 planned', state: 'stable' },
+        ],
+        drivers: [
+          {
+            kind: 'positive',
+            label: 'Glucose and HbA1c both unremarkable',
+            detail: 'Nothing in the glucose markers themselves is currently outside range.',
+          },
+          {
+            kind: 'opportunity',
+            label: 'Fasting insulin rising at every measurement',
+            detail: '15.1 → 16.2 → 17.0 → 18.0 → 18.6 µIU/mL across 14 months.',
+          },
+          {
+            kind: 'opportunity',
+            label: 'Moving with your cycle length',
+            detail: 'These two have risen together across five paired measurements — an association, not a cause.',
+          },
+        ],
+      },
+      {
+        systemId: 'thyroid',
+        estimate: 32.9,
+        delta: 1.9,
+        trend: 'drifting',
+        since: 0.5,
+        interpretation: 'Every result was reported as normal. The trend is the finding.',
+        why: 'TSH has risen at each of five measurements — 2.9 → 4.1 mIU/L — while staying inside most laboratory ranges. Your anti-TPO antibodies are positive and your mother was diagnosed at 38. No single one of those reports would have prompted a follow-up on its own.',
+        signalIds: ['tsh_f', 'ft4_f', 'tpo'],
+        lifestyleSignals: [],
+        drivers: [
+          {
+            kind: 'positive',
+            label: 'Free T4 still comfortably in range',
+            detail: 'Thyroid output itself has not changed, which is why this is monitoring rather than a priority.',
+          },
+          {
+            kind: 'opportunity',
+            label: 'TSH rising across five measurements',
+            detail: '2.9 → 3.2 → 3.5 → 3.8 → 4.1 mIU/L over 14 months.',
+          },
+          {
+            kind: 'opportunity',
+            label: 'Positive anti-TPO with family history',
+            detail: 'Worth an endocrinology opinion rather than another year of watching.',
+          },
+        ],
+      },
+      {
+        systemId: 'sleep',
+        estimate: 30.4,
+        delta: -0.6,
+        trend: 'holding',
+        since: 0,
+        interpretation: 'Not currently a limiting factor for you.',
+        why: 'You average 7h 22m with fairly consistent timing, and both have held steady across the year. Sleep is one of the few systems in your profile that is not part of the current picture.',
+        signalIds: [],
+        lifestyleSignals: [
+          { label: 'Average duration', value: '7h 22m', state: 'optimal' },
+          { label: 'Timing consistency', value: '±31 min', state: 'optimal' },
+        ],
+        drivers: [
+          {
+            kind: 'positive',
+            label: 'Duration and timing both steady',
+            detail: '7h 22m on average with a ±31 minute midpoint swing across the week.',
+          },
+          {
+            kind: 'opportunity',
+            label: 'Fatigue is not explained by sleep',
+            detail: 'Which is part of why HUMAN pointed at iron rather than at your routine.',
+          },
+        ],
+      },
+      {
+        systemId: 'cardiovascular',
+        estimate: 30.1,
+        delta: -0.9,
+        trend: 'holding',
+        since: -0.2,
+        interpretation: 'Currently one of your strongest health areas.',
+        why: 'Lipids are in range and have improved slowly since baseline, and blood pressure is normal. HUMAN keeps this measured because insulin resistance and cardiovascular risk tend to travel together over decades, not because anything here needs attention now.',
+        signalIds: ['ldl_f', 'hdl_f', 'trig_f'],
+        lifestyleSignals: [],
+        drivers: [
+          {
+            kind: 'positive',
+            label: 'LDL improving without a plan',
+            detail: '102 → 96 mg/dL across five measurements.',
+          },
+          {
+            kind: 'opportunity',
+            label: 'Linked to the insulin picture over time',
+            detail: 'Nothing to act on today. It is measured because of what your metabolic markers are doing.',
+          },
+        ],
+      },
+      {
+        systemId: 'liver',
+        estimate: 28.9,
+        delta: -2.1,
+        trend: 'holding',
+        since: -0.1,
+        interpretation: 'Nothing here needs attention, and nothing here is holding you back.',
+        why: 'ALT at 21 U/L sits in the middle of range and has been flat across four measurements. There is nothing in your liver markers pulling this estimate in either direction.',
+        signalIds: ['alt_f'],
+        lifestyleSignals: [{ label: 'Alcohol', value: 'None', state: 'optimal' }],
+        drivers: [
+          {
+            kind: 'positive',
+            label: 'Stable and mid-range across four tests',
+            detail: '23 → 22 → 22 → 21 U/L.',
+          },
+          {
+            kind: 'opportunity',
+            label: 'Nothing outstanding',
+            detail: 'Included in the annual panel rather than the September retest.',
+          },
+        ],
+      },
+    ],
+  },
+
+  /* ---------------------------------------------------------------------
+     AI Coach — Meera's record. Women's health context is used where it is
+     relevant and is never assumed to be her only concern.
+     --------------------------------------------------------------------- */
+  coach: {
+    headline: 'Iron is your biggest opportunity — and the one place you should feel a difference fastest.',
+    cta: 'Your iron protocol is at week 4. Want to know if it is working?',
+    contextLine: 'Your health, understood in context.',
+    context: [
+      { label: 'Blood assessments', value: '4 since Mar 2025 · 44 markers' },
+      { label: 'Biological age', value: '33.3 estimated · 9 systems' },
+      { label: 'Cycle & symptoms', value: '6 cycles · 5 symptoms logged' },
+      { label: 'Experiments', value: '2 run · 25 days of adherence logged' },
+      { label: 'Wearables', value: 'Apple Watch · sleep, HRV, cycle' },
+      { label: 'Care Circle', value: '2 people · not used in your answers' },
+    ],
+    opener: {
+      short:
+        'Meera — your estimated biological age was 33.3 at your July assessment, 2.3 years above your chronological age. Iron is the single largest contributor, and it is the one HUMAN expects to move first.',
+      blocks: [
+        {
+          label: 'Where you are',
+          body: 'Week 4 of 6 of the Iron Absorption Protocol, 19 of 21 doses taken. Your plan review is on 1 September and the Women’s Hormonal & Iron panel is due 15 September.',
+        },
+        {
+          label: 'What I would ask me',
+          body: 'Pick one of the questions below. I have your assessments, cycle logs, symptoms, protocols and adherence open — and I can tell you which parts of your record I am not using.',
+        },
+      ],
+      refs: [
+        { kind: 'bioage', label: 'Biological Age' },
+        { kind: 'experiment', id: 'e_iron', label: 'Iron Absorption Protocol' },
+      ],
+    },
+    prompts: [
+      {
+        id: 'q_bioage',
+        question: 'Why is my biological age older than my age?',
+        chip: 'Why is my biological age older than my age?',
+        answer: {
+          short:
+            'Three systems account for most of it: nutritional, women’s health and recovery. Your estimate also rose 0.4 years since March, and I want to be direct about why.',
+          blocks: [
+            {
+              label: 'Why it is where it is',
+              body: 'Nutritional estimates 4.4 years above your age, driven by ferritin at 14 ng/mL after five consecutive falls. Women’s health estimates 3.8 above, on a cycle length that has grown from 31 to 38 days. Recovery estimates 2.9 above, with HRV down from 48 to 38 ms.',
+            },
+            {
+              label: 'Why it went up, not down',
+              body: 'Your Iron Absorption Protocol started on 21 July — a week after the blood draw this estimate is built on. Nothing in it has been re-measured yet, so there is nothing for the estimate to respond to. The rise reflects insulin and TSH continuing to drift between March and July.',
+            },
+            {
+              label: 'What matters',
+              body: 'Cardiovascular, liver and sleep all estimate below your age, so this is not a general picture of poor health. It is three specific threads, and two of them are the same thread — iron loss and the bleeding pattern behind it.',
+            },
+            {
+              label: 'What to do',
+              body: 'Stay on the protocol. You are at 19 of 21 doses, which is exactly the adherence that makes September interpretable.',
+            },
+            {
+              label: 'When to reassess',
+              body: 'Review 1 September. The 15 September panel is the first measurement that can move this estimate — ferritin responds to oral iron over eight to twelve weeks.',
+            },
+          ],
+          refs: [
+            { kind: 'bioage', label: 'Biological Age detail' },
+            { kind: 'systemage', id: 'nutritional', label: 'Nutritional age' },
+            { kind: 'systemage', id: 'women', label: 'Women’s health age' },
+            { kind: 'biomarker', id: 'ferritin', label: 'Ferritin' },
+          ],
+          safety:
+            'Biological age here is a HUMAN estimate built from the signals available to it, not a measurement and not a diagnosis. Steadily falling ferritin with heavier periods needs a clinician to establish the cause of the loss — that is not something HUMAN can work out from your data.',
+        },
+      },
+      {
+        id: 'q_focus',
+        question: 'What should I focus on this month?',
+        chip: 'What should I focus on this month?',
+        answer: {
+          short:
+            'Iron, and only iron. Two more weeks of the protocol, then the September panel reads four threads at once.',
+          blocks: [
+            {
+              label: 'Why this and not the cycle question',
+              body: 'Iron deficiency can itself affect energy, cycle length and thyroid readings. Repleting iron first gives a cleaner picture to interpret in September. Your cycle-and-insulin priority is deliberately queued, with one strength-training action carried into the current plan.',
+            },
+            {
+              label: 'What matters most',
+              body: 'The chai timing, honestly. You are at 21 of 30 days on moving chai away from meals, against 19 of 21 on the doses. Tannins bind the non-haem iron in dal and leafy vegetables, so that habit works directly against the supplement.',
+            },
+            {
+              label: 'What to do',
+              body: 'Keep the alternate-day dose with vitamin C mid-morning. Push the chai gap to every day. Keep the two strength sessions. Nothing else changes.',
+            },
+            {
+              label: 'When to reassess',
+              body: 'Review 1 September, panel 15 September — timed to day 2–5 of your cycle so the hormone values are comparable with July.',
+            },
+          ],
+          refs: [
+            { kind: 'priority', id: 'p_iron', label: 'Iron & Energy Restore' },
+            { kind: 'experiment', id: 'e_iron', label: 'Iron Absorption Protocol' },
+            { kind: 'priority', id: 'p_cycle', label: 'What is being held back' },
+          ],
+        },
+      },
+      {
+        id: 'q_experiment',
+        question: 'Is my Iron Absorption Protocol working?',
+        chip: 'Is my current experiment working?',
+        answer: {
+          short:
+            'Your energy has started to move, but ferritin has not been measured since you started — so HUMAN cannot yet say whether the protocol is doing it.',
+          blocks: [
+            {
+              label: 'What you actually did',
+              body: 'You have taken 19 of 21 alternate-day doses since 21 July, with vitamin C on an empty stomach. Chai moved away from meals on 21 of 30 days. Strength sessions are running at 1.8 a week against a target of 2.',
+            },
+            {
+              label: 'What moved alongside it',
+              body: 'Self-rated energy rose from 2.9 to 3.4 out of 5, and resting heart rate fell from 74 to 71 bpm. HRV has not moved — still 38 ms.',
+            },
+            {
+              label: 'What that does and does not mean',
+              body: 'The energy change coincided with the protocol. It appears to have improved, and that is genuinely encouraging — but self-rated energy responds to many things, and HUMAN needs another ferritin measurement before concluding that the intervention is responsible for the change.',
+            },
+            {
+              label: 'What to do',
+              body: 'Continue unchanged for the remaining two weeks. Tighten the chai gap, which is the weakest part of your adherence.',
+            },
+            {
+              label: 'When to reassess',
+              body: 'Readout at the 1 September review, then ferritin, haemoglobin, TSH, free T4 and insulin together on 15 September.',
+            },
+          ],
+          refs: [
+            { kind: 'experiment', id: 'e_iron', label: 'Protocol & adherence' },
+            { kind: 'readout', id: 'e_vitd_done', label: 'Your vitamin D readout' },
+            { kind: 'retest', id: 'p_iron', label: 'September panel' },
+          ],
+          safety:
+            'This is a structured observation of your own data over a fixed window, not a controlled trial. It can show what moved together. It cannot establish what caused what.',
+        },
+      },
+      {
+        id: 'q_bloods',
+        question: 'Explain my latest blood test.',
+        chip: 'Explain my latest blood test.',
+        answer: {
+          short:
+            'Your 14 July panel — 44 markers — is best read as four threads moving together rather than as a list of results. Three of them would have been reported as normal.',
+          blocks: [
+            {
+              label: 'What looks good',
+              body: 'Liver enzymes are mid-range and flat. Lipids are in range and slowly improving. HbA1c and fasting glucose are unremarkable. Vitamin D reached 24 ng/mL from 16 after twelve weeks of dosing.',
+            },
+            {
+              label: 'What changed',
+              body: 'Ferritin 16 → 14 ng/mL, its fifth consecutive fall. TSH 3.8 → 4.1 mIU/L, its fifth consecutive rise. Fasting insulin 18.0 → 18.6 µIU/mL. AMH 5.7 → 5.8 ng/mL.',
+            },
+            {
+              label: 'What deserves attention',
+              body: 'Ferritin at 14 with haemoglobin at the bottom of range is the most treatable finding and the most likely explanation for five months of fatigue. TSH rising with positive anti-TPO antibodies is the one that needs a specialist rather than a plan.',
+            },
+            {
+              label: 'What matters most',
+              body: 'The bleeding behind the iron loss. Repleting iron treats the number; it does not answer why you keep losing it. That question is a gynaecologist’s, and it is the reason iron is your priority rather than just a supplement.',
+            },
+            {
+              label: 'What to do next',
+              body: 'Continue the protocol to 1 September. Book the Women’s Hormonal & Iron panel for 15 September, timed to day 2–5 of your cycle.',
+            },
+            {
+              label: 'When to speak to a clinician',
+              body: 'Two conversations, not one: a gynaecologist about heavier, longer periods with falling ferritin, and an endocrinologist about the TSH trend with positive antibodies and your mother’s diagnosis at 38. HUMAN can prepare a one-page summary of the trends for either.',
+            },
+          ],
+          refs: [
+            { kind: 'biomarker', id: 'ferritin', label: 'Ferritin' },
+            { kind: 'biomarker', id: 'tsh_f', label: 'TSH' },
+            { kind: 'biomarker', id: 'insulin', label: 'Fasting insulin' },
+            { kind: 'retest', id: 'p_iron', label: 'What gets retested' },
+          ],
+          safety:
+            'HUMAN organises and explains results. It does not diagnose iron-deficiency anaemia, thyroid disease, PCOS or any other condition, and it does not prescribe. The two referrals above are the point of this readout.',
+        },
+      },
+      {
+        id: 'q_cycle',
+        question: 'Why are my cycles getting longer?',
+        chip: 'Why are my cycles getting longer?',
+        answer: {
+          short:
+            'HUMAN cannot tell you why. What it can show you is that three other things moved in step with it over 14 months — and that is the finding worth taking to a specialist.',
+          blocks: [
+            {
+              label: 'What moved together',
+              body: 'Average cycle length 31 → 38 days. Fasting insulin 15.1 → 18.6 µIU/mL. SHBG fell, so available testosterone rose. Ferritin fell from 26 to 14 ng/mL alongside heavier flow in three of your last four cycles.',
+            },
+            {
+              label: 'What that does and does not mean',
+              body: 'These are known to interact with one another. HUMAN cannot tell you which is driving which, and it will not name a condition — that needs an examination and a scan. What HUMAN can do is show you four measurements moving together, which is not visible in any single test report.',
+            },
+            {
+              label: 'What matters',
+              body: 'Iron deficiency can itself affect cycles and thyroid readings, which is exactly why HUMAN is repleting iron first. September gives a cleaner read on the rest.',
+            },
+            {
+              label: 'What to do',
+              body: 'Keep logging flow and symptoms — five paired points are what made this visible at all. Take the summary HUMAN has prepared to a gynaecologist. Your sister’s PCOS is relevant family history to mention.',
+            },
+            {
+              label: 'When to reassess',
+              body: 'The 15 September panel is timed to day 2–5 of your cycle so the hormone values are directly comparable with July.',
+            },
+          ],
+          refs: [
+            { kind: 'womens', label: "Women's Health" },
+            { kind: 'biomarker', id: 'insulin', label: 'Fasting insulin' },
+            { kind: 'biomarker', id: 'shbg', label: 'SHBG' },
+            { kind: 'systemage', id: 'women', label: "Women's health age" },
+          ],
+          safety:
+            'A cycle consistently longer than 35 days is worth discussing with a gynaecologist. HUMAN identifies patterns and organises information; it does not diagnose PCOS, thyroid disease or endometriosis.',
+        },
+      },
+      {
+        id: 'q_retest',
+        question: 'What should I retest, and when?',
+        chip: 'What should I retest?',
+        answer: {
+          short:
+            'Five markers on 15 September, timed to day 2–5 of your cycle. Ferritin, haemoglobin, TSH, free T4 and insulin.',
+          blocks: [
+            {
+              label: 'Why that date',
+              body: 'Ferritin responds to oral iron over roughly eight to twelve weeks. You started on 21 July, so anything before mid-September would be uninformative. The date is then pulled to day 2–5 of your cycle so the hormone values sit at a comparable point to your July draw.',
+            },
+            {
+              label: 'Why those five',
+              body: 'They are the four threads of the pattern plus the marker that tells us whether the protocol worked. Repeating all 44 would cost more and tell you less — AMH, lipids and liver have no reason to have moved.',
+            },
+            {
+              label: 'What to do',
+              body: 'Book the Women’s Hormonal & Iron panel and let HUMAN move the date with your cycle if the timing shifts.',
+            },
+            {
+              label: 'When to reassess',
+              body: 'Results in 48 hours. That readout closes cycle 2 and decides whether your cycle-and-insulin priority gets promoted.',
+            },
+          ],
+          refs: [
+            { kind: 'retest', id: 'p_iron', label: "Women's Hormonal & Iron panel" },
+            { kind: 'biomarker', id: 'amh', label: 'Why AMH is not retested' },
+          ],
+        },
+      },
+      {
+        id: 'q_doctor',
+        question: 'Should I be seeing a doctor about any of this?',
+        chip: 'Should I see a doctor?',
+        answer: {
+          short:
+            'Yes — two appointments, and HUMAN has already prepared what to take to each. Neither is urgent, and neither should wait for September.',
+          blocks: [
+            {
+              label: 'Gynaecologist',
+              body: 'Heavier and longer periods with ferritin falling at five consecutive measurements should be assessed to establish the cause of the blood loss. Repleting iron treats the consequence, not the cause.',
+            },
+            {
+              label: 'Endocrinologist',
+              body: 'A TSH rising 2.9 → 4.1 mIU/L across 14 months with positive anti-TPO antibodies and a mother diagnosed at 38. Every individual result was reported as normal, which is exactly why the trend needs someone to look at it.',
+            },
+            {
+              label: 'What to take',
+              body: 'HUMAN can prepare a one-page summary for each: the trend charts, the paired measurements, your symptom log and your family history. It is the part of the appointment that is usually reconstructed from memory.',
+            },
+            {
+              label: 'What HUMAN is not doing',
+              body: 'Not diagnosing, not naming a condition, not prescribing. The patterns above are organised information for a clinician to interpret.',
+            },
+          ],
+          refs: [
+            { kind: 'priority', id: 'p_iron', label: 'Iron & Energy Restore' },
+            { kind: 'priority', id: 'p_thyroid', label: 'Thyroid trajectory' },
+            { kind: 'passport', label: 'Health Passport' },
+          ],
+          safety:
+            'If you develop new or worsening breathlessness, chest pain, fainting, or bleeding heavy enough to soak through protection hourly, seek medical care promptly rather than waiting for a scheduled appointment.',
+        },
+      },
+    ],
+  },
+
   loop: {
     stage: 'ACT',
     stageSince: '21 Jul 2026',
