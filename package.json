@@ -12,7 +12,8 @@
     "typecheck": "tsc -b --noEmit",
     "dev:site": "vite --config vite.config.site.ts",
     "build:site": "tsc -b && vite build --config vite.config.site.ts",
-    "preview:site": "vite preview --config vite.config.site.ts"
+    "preview:site": "vite preview --config vite.config.site.ts",
+    "portable:site": "tsc -b && vite build --config vite.config.site-portable.ts && node scripts/build-portable.mjs --in dist-site-portable --out HUMAN-website --readme portable-site-README.txt"
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.3.0",

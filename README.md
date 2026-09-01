@@ -44,9 +44,15 @@ at `./index.html` is untouched.
 
 ```bash
 npm run dev:site      # http://localhost:5174
-npm run build:site    # → dist-site/
+npm run build:site    # → dist-site/ (a plain static folder, deploy anywhere)
 npm run preview:site
+npm run portable:site # → HUMAN-website/index.html, one file, opens offline
 ```
+
+`portable:site` exists for the same reason `portable` does: a normal Vite build
+cannot be opened from `file://`, because browsers refuse to load ES modules
+over it. Both targets share `scripts/build-portable.mjs`, which takes `--in`,
+`--out` and `--readme`.
 
 One decision shapes it: **there are no screenshots.** The site imports the real
 screens, the real state container and the real sheets from `src/` and renders

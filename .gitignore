@@ -9,5 +9,8 @@ dist-ssr
 
 # Portable build output (regenerate with: npm run portable)
 dist-portable
+dist-site-portable
 HUMAN-app
 HUMAN-app.zip
+HUMAN-website
+HUMAN-website.zip

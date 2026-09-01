@@ -1,6 +1,9 @@
 /**
- * Collapses the portable Vite output into ONE self-contained index.html that
+ * Collapses a portable Vite build into ONE self-contained index.html that
  * opens by double-click, offline, with no server and no install.
+ *
+ * Serves both portable targets — the app and the website — since the
+ * inlining problem is identical for each. Defaults are the app's.
  *
  * Inlines: the stylesheet, the bundled script (as a classic <script>), and the
  * Inter woff2 subsets the app actually needs, as base64 data URIs.
@@ -10,15 +13,21 @@
  * The remaining subsets (cyrillic, greek, vietnamese) are dropped — roughly
  * 85 KB of woff2 the app never renders.
  *
- * Usage: node scripts/build-portable.mjs
+ * Usage: node scripts/build-portable.mjs [--in DIR] [--out DIR] [--readme FILE]
  */
 import { readFileSync, writeFileSync, readdirSync, mkdirSync, rmSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
-const dist = join(root, 'dist-portable')
-const out = join(root, 'HUMAN-app')
+
+const arg = (name, fallback) => {
+  const i = process.argv.indexOf(`--${name}`)
+  return i > -1 && process.argv[i + 1] ? process.argv[i + 1] : fallback
+}
+const dist = join(root, arg('in', 'dist-portable'))
+const out = join(root, arg('out', 'HUMAN-app'))
+const readme = join(root, 'scripts', arg('readme', 'portable-README.txt'))
 
 const KEEP_SUBSETS = ['latin', 'latin-ext']
 const kb = (s) => `${(Buffer.byteLength(s) / 1024).toFixed(0)} KB`
@@ -81,9 +90,9 @@ if (finalHtml.includes(cssName) || finalHtml.includes(jsName)) {
 rmSync(out, { recursive: true, force: true })
 mkdirSync(out, { recursive: true })
 writeFileSync(join(out, 'index.html'), finalHtml)
-writeFileSync(join(out, 'README.txt'), readFileSync(join(root, 'scripts', 'portable-README.txt'), 'utf8'))
+writeFileSync(join(out, 'README.txt'), readFileSync(readme, 'utf8'))
 
-console.log(`portable build → HUMAN-app/index.html`)
+console.log(`portable build → ${arg('out', 'HUMAN-app')}/index.html`)
 console.log(`  css ${kb(css)} · js ${kb(js)} · fonts inlined: ${fontsInlined}`)
 console.log(`  css shrank from ${(before / 1024).toFixed(0)} KB of @font-face by dropping unused subsets`)
 console.log(`  total ${kb(finalHtml)} — single file, no external requests`)
