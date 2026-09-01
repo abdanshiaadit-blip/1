@@ -56,8 +56,14 @@ export default function Problem() {
                 <rect x="0" y="250" width="1000" height="96" className="prob__band" />
                 <line x1="0" y1="250" x2="1000" y2="250" className="prob__bandline" />
 
-                <path d={AREA} fill="url(#driftfill)" clipPath="url(#driftclip)" />
-                <path d={D} className="prob__trace" pathLength={1} />
+                {/* Both the fill and the line are revealed by the same
+                    left-to-right wipe. A dash offset would do the same job on
+                    the line alone, but two mechanisms drifting apart is how
+                    charts end up drawing from the wrong end. */}
+                <g clipPath="url(#driftclip)">
+                  <path d={AREA} fill="url(#driftfill)" />
+                  <path d={D} className="prob__trace" />
+                </g>
 
                 {/* Rides the same path, in the same coordinate space, so it can
                     never drift off the line. */}

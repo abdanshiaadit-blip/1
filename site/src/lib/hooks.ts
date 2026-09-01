@@ -2,6 +2,19 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { register, watchPageProgress, type ProgressMode } from './scroll'
 
 /**
+ * The run-up to a sticky section, published as `--ap` (0 → 1 as the section's
+ * top travels from the viewport bottom to the viewport top).
+ *
+ * A sticky panel centres its content, so while the section is still arriving
+ * that content sits half a viewport below the fold and the screen looks
+ * empty. `--ap` drives a lift that peaks in the middle of the run-up and
+ * returns to zero exactly as the panel pins — so the content rises into
+ * place instead of waiting below the fold.
+ */
+const registerApproach = (el: HTMLElement) =>
+  register(el, { mode: 'approach', prop: '--ap', initial: '1' })
+
+/**
  * Attach to a scroll-driven element. Publishes `--p` (0 → 1) on it and
  * re-renders nothing. Everything visual should read `--p` from CSS.
  */
@@ -10,7 +23,12 @@ export function useProgress<E extends HTMLElement = HTMLDivElement>(mode: Progre
   const pin = useRef<HTMLDivElement>(null)
   useEffect(() => {
     if (!el.current) return
-    return register(el.current, { mode, pin: pin.current })
+    const stop = register(el.current, { mode, pin: pin.current })
+    const stopApproach = mode === 'pin' ? registerApproach(el.current) : undefined
+    return () => {
+      stop()
+      stopApproach?.()
+    }
   }, [mode])
   return { ref: el, pinRef: pin }
 }
@@ -44,8 +62,9 @@ export function useSteps(
 
   useEffect(() => {
     if (!el.current) return
+    const stopApproach = mode === 'pin' ? registerApproach(el.current) : undefined
     const span = Math.max(0.0001, 1 - lead - tail)
-    return register(el.current, {
+    const stop = register(el.current, {
       mode,
       pin: pin.current,
       onChange: (p) => {
@@ -58,6 +77,10 @@ export function useSteps(
         el.current?.style.setProperty('--step', String(next))
       },
     })
+    return () => {
+      stop()
+      stopApproach?.()
+    }
   }, [count, mode, lead, tail])
 
   return { ref: el, pinRef: pin, step }
@@ -172,6 +195,95 @@ export function usePointerParallax<T extends HTMLElement = HTMLDivElement>(stren
     }
   }, [strength])
   return ref
+}
+
+/**
+ * A soft pool of light that follows the pointer, eased. One fixed element,
+ * moved with a transform and nothing else, so it costs a single composited
+ * layer. Off on touch and under reduced motion.
+ */
+export function useCursorLight(ref: React.RefObject<HTMLElement | null>) {
+  useEffect(() => {
+    const node = ref.current
+    if (!node) return
+    if (!matchMedia('(hover: hover) and (pointer: fine)').matches) return
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+    let tx = innerWidth / 2
+    let ty = innerHeight / 2
+    let x = tx
+    let y = ty
+    let raf = 0
+    let seen = false
+
+    const loop = () => {
+      x += (tx - x) * 0.09
+      y += (ty - y) * 0.09
+      node.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`
+      if (Math.abs(tx - x) > 0.4 || Math.abs(ty - y) > 0.4) raf = requestAnimationFrame(loop)
+      else raf = 0
+    }
+    const move = (e: PointerEvent) => {
+      tx = e.clientX
+      ty = e.clientY
+      if (!seen) {
+        seen = true
+        node.classList.add('is-on')
+      }
+      if (!raf) raf = requestAnimationFrame(loop)
+    }
+    const leave = () => node.classList.remove('is-on')
+    const enter = () => seen && node.classList.add('is-on')
+
+    addEventListener('pointermove', move, { passive: true })
+    document.addEventListener('pointerleave', leave)
+    document.addEventListener('pointerenter', enter)
+    return () => {
+      removeEventListener('pointermove', move)
+      document.removeEventListener('pointerleave', leave)
+      document.removeEventListener('pointerenter', enter)
+      if (raf) cancelAnimationFrame(raf)
+    }
+  }, [ref])
+}
+
+/**
+ * Which linked section the reader is in, for the navigation. Reports the
+ * last section whose top has passed the middle of the viewport, which is
+ * what "where am I" means on a page built out of tall sticky sections.
+ */
+export function useActiveSection(ids: string[]) {
+  const [active, setActive] = useState('')
+  useEffect(() => {
+    const els = ids
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => Boolean(el))
+    if (!els.length) return
+
+    let raf = 0
+    const measure = () => {
+      raf = 0
+      const line = innerHeight * 0.45
+      let found = ''
+      for (const el of els) {
+        const r = el.getBoundingClientRect()
+        if (r.top <= line && r.bottom > line) found = el.id
+      }
+      setActive((cur) => (cur === found ? cur : found))
+    }
+    const on = () => {
+      if (!raf) raf = requestAnimationFrame(measure)
+    }
+    measure()
+    addEventListener('scroll', on, { passive: true })
+    addEventListener('resize', on, { passive: true })
+    return () => {
+      removeEventListener('scroll', on)
+      removeEventListener('resize', on)
+      if (raf) cancelAnimationFrame(raf)
+    }
+  }, [ids])
+  return active
 }
 
 /** Live media-query match. Used to keep heavy things off small screens. */

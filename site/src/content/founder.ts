@@ -28,10 +28,10 @@ export const founder = {
   title: 'One person, so far.',
 
   lines: [
-    'I am nineteen, and I am studying nutrition and dietetics.',
-    'I built this prototype on my own. No team, no funding, no agency — every screen, every number and every line of copy in it.',
-    'Before HUMAN I started a supplement company and shut it down. I learned what a supplier can do to you, and I learned that selling people a product is not the same as helping them get healthier.',
-    'HUMAN is the thing I wanted to build instead.',
+    'I’m nineteen, and I’m studying nutrition and dietetics.',
+    'I built this prototype on my own. No team, no funding — every screen, every number, every line of copy.',
+    'Before HUMAN I started a supplement company and shut it down. I learned what a supplier can do to you. And I learned that selling someone a product isn’t the same as helping them get healthier.',
+    'HUMAN is what I wanted to build instead.',
   ],
 
   /** Presented as previous experience and what it taught — never as a HUMAN product. */
@@ -40,6 +40,6 @@ export const founder = {
     name: 'House of Kings',
     what: 'A supplement company. Started, then closed.',
     learned:
-      'That the hard part of health is not selling someone something. It is helping them understand what is actually happening, and staying with them long enough for it to change.',
+      'That the hard part of health isn’t selling someone something. It’s helping them understand what’s happening, and staying with them long enough for it to change.',
   },
 }

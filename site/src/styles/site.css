@@ -11,18 +11,23 @@
    ========================================================================== */
 
 :root {
-  /* ---- Ground -------------------------------------------------------- */
-  --ink: #05100e;          /* the page */
-  --ink-1: #081916;        /* raised */
-  --ink-2: #0c211d;        /* raised further */
-  --paper: #f1f7f5;
-  --mute: rgba(228, 244, 240, 0.66);
-  --faint: rgba(228, 244, 240, 0.44);
-  --ghost: rgba(228, 244, 240, 0.26);
-  --hair: rgba(228, 244, 240, 0.1);
-  --hair-2: rgba(228, 244, 240, 0.16);
-  --glass: rgba(228, 244, 240, 0.038);
-  --glass-2: rgba(228, 244, 240, 0.065);
+  /* ---- Ground --------------------------------------------------------
+     Four steps, not one. Every section sits on one of them, so the page
+     reads as a sequence of planes rather than a single flat field. */
+  --ink-deep: #04100d;     /* philosophy, the last word */
+  --ink: #071613;          /* the page */
+  --ink-1: #0a1e1a;        /* raised */
+  --ink-2: #0e2622;        /* raised further */
+  --ink-lit: #123029;      /* the lit stage — the app sections */
+
+  --paper: #f4faf8;
+  --mute: rgba(230, 246, 242, 0.7);
+  --faint: rgba(230, 246, 242, 0.48);
+  --ghost: rgba(230, 246, 242, 0.29);
+  --hair: rgba(230, 246, 242, 0.11);
+  --hair-2: rgba(230, 246, 242, 0.19);
+  --glass: rgba(230, 246, 242, 0.045);
+  --glass-2: rgba(230, 246, 242, 0.078);
 
   /* ---- Brand — the app's own ring gradient, unchanged ---------------- */
   --b1: #45d97f;
@@ -73,7 +78,9 @@ html {
 }
 
 body {
-  background: var(--ink);
+  background:
+    linear-gradient(180deg, #081815 0%, var(--ink) 26%, var(--ink) 74%, var(--ink-deep) 100%)
+      fixed;
   color: var(--paper);
   font-size: var(--fs-body);
   line-height: 1.55;
@@ -99,17 +106,46 @@ body {
   inset: -20vmax;
   z-index: -1;
   pointer-events: none;
-  opacity: 0.85;
+  opacity: 0.9;
   background:
-    radial-gradient(38vmax 30vmax at 22% 12%, rgba(0, 194, 166, 0.13), transparent 62%),
-    radial-gradient(34vmax 30vmax at 82% 34%, rgba(10, 162, 224, 0.11), transparent 62%),
-    radial-gradient(30vmax 26vmax at 46% 88%, rgba(69, 217, 127, 0.085), transparent 64%);
-  animation: drift 34s var(--sp-soft) infinite alternate;
+    radial-gradient(40vmax 32vmax at 20% 10%, rgba(0, 200, 172, 0.16), transparent 62%),
+    radial-gradient(36vmax 32vmax at 84% 32%, rgba(20, 168, 228, 0.13), transparent 62%),
+    radial-gradient(32vmax 28vmax at 44% 86%, rgba(69, 217, 127, 0.1), transparent 64%);
+  animation: drift 40s var(--sp-soft) infinite alternate;
   will-change: transform;
 }
 @keyframes drift {
   from { transform: translate3d(-2.2%, -1.4%, 0) scale(1); }
   to { transform: translate3d(2.6%, 2%, 0) scale(1.09); }
+}
+
+/* A soft pool of light that follows the pointer. Ambient, not a cursor —
+   large, faint and heavily eased, so it reads as the page being lit rather
+   than as a effect chasing the mouse. */
+.cursorlight {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  width: 44rem;
+  height: 44rem;
+  margin: -22rem 0 0 -22rem;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    circle,
+    rgba(0, 200, 172, 0.09) 0%,
+    rgba(20, 168, 228, 0.05) 38%,
+    transparent 68%
+  );
+  transition: opacity 900ms var(--sp);
+  will-change: transform;
+}
+.cursorlight.is-on { opacity: 1; }
+
+@media (hover: none), (prefers-reduced-motion: reduce) {
+  .cursorlight { display: none; }
 }
 
 /* --------------------------------------------------------------------------
@@ -185,6 +221,16 @@ body {
   position: sticky;
   top: 0;
   height: 100svh;
+  /* Clears itself before the next section arrives. Without this, an outgoing
+     panel and an incoming one share the screen as two unrelated blocks —
+     which is what a "hard cut" actually looks like on a sticky page. */
+  --exit: clamp(0, calc((var(--p, 0) - 0.92) / 0.08), 1);
+  /* One continuous timeline for the whole section, run-up included. --ap
+     reaches 1 exactly as --p leaves 0, so the two join without a seam: 0 →
+     0.25 is the section arriving, 0.25 → 1 is the section pinned. Anything
+     that should already be legible as the section rises is written against
+     --t rather than --p. */
+  --t: calc(var(--ap, 1) * 0.25 + var(--p, 0) * 0.75);
   display: grid;
   /* An implicit auto column would be sized by its widest child, so a wide
      chart could blow the panel out and get clipped. Cap it at the panel. */
@@ -197,7 +243,18 @@ body {
 
 .hu-sec {
   position: relative;
-  padding-block: clamp(5rem, 13vh, 10rem);
+  padding-block: clamp(4rem, 11vh, 8rem);
+}
+
+/* The same entrance lift the pinned panels get, at half the amplitude — a
+   plain section has less distance to cover, and its content is at the top of
+   the block rather than centred. */
+.hu-sec > .wrap {
+  translate: 0 calc(var(--ap, 1) * (1 - var(--ap, 1)) * -62svh);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hu-sec > .wrap { translate: none; }
 }
 
 .rule {
@@ -364,6 +421,23 @@ body {
   color: var(--paper);
   background: var(--glass);
 }
+/* Where you are, stated quietly. */
+.nav__links a.is-here {
+  color: var(--paper);
+}
+.nav__links a.is-here::after {
+  content: '';
+  display: block;
+  height: 2px;
+  margin: 0.28em auto -0.34em;
+  border-radius: 2px;
+  background: var(--grad);
+  animation: navmark 420ms var(--sp) both;
+}
+@keyframes navmark {
+  from { width: 0; opacity: 0; }
+  to { width: 60%; opacity: 1; }
+}
 .nav__cta {
   font-size: 0.78rem;
   font-weight: 580;
@@ -448,4 +522,73 @@ body {
   .aurora { animation: none; }
   .rev { opacity: 1; transform: none; transition: none; }
   .hu-btn:hover { transform: none; }
+}
+
+/* ==========================================================================
+   Section grounds.
+
+   Every section paints its own plane behind its content — a soft wash keyed
+   to what the section is about. Two things come out of this: the page stops
+   reading as one flat black field, and the moment between two sticky panels
+   becomes a deliberate change of light rather than an empty gap.
+
+   The light curve across the page is designed, not decorative:
+
+     deep · cool · teal · lifted · LIT (the product) · teal · lifted
+     · warm · BLACK (philosophy) · lifted · LIT (the CTA) · deep
+
+   Each ground is one or two gradients that fade out at their own edges, so
+   sections bleed into each other and no seam ever announces itself. They are
+   painted once into the section's layer and never animate.
+   ========================================================================== */
+
+.pinwrap,
+.hu-sec {
+  position: relative;
+}
+.pinwrap::before,
+.hu-sec::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: var(--ground, none);
+}
+
+/* A pinned section paints two grounds: --ground washes past you as you scroll
+   the tall wrapper, and --pin-ground stays put behind the panel. Together
+   they give a sticky section both a stable pool of light and a sense of
+   travelling somewhere. */
+.pin::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: var(--pin-ground, none);
+}
+
+/* Every pinned panel clears itself before the next section arrives. Without
+   this, an outgoing panel and an incoming one share the screen as two
+   unrelated blocks — which is what a hard cut actually looks like on a
+   sticky page. Applied to the panel rather than to its contents so it cannot
+   collide with the entrance reveal inside. */
+.pin {
+  opacity: calc(1 - var(--exit));
+  scale: calc(1 - var(--exit) * 0.015);
+  /* The entrance lift. Peaks halfway through the run-up and is exactly zero
+     both before the section enters and once it pins, so it can never collide
+     with the section before it or displace the pinned composition. */
+  translate: 0 calc(var(--ap, 1) * (1 - var(--ap, 1)) * -145svh);
+}
+
+/* No scroll-linked movement at all. The entrance lift and the exit scale are
+   both dropped; the opacity handoff stays, because a cross-fade is not the
+   kind of motion the preference is asking us to stop. */
+@media (prefers-reduced-motion: reduce) {
+  .pin {
+    scale: none;
+    translate: none;
+  }
 }

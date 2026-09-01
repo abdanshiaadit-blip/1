@@ -24,16 +24,127 @@
 }
 
 /* ==========================================================================
+   The light curve.
+
+   Each section's plane, in order. Read down this list and you can see the
+   rhythm of the page: it opens deep, cools through the problem, warms into
+   the idea, lifts to read, turns the lights up for the product, goes almost
+   black for the philosophy, and comes back up for the last word.
+   ========================================================================== */
+
+.hu-hero {
+  --pin-ground: radial-gradient(64% 46% at 50% 88%, rgba(0, 200, 172, 0.17), transparent 70%);
+  --ground: linear-gradient(180deg, rgba(4, 16, 13, 0.75), transparent 34%);
+}
+
+.prob {
+  /* Cool for eight years, warm in the ninth — the same story the line tells. */
+  --pin-ground: radial-gradient(52% 38% at 76% 58%, rgba(255, 125, 79, 0.1), transparent 70%);
+  --ground: linear-gradient(
+    180deg,
+    transparent,
+    rgba(9, 28, 25, 0.8) 26%,
+    rgba(9, 28, 25, 0.8) 74%,
+    transparent
+  );
+}
+
+.loopsec {
+  --pin-ground:
+    radial-gradient(40% 32% at 50% 56%, rgba(20, 168, 228, 0.15), transparent 70%),
+    radial-gradient(62% 44% at 50% 54%, rgba(0, 200, 172, 0.1), transparent 72%);
+  --ground: linear-gradient(180deg, transparent, rgba(11, 32, 28, 0.6) 30%, transparent);
+}
+
+.what {
+  --ground: linear-gradient(
+    180deg,
+    transparent,
+    rgba(230, 246, 242, 0.05) 28%,
+    rgba(230, 246, 242, 0.05) 72%,
+    transparent
+  );
+}
+
+/* The product gets the lit stage. This is the brightest scrolling section on
+   the page, and deliberately so — everything else steps down to it. */
+.tour {
+  --pin-ground:
+    radial-gradient(46% 34% at 72% 46%, rgba(0, 200, 172, 0.16), transparent 68%),
+    radial-gradient(58% 44% at 72% 46%, rgba(20, 168, 228, 0.08), transparent 72%);
+  --ground: linear-gradient(
+    180deg,
+    transparent,
+    rgba(230, 246, 242, 0.062) 12%,
+    rgba(230, 246, 242, 0.062) 88%,
+    transparent
+  );
+}
+
+.xf {
+  --pin-ground: radial-gradient(42% 34% at 50% 52%, rgba(0, 200, 172, 0.13), transparent 70%);
+  --ground: linear-gradient(
+    180deg,
+    transparent,
+    rgba(230, 246, 242, 0.032) 24%,
+    rgba(230, 246, 242, 0.032) 76%,
+    transparent
+  );
+}
+
+.sys {
+  --ground: linear-gradient(180deg, transparent, rgba(230, 246, 242, 0.048) 36%, transparent);
+}
+
+.india {
+  --ground:
+    radial-gradient(50% 36% at 16% 28%, rgba(240, 172, 54, 0.08), transparent 68%),
+    linear-gradient(180deg, transparent, rgba(230, 246, 242, 0.03) 40%, transparent);
+}
+
+/* Almost black. The restraint is the point, and the drop in light after the
+   section before it is what makes the words land. */
+.philo {
+  --pin-ground: radial-gradient(74% 64% at 50% 50%, transparent 0%, rgba(2, 10, 8, 0.9) 100%);
+  --ground: linear-gradient(
+    180deg,
+    transparent,
+    rgba(2, 10, 8, 0.92) 24%,
+    rgba(2, 10, 8, 0.92) 76%,
+    transparent
+  );
+}
+
+.fnd {
+  --ground: linear-gradient(180deg, transparent, rgba(230, 246, 242, 0.05) 38%, transparent);
+}
+
+.cta {
+  --ground:
+    radial-gradient(50% 50% at 50% 46%, rgba(0, 200, 172, 0.2), transparent 66%),
+    radial-gradient(72% 64% at 50% 46%, rgba(20, 168, 228, 0.1), transparent 70%);
+}
+
+.end {
+  --pin-ground: radial-gradient(70% 60% at 50% 46%, rgba(0, 200, 172, 0.09), transparent 70%);
+  --ground: linear-gradient(180deg, transparent, rgba(2, 10, 8, 0.85) 44%);
+}
+
+/* ==========================================================================
    01 · HERO
    ========================================================================== */
 
-.hu-hero { height: 300svh; }
+.hu-hero { height: 285svh; }
 
 .hu-hero__pin {
-  --m1: clamp(0, calc((var(--p, 0) - 0.13) / 0.24), 1); /* wordmark leaves   */
-  --m2: clamp(0, calc((var(--p, 0) - 0.26) / 0.2), 1);  /* the line arrives  */
-  --m3: clamp(0, calc((var(--p, 0) - 0.44) / 0.36), 1); /* the device builds */
-  --m4: clamp(0, calc((var(--p, 0) - 0.62) / 0.24), 1); /* copy hands over   */
+  --m1: clamp(0, calc((var(--p, 0) - 0.1) / 0.2), 1);   /* wordmark leaves   */
+  --m2: clamp(0, calc((var(--p, 0) - 0.2) / 0.16), 1);  /* the line arrives  */
+  /* The headline is the most important sentence on the site, so it holds for
+     a while before handing over. Copy out at 0.72, device up at 0.88. */
+  --m4: clamp(0, calc((var(--p, 0) - 0.54) / 0.18), 1); /* copy hands over   */
+  --m3: clamp(0, calc((var(--p, 0) - 0.58) / 0.3), 1);  /* the device builds */
+  /* The device is the payoff, so it holds longer before the panel clears. */
+  --exit: clamp(0, calc((var(--p, 0) - 0.95) / 0.05), 1);
   place-items: center;
   text-align: center;
 }
@@ -141,11 +252,11 @@
    02 · THE PROBLEM
    ========================================================================== */
 
-.prob { height: 340svh; }
+.prob { height: 290svh; }
 
 .prob__pin {
-  --pd: clamp(0, calc((var(--p, 0) - 0.1) / 0.56), 1);  /* the line draws */
-  --pu: clamp(0, calc((var(--p, 0) - 0.72) / 0.16), 1); /* the punch      */
+  --pd: clamp(0, calc((var(--t) - 0.2) / 0.46), 1);  /* the line draws */
+  --pu: clamp(0, calc((var(--t) - 0.78) / 0.13), 1); /* the punch      */
   align-content: stretch;
 }
 .prob__inner {
@@ -189,7 +300,8 @@
 }
 .prob__wipe {
   transform-origin: 0 0;
-  scale: var(--pd) 1;
+  /* Starts just past the line's first point so nothing lags at the origin. */
+  scale: calc(0.045 + var(--pd) * 0.955) 1;
 }
 .prob__trace {
   fill: none;
@@ -197,8 +309,6 @@
   stroke-width: 3;
   stroke-linecap: round;
   vector-effect: non-scaling-stroke;
-  stroke-dasharray: 1;
-  stroke-dashoffset: calc(1 - var(--pd));
   filter: drop-shadow(0 0 8px rgba(255, 125, 79, 0.28));
 }
 .prob__dot {
@@ -278,7 +388,7 @@
    03 · THE LOOP
    ========================================================================== */
 
-.loopsec { height: 340svh; }
+.loopsec { height: 300svh; }
 
 .loopsec__pin {
   /* The arc draws behind the nodes and closes in the final tenth. */
@@ -295,15 +405,15 @@
 }
 .loopsec__title { margin-top: 0.5rem; }
 .loopsec__lead {
-  margin: 0.7rem auto 0;
-  max-width: 50ch;
+  margin: 0.6rem auto 0;
+  max-width: 44ch;
 }
 
 .loopring {
   position: relative;
-  width: min(100%, 46svh, 480px);
+  width: min(88%, 52svh, 540px);
   aspect-ratio: 1;
-  margin-block: clamp(0.5rem, 2vh, 1.6rem);
+  margin-block: clamp(0.25rem, 1.4vh, 1rem);
 }
 .loopring__svg {
   position: absolute;
@@ -445,6 +555,9 @@
 .what__title { margin-top: 0.8rem; max-width: 14ch; }
 .what__lead { margin-top: 1rem; max-width: 44ch; }
 
+.what {
+  padding-bottom: clamp(7rem, 18vh, 13rem);
+}
 .what__grid {
   margin-top: clamp(2.4rem, 6vh, 4.5rem);
   display: grid;
@@ -498,6 +611,20 @@
   border: 1px solid var(--hair-2);
   position: relative;
   z-index: 1;
+  transition: scale 320ms var(--sp), box-shadow 320ms var(--sp);
+}
+.rail__i {
+  transition: opacity 320ms var(--sp);
+}
+.rail__i:hover .rail__dot {
+  scale: 1.35;
+  box-shadow: 0 0 0 5px rgba(0, 200, 172, 0.12), 0 0 14px rgba(0, 200, 172, 0.55);
+}
+.rail__i:hover .rail__k { color: #fff; }
+.rail__i:hover .rail__n { color: var(--b2); }
+.rail__k,
+.rail__n {
+  transition: color 320ms var(--sp);
 }
 .rail__i:nth-child(-n + 6) .rail__dot {
   background: color-mix(in oklab, var(--b2) calc(var(--in) * 100%), var(--ink));
@@ -523,6 +650,9 @@
   background: var(--glass);
   border-radius: 22px;
   padding: clamp(1.2rem, 2vw, 1.7rem);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 24px 56px -40px rgba(0, 0, 0, 0.85);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
 }
@@ -540,9 +670,15 @@
 .tabs__row {
   display: grid;
   gap: 0.15rem;
-  padding: 0.72rem 0;
+  padding: 0.72rem 0.6rem;
+  margin-inline: -0.6rem;
+  border-radius: 10px;
   border-top: 1px solid var(--hair);
+  transition: background 300ms var(--sp);
 }
+.tabs__row:hover { background: var(--glass); }
+.tabs__name { transition: color 300ms var(--sp); }
+.tabs__row:hover .tabs__name { color: #fff; }
 .tabs__name {
   font-size: 0.94rem;
   font-weight: 600;
@@ -554,7 +690,7 @@
    05 · THE APP
    ========================================================================== */
 
-.tour { height: 760svh; }
+.tour { height: 700svh; }
 .tour__pin {
   overflow: clip;
   align-content: stretch;
@@ -583,10 +719,15 @@
 .tour__head { grid-area: head; align-self: end; }
 .tour__copy {
   grid-area: copy;
+  /* Must fill its row, or space-between has nothing to distribute. */
+  align-self: stretch;
   display: grid;
-  align-content: center;
+  /* The words sit under the headline; the progress sits on the baseline.
+     Centring both left a hole between the title and the copy. */
+  align-content: space-between;
   gap: 1.4rem;
   min-width: 0;
+  padding-block: clamp(0.5rem, 3vh, 1.6rem) clamp(0.5rem, 4vh, 2.5rem);
 }
 .tour__title { margin-top: 0.7rem; max-width: 15ch; }
 
@@ -709,7 +850,7 @@
    06 · DATA → ACTION
    ========================================================================== */
 
-.xf { height: 400svh; }
+.xf { height: 340svh; }
 .xf__pin {
   --xa: clamp(0, calc((var(--p, 0) - 0.03) / 0.12), 1);
 }
@@ -970,6 +1111,9 @@
     radial-gradient(120% 100% at 100% 0, color-mix(in oklab, var(--st, var(--b2)) 12%, transparent), transparent 62%),
     var(--glass);
   padding: clamp(1.1rem, 2.4vw, 2rem);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    0 30px 70px -46px rgba(0, 0, 0, 0.9);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   transition: background 700ms var(--sp);
@@ -980,6 +1124,7 @@
   gap: 2px;
 }
 .sys__b {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 0.65rem;
@@ -996,6 +1141,21 @@
   cursor: pointer;
   transition: background 260ms var(--sp), color 260ms var(--sp);
 }
+.sys__b::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 22%;
+  bottom: 22%;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--st, var(--b2));
+  scale: 1 0;
+  transform-origin: 50% 50%;
+  transition: scale 340ms var(--sp);
+}
+.sys__b:hover::before,
+.sys__b.is-on::before { scale: 1 1; }
 .sys__b:hover { color: var(--paper); background: var(--glass); }
 .sys__b.is-on {
   color: var(--paper);
@@ -1160,7 +1320,15 @@
 .india__i {
   padding-top: 1.2rem;
   border-top: 1px solid var(--hair);
+  transition: border-color 380ms var(--sp);
 }
+.india__i:hover {
+  border-top-color: rgba(0, 200, 172, 0.55);
+}
+.india__k {
+  transition: color 380ms var(--sp);
+}
+.india__i:hover .india__k { color: #fff; }
 .india__k {
   font-size: clamp(1rem, 1.5vw, 1.22rem);
   font-weight: 600;
@@ -1180,7 +1348,7 @@
    09 · PHILOSOPHY
    ========================================================================== */
 
-.philo { height: 200svh; }
+.philo { height: 185svh; }
 .philo__pin { place-items: center; text-align: center; }
 .philo__lines {
   display: grid;
@@ -1191,13 +1359,13 @@
   line-height: 1.1;
 }
 .philo__line {
-  --lp: clamp(0, calc((var(--p, 0) - 0.16 - var(--i) * 0.16) / 0.2), 1);
+  --lp: clamp(0, calc((var(--t) - 0.06 - var(--i) * 0.17) / 0.2), 1);
   opacity: var(--lp);
   translate: 0 calc((1 - var(--lp)) * 18px);
   filter: blur(calc((1 - var(--lp)) * 8px));
 }
 .philo__sub {
-  --sp2: clamp(0, calc((var(--p, 0) - 0.56) / 0.2), 1);
+  --sp2: clamp(0, calc((var(--t) - 0.5) / 0.2), 1);
   margin-top: clamp(2rem, 6vh, 3.6rem);
   font-size: clamp(0.92rem, 1.3vw, 1.14rem);
   font-weight: 500;
@@ -1296,7 +1464,7 @@
 .cta {
   position: relative;
   overflow: clip;
-  padding-block: clamp(6rem, 16vh, 12rem);
+  padding-block: clamp(9rem, 26vh, 17rem) clamp(6rem, 16vh, 12rem);
 }
 .cta__bg {
   position: absolute;
@@ -1333,7 +1501,7 @@
    12 · THE LAST WORD
    ========================================================================== */
 
-.end { height: 190svh; }
+.end { height: 175svh; }
 .end__pin { place-items: center; text-align: center; }
 .end__inner { display: grid; justify-items: center; gap: clamp(1.6rem, 5vh, 3rem); }
 .end__lines {
@@ -1345,13 +1513,13 @@
   line-height: 1.1;
 }
 .end__line {
-  --lp: clamp(0, calc((var(--p, 0) - 0.14 - var(--i) * 0.14) / 0.18), 1);
+  --lp: clamp(0, calc((var(--t) - 0.08 - var(--i) * 0.15) / 0.18), 1);
   opacity: var(--lp);
   translate: 0 calc((1 - var(--lp)) * 16px);
 }
 .end__line:last-child { color: var(--mute); }
 .end__mark {
-  --mp: clamp(0, calc((var(--p, 0) - 0.5) / 0.22), 1);
+  --mp: clamp(0, calc((var(--t) - 0.44) / 0.2), 1);
   font-size: clamp(2.6rem, 11vw, 8rem);
   font-weight: 620;
   letter-spacing: 0.02em;
@@ -1360,7 +1528,7 @@
   scale: calc(0.94 + var(--mp) * 0.06);
 }
 .end__safety {
-  --np: clamp(0, calc((var(--p, 0) - 0.72) / 0.2), 1);
+  --np: clamp(0, calc((var(--t) - 0.66) / 0.2), 1);
   max-width: 44ch;
   font-size: 0.74rem;
   line-height: 1.6;
@@ -1513,11 +1681,15 @@
   }
   .xf__ticks .xf__tick.is-on { background: var(--b2); }
 
-  /* The chart sits under the headline rather than floating in the middle of
-     a short panel; the punch takes the space that is left. */
-  .prob__inner { grid-template-rows: auto auto 1fr; gap: 1.6rem; }
-  .prob__chartwrap { align-self: start; }
-  .prob__punch { min-height: 0; }
+  /* Head, chart and punch as one centred group. A 1fr row here left a large
+     hole under the chart for the two thirds of the section where the punch
+     has not arrived yet. */
+  .prob__inner {
+    grid-template-rows: auto auto auto;
+    align-content: center;
+    gap: clamp(1.2rem, 4vh, 2.2rem);
+  }
+  .prob__punch { min-height: 8.5rem; }
 
   .sys__metric { flex-direction: column; align-items: flex-start; gap: 0.9rem; }
   .sys__sparkwrap { justify-items: start; width: 100%; }

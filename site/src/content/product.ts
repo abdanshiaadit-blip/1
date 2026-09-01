@@ -21,7 +21,7 @@ export const PROTOTYPE_URL = 'https://minimum-bronze-wj3yadap.edgeone.dev/'
 export const hero = {
   wordmark: 'HUMAN',
   promise: 'Understand your health before something feels wrong.',
-  sub: 'Preventive healthcare, built for India. Test. Understand. Act. Track. Repeat.',
+  sub: 'Book a blood test at home, understand what your results mean, and get one thing to work on. Built for India.',
   scrollHint: 'Scroll',
 }
 
@@ -37,8 +37,8 @@ export const problem = {
     { year: 'Year 7', line: 'You feel fine.' },
     { year: 'Year 9', line: 'Something feels wrong.' },
   ],
-  punch: 'Most of us think about our health only when something starts to hurt.',
-  after: 'By then it has usually been building for a long time — quietly, and without a single symptom.',
+  punch: 'Most of us only think about our health when something starts to hurt.',
+  after: 'By then it has usually been building a long time. Quietly. Without a single symptom.',
   note: 'Illustration only. Not real data.',
 }
 
@@ -50,22 +50,22 @@ export const loop: { stage: string; plain: string; body: string }[] = [
   {
     stage: 'MEASURE',
     plain: 'Get tested',
-    body: 'A blood test at home. One appointment, one sample, results in 48 hours.',
+    body: 'A blood test at home. One appointment, results in 48 hours.',
   },
   {
     stage: 'UNDERSTAND',
     plain: 'Know what it means',
-    body: 'Every marker is read across nine body systems, next to your history and your family history.',
+    body: 'Every marker read across nine body systems, next to your history and your family’s.',
   },
   {
     stage: 'PRIORITIZE',
     plain: 'Know what matters',
-    body: 'Out of everything found, HUMAN gives you one thing to work on — and tells you why the rest are waiting.',
+    body: 'One thing to work on — and why the rest can wait.',
   },
   {
     stage: 'ACT',
     plain: 'Do something about it',
-    body: 'A plan you can actually keep. One daily action, and a protocol with a start date and an end date.',
+    body: 'A plan that fits your life. One small thing a day.',
   },
   {
     stage: 'RE-MEASURE',
@@ -75,20 +75,20 @@ export const loop: { stage: string; plain: string; body: string }[] = [
   {
     stage: 'LEARN',
     plain: 'See what worked',
-    body: 'What moved, what did not, written as what was observed — never as a promise about cause.',
+    body: 'What moved and what didn’t — said as what we saw, never as a promise.',
   },
   {
     stage: 'ADAPT',
     plain: 'Go again, smarter',
-    body: 'The next cycle begins with everything the last one taught HUMAN about you.',
+    body: 'The next round starts knowing everything the last one taught.',
   },
 ]
 
 export const loopIntro = {
   eyebrow: 'The idea',
   title: 'Not a report. A loop.',
-  lead: 'A blood test tells you where you stand today. On its own, that changes nothing. HUMAN turns the test into a cycle that keeps going.',
-  closing: 'And then it runs again — with more about you each time.',
+  lead: 'A blood test tells you where you stand today. On its own, that changes nothing. HUMAN keeps it going.',
+  closing: 'Then it runs again. Knowing more about you each time.',
 }
 
 /* ------------------------------------------------------- what is HUMAN ---- */
@@ -98,18 +98,18 @@ export const what = {
   title: 'Your health, in one place.',
   lead: 'Not a lab. Not a PDF. Not another app to log things in.',
   steps: [
-    { k: 'You test', v: 'Book a blood test. A phlebotomist comes to your home.' },
-    { k: 'HUMAN reads it', v: 'Every marker, across nine body systems, in plain language.' },
-    { k: 'You see what matters', v: 'One priority at a time, with the reasoning shown.' },
-    { k: 'You get a plan', v: 'Small daily actions built around how you already live.' },
-    { k: 'You track it', v: 'Your numbers, your habits and your progress in one record.' },
-    { k: 'It improves', v: 'Each cycle knows more about you than the last.' },
+    { k: 'You test', v: 'Book a blood test. Someone comes to your home.' },
+    { k: 'HUMAN reads it', v: 'Every marker, across nine body systems, in plain words.' },
+    { k: 'You see what matters', v: 'One thing at a time, and the reason for it.' },
+    { k: 'You get a plan', v: 'Small things that fit the life you already have.' },
+    { k: 'You track it', v: 'Your numbers, your habits, your progress — one place.' },
+    { k: 'It improves', v: 'Every round knows more about you than the last.' },
   ],
   tabs: [
     { name: 'Home', q: 'How am I doing?' },
     { name: 'Health', q: 'What is my body doing?' },
     { name: 'Action', q: 'What should I do today?' },
-    { name: 'Profile', q: 'My account and who can see what.' },
+    { name: 'Profile', q: 'My account, and who sees what.' },
   ],
 }
 
@@ -133,31 +133,31 @@ export const tour: TourStop[] = [
     id: 'home',
     eyebrow: 'Home',
     title: 'One number. One thing to do.',
-    body: 'Open HUMAN and you are not met with a dashboard. You get how you are doing, what stage you are at, and the single thing your plan is asking of you today.',
+    body: 'Open HUMAN and you don’t get a dashboard. You get how you’re doing, and the one thing your plan is asking of you today.',
     tab: 'home',
     scroll: 0,
   },
   {
     id: 'score',
     eyebrow: 'Health Intelligence',
-    title: 'A number you can actually question.',
-    body: `Your body systems, weighted by how much each one shapes your long-term risk right now. Tap it and HUMAN shows you the full working — every system and exactly how much it counts. It is a HUMAN construct for tracking your own change, not a medical grade.`,
+    title: 'A number you can question.',
+    body: 'Your body systems, weighted by what matters most right now. Tap it and HUMAN shows the full working — every system, and how much it counts. It is a HUMAN measure, not a medical grade.',
     tab: 'home',
     sheet: { kind: 'intel' },
   },
   {
     id: 'book',
     eyebrow: 'Blood tests',
-    title: 'Booked at home, in under a minute.',
-    body: 'Choose the assessment that answers your question — not the one with the biggest marker count. Pick a slot. A trained phlebotomist comes to your address.',
+    title: 'Booked at home, in a minute.',
+    body: 'Pick the test that answers your question, not the one with the most markers. Pick a slot. Someone comes to your address.',
     tab: 'home',
     booking: true,
   },
   {
     id: 'health',
     eyebrow: 'Health',
-    title: 'Nine systems, one object.',
-    body: 'Metabolic, cardiovascular, hormonal, nutritional, liver, thyroid, recovery, sleep and women’s health. Swipe through them. Every one has a state, a headline and the markers behind it.',
+    title: 'Nine systems, one card.',
+    body: 'Metabolic, heart, hormones, nutrition, liver, thyroid, recovery, sleep and women’s health. Swipe through them.',
     tab: 'health',
     scroll: 0,
   },
@@ -165,7 +165,7 @@ export const tour: TourStop[] = [
     id: 'marker',
     eyebrow: 'Your results',
     title: 'Every marker, explained like a person would.',
-    body: 'Where your value sits, which way it is moving, what it actually means, and what it means here — in India, with Indian food and Indian habits. Not a range table and a colour.',
+    body: 'Where your value sits, which way it is moving, and what it means here — with Indian food and Indian habits. Not a range table and a colour.',
     tab: 'health',
     sheet: { kind: 'biomarker', id: 'hba1c' },
   },
@@ -173,23 +173,23 @@ export const tour: TourStop[] = [
     id: 'priority',
     eyebrow: 'What matters most',
     title: 'Out of everything, one thing.',
-    body: 'HUMAN reads every finding, ranks them, and hands you one. It shows the evidence, the plan, what it will watch, and the date it will check.',
+    body: 'HUMAN reads every finding, ranks them, and hands you one — with the evidence, the plan, and the date it will check.',
     tab: 'action',
     sheet: { kind: 'priority', id: 'p_metabolic' },
   },
   {
     id: 'notnow',
     eyebrow: 'Not now',
-    title: 'And it tells you what it is holding back.',
-    body: 'The things HUMAN found but deliberately did not put in front of you, and the reason for each. Running two plans at once reliably works worse than running one.',
+    title: 'And what it is holding back.',
+    body: 'The things HUMAN found but did not put in front of you, and the reason for each. Two plans at once works worse than one.',
     tab: 'action',
     sheet: { kind: 'nextup' },
   },
   {
     id: 'plan',
     eyebrow: 'Your plan',
-    title: 'Small enough that you will actually do it.',
-    body: 'A ten-minute walk after dinner. Dal before rice. Lights out by 11:30. Built around the life you already have, not a life you would have to start.',
+    title: 'Small enough that you will do it.',
+    body: 'A ten-minute walk after dinner. Dal before rice. Lights out by 11:30. Built around your life, not a new one.',
     tab: 'action',
     scroll: 0,
   },
@@ -197,23 +197,23 @@ export const tour: TourStop[] = [
     id: 'experiment',
     eyebrow: 'Tracking',
     title: 'A plan with an end date.',
-    body: 'Six weeks. A written protocol. The signals it is watching. Every day you did it, and every day you did not. You always know where you are.',
+    body: 'Six weeks. What to do. What it is watching. Every day you did it, and every day you did not.',
     tab: 'action',
     sheet: { kind: 'experiment', id: 'e_dinner_walk' },
   },
   {
     id: 'readout',
     eyebrow: 'What we learned',
-    title: 'Honest about what it can and cannot say.',
-    body: 'At the end you get what was observed, what else changed at the same time, and what HUMAN decided to do next. It will not tell you one thing caused another when it cannot know that.',
+    title: 'Honest about what it cannot say.',
+    body: 'What was seen, what else changed at the same time, and what happens next. It will not tell you one thing caused another when it cannot know that.',
     tab: 'action',
     sheet: { kind: 'readout', id: 'e_chai_done' },
   },
   {
     id: 'passport',
     eyebrow: 'Health Passport',
-    title: 'Everything, in order, for as long as you have been here.',
-    body: 'Tests, results, prescriptions, scans, the things you tried and what happened. One timeline instead of a folder of PDFs and a WhatsApp search.',
+    title: 'Everything, in order.',
+    body: 'Tests, results, prescriptions, scans, what you tried and what happened. One timeline instead of a folder of PDFs.',
     tab: 'health',
     sheet: { kind: 'passport' },
   },
@@ -228,32 +228,30 @@ const walk = aadit.actions[0]
 
 export const transform = {
   eyebrow: 'From a number to something you can do',
-  title: 'This is the whole product, in one card.',
+  title: 'The whole product, in one card.',
   lead: 'A blood test gives you a value. HUMAN carries it the rest of the way.',
   states: [
     {
       cap: 'A number',
       head: `${hba1c.short} · ${hba1c.value}${hba1c.unit}`,
-      body: 'On a lab report, this is where it stops. A value, a reference range, and a colour if you are lucky.',
+      body: 'On a lab report, this is where it stops. A value, a range, and a colour if you are lucky.',
     },
     {
       cap: 'What it means',
       head: 'Your average blood sugar over the last three months.',
       // Condensed from the biomarker's own explanation in src/data/aadit.ts.
-      body:
-        'At 5.9% you are in what is commonly called the prediabetes range. It has fallen steadily since your baseline, which is the direction we want.',
+      body: 'At 5.9% you are in what is usually called the prediabetes range. It has been falling since your first test, which is the direction you want.',
     },
     {
       cap: 'Why it matters most',
       head: metabolic.title,
       // Trimmed from the priority's own reasoning in src/data/aadit.ts.
-      body:
-        'Four signals point the same way — HbA1c, fasting insulin, triglycerides and ALT. Alone, none of them is alarming. Together they are one pattern. And Aadit’s father was diagnosed with type 2 diabetes at 47.',
+      body: 'Four signals point the same way — HbA1c, insulin, triglycerides and ALT. Alone, none of them is alarming. Together they are one pattern. And Aadit’s father was diagnosed with type 2 diabetes at 47.',
     },
     {
       cap: 'What you do about it',
       head: walk.title,
-      body: `${walk.why} And HbA1c reflects about three months of average glucose, so HUMAN retests it on ${metabolic.retest.dueDate} — six markers, not the whole panel.`,
+      body: `That is it. Blood sugar moves slowly, so HUMAN retests it on ${metabolic.retest.dueDate} — six markers, not the whole panel.`,
     },
   ],
   markerLabel: hba1c.name,
@@ -264,8 +262,8 @@ export const transform = {
 export const systems = {
   eyebrow: 'What HUMAN looks at',
   title: 'Nine systems. One picture.',
-  lead: 'Pick one. This is your body, read the way HUMAN reads it — every marker in the context of every other.',
-  note: 'Shown with a HUMAN member’s prototype data. All member data is fictional.',
+  lead: 'Pick one. Every marker is read next to every other, never on its own.',
+  note: 'Shown with a HUMAN member’s prototype data. All member data is made up.',
 }
 
 /* -------------------------------------------------------------- India ---- */
@@ -277,15 +275,15 @@ export const india = {
   points: [
     {
       k: 'A blood test usually means something is already wrong',
-      v: 'Most of us test because a doctor asked, or because something hurt. HUMAN is built for the other reason — to know where you stand while you still feel fine.',
+      v: 'Most of us test because a doctor asked, or because something hurt. HUMAN is for the other reason — knowing where you stand while you still feel fine.',
     },
     {
       k: 'Reports are written for doctors, not for you',
-      v: 'Sixty markers, a reference range, and no idea which three matter. HUMAN reads all of them and tells you the one to start with.',
+      v: 'Sixty markers, a reference range, and no idea which three matter. HUMAN reads all of them and tells you where to start.',
     },
     {
       k: 'The advice has to fit Indian food',
-      v: 'Dal or sabzi before the rice. Sugar in your chai. Advice you can follow at your own dinner table, not a meal plan you will abandon in a week.',
+      v: 'Dal or sabzi before the rice. Sugar in your chai. Things you can do at your own dinner table.',
     },
     {
       k: 'Our context is not the same as everyone else’s',
@@ -293,7 +291,7 @@ export const india = {
     },
     {
       k: 'Health slips down the list',
-      v: 'Work, family, everything else. So HUMAN asks for one small thing a day, not an hour in a gym.',
+      v: 'Work, family, everything else. So HUMAN asks for one small thing a day, not an hour at the gym.',
     },
     {
       k: 'Your family already knows your risk',
@@ -314,9 +312,9 @@ export const philosophy = {
 export const explore = {
   eyebrow: 'The prototype',
   title: 'See HUMAN for yourself.',
-  lead: 'A working prototype, open to anyone. No signup, no email, nothing to install. Every screen is real and every screen works.',
+  lead: 'A working prototype, open to anyone. No signup, nothing to install. Every screen is real.',
   cta: 'Explore the HUMAN Prototype',
-  note: 'Two members, one product. All member data is fictional.',
+  note: 'Two members, one product. All member data is made up.',
 }
 
 export const closing = {
@@ -327,5 +325,5 @@ export const legal = {
   safety:
     'HUMAN supports your health decisions. It does not diagnose conditions and does not replace your doctor.',
   prototype:
-    'HUMAN is a working prototype. All member data shown is fictional, prices are planning assumptions, and the Health Intelligence score is a HUMAN construct rather than a validated clinical measure.',
+    'HUMAN is a working prototype. All member data is made up, prices are planning assumptions, and the Health Intelligence score is a HUMAN measure rather than a validated clinical one.',
 }

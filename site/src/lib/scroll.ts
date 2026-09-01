@@ -12,11 +12,13 @@
    means React re-renders only when a *step* changes — never per frame.
    ========================================================================== */
 
-export type ProgressMode = 'pin' | 'through' | 'enter'
+export type ProgressMode = 'pin' | 'through' | 'enter' | 'approach'
 
 interface Entry {
   el: HTMLElement
   mode: ProgressMode
+  /** Custom property to publish on. Lets one element carry two progresses. */
+  prop: string
   /** Element that stays pinned; its height is subtracted from the travel. */
   pin?: HTMLElement | null
   /** Called with 0 → 1 whenever the value materially changes. */
@@ -44,6 +46,13 @@ function progressOf(e: Entry, vh: number): number {
     return clamp01(-r.top / travel)
   }
 
+  if (e.mode === 'approach') {
+    // 0 while the element's top is still at or below the viewport bottom,
+    // 1 once its top reaches the viewport top. This is the run-up to a
+    // sticky section, and it is what the entrance parallax is driven by.
+    return clamp01((vh - r.top) / vh)
+  }
+
   if (e.mode === 'enter') {
     // 0 when the element's top touches the bottom of the viewport,
     // 1 once it has risen by 60% of a viewport. For reveals and parallax-in.
@@ -66,7 +75,7 @@ function update() {
     // use, and stops us writing to the DOM for imperceptible deltas.
     if (Math.abs(p - e.last) < 0.0005) continue
     e.last = p
-    e.el.style.setProperty('--p', p.toFixed(4))
+    e.el.style.setProperty(e.prop, p.toFixed(4))
     e.onChange?.(p)
   }
 }
@@ -109,25 +118,36 @@ function listen() {
 
 export function register(
   el: HTMLElement,
-  opts: { mode?: ProgressMode; pin?: HTMLElement | null; onChange?: (p: number) => void } = {},
+  opts: {
+    mode?: ProgressMode
+    pin?: HTMLElement | null
+    prop?: string
+    initial?: string
+    onChange?: (p: number) => void
+  } = {},
 ): () => void {
   const entry: Entry = {
     el,
     mode: opts.mode ?? 'pin',
+    prop: opts.prop ?? '--p',
     pin: opts.pin,
     onChange: opts.onChange,
     last: -1,
     visible: false,
   }
   entries.add(entry)
-  el.style.setProperty('--p', '0')
+  el.style.setProperty(entry.prop, opts.initial ?? '0')
   ensureObserver().observe(el)
   listen()
   request()
 
   return () => {
     entries.delete(entry)
-    io?.unobserve(el)
+    // An element can carry more than one progress; only stop watching it once
+    // nothing is left that cares.
+    let stillUsed = false
+    for (const e of entries) if (e.el === el) stillUsed = true
+    if (!stillUsed) io?.unobserve(el)
   }
 }
 
