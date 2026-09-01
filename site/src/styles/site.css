@@ -19,36 +19,54 @@
    ========================================================================== */
 
 :root {
-  /* ---- Ground — four shades of white, plus one dark ------------------- */
-  --bg: #ffffff;      /* the page */
-  --bg-1: #fafcfb;    /* a breath of tint */
-  --bg-2: #f1f5f4;    /* recessed — the alternating sections */
-  --bg-lit: #e4ecea;  /* the product stage, so the dark device has ground */
-  --bg-dark: #06231f; /* the one section that changes register */
+  /* ---- Ground ---------------------------------------------------------
+     Two temperatures, not one. A single grey scale is what makes a white
+     page read as clinical; a faintly warm sheet lit from above and a cool
+     grey in the recesses is what makes it read as paper. The warm and the
+     cool are only a couple of points apart in hue — enough to feel, not
+     enough to see. */
+  --bg: #ffffff; /* the highest plane: cards, the device screen */
+  --paper: #fdfdfc; /* the page itself — warm side */
+  --bg-1: #f8fbfa; /* a breath of tint */
+  --bg-2: #eef3f1; /* recessed — the alternating sections */
+  --bg-3: #e6edeb; /* deeper recess, for layered panels */
+  --bg-lit: #dde7e4; /* the product stage, so the dark device has ground */
+  --bg-dark: #05201d; /* the one section that changes register */
 
-  /* ---- Ink — the app's own text ramp, so site and product agree ------- */
-  /* Four steps, and every one of them passes 4.5:1 on white. On paper you
-     simply cannot have five legible greys below that threshold, so the ramp
-     is compressed and the hierarchy is carried by size and weight instead —
-     which is where it belongs. */
-  --ink: #06231f;                    /* 15.9:1 */
-  --ink-2: rgba(6, 35, 31, 0.82);    /*  8.7:1 — body */
-  --ink-3: rgba(6, 35, 31, 0.72);    /*  6.1:1 — secondary */
-  --ink-4: rgba(6, 35, 31, 0.66);    /*  5.5:1 — the faintest that is still text */
+  /* ---- Ink — the app's own text ramp, so site and product agree -------
+     Four steps, and every one of them passes 4.5:1 on the grounds above.
+     On paper you simply cannot have five legible greys below that
+     threshold, so the ramp is compressed and the hierarchy is carried by
+     size and weight instead — which is where it belongs. */
+  --ink: #05201d; /* 16.6:1 */
+  --ink-2: rgba(5, 32, 29, 0.84); /*  9.2:1 — body */
+  --ink-3: rgba(5, 32, 29, 0.74); /*  6.5:1 — secondary */
+  --ink-4: rgba(5, 32, 29, 0.68); /*  5.7:1 — the faintest that is still text */
 
-  --line: rgba(6, 42, 38, 0.09);
-  --line-2: rgba(6, 42, 38, 0.16);
-  --tint: rgba(6, 42, 38, 0.032);
-  --tint-2: rgba(6, 42, 38, 0.062);
+  --line: rgba(5, 38, 34, 0.085);
+  --line-2: rgba(5, 38, 34, 0.15);
+  /* The hairline that reads as a milled edge rather than a drawn border:
+     dark below, light above, both nearly invisible. */
+  --line-lit: rgba(255, 255, 255, 0.7);
+  --tint: rgba(5, 38, 34, 0.03);
+  --tint-2: rgba(5, 38, 34, 0.058);
 
-  /* ---- Brand — the app's own ring gradient, unchanged ----------------- */
+  /* ---- Brand ----------------------------------------------------------
+     The three ring colours are the product's own and are not ours to
+     change. What the site adds is a deeper register of the same family —
+     a pine and a jewel teal — so that brand can appear as ink, as a rule
+     and as a large surface without ever being used at full brightness on
+     a white page, which is where a health brand starts to look like a
+     sports drink. */
   --b1: #45d97f;
   --b2: #00c2a6;
   --b3: #0aa2e0;
-  --b-ink: #006e5c; /* the brand at text contrast — 6.2:1 on white, so it
-                       still clears 4.5:1 on the tinted grounds */
+  --b-ink: #006352; /* the brand at text contrast — 7.2:1 on white */
+  --b-deep: #0a3f38; /* pine: dark surfaces, rules, emphasis */
+  --b-jewel: #0a8f7d; /* the teal one shade more serious than --b2 */
   --grad: linear-gradient(112deg, var(--b1) 0%, var(--b2) 48%, var(--b3) 100%);
-  --grad-deep: linear-gradient(112deg, #22b972 0%, #00a892 48%, #0e86bd 100%);
+  --grad-deep: linear-gradient(108deg, #1aa96a 0%, #009e88 44%, #0d7fb4 100%);
+  --grad-ink: linear-gradient(148deg, #0d4a41 0%, #05201d 62%);
 
   /* ---- Health states — the app's values, unchanged -------------------- */
   --s-optimal: #00b478;
@@ -57,28 +75,49 @@
   --s-attention: #f0602c;
   --s-clinical: #e12d4c;
   --s-women: #e63f96;
-  /* The same two states again, dark enough to be read as small text. The
-     bright versions stay for dots, bars and fills, where they are shapes
-     rather than words. */
+  /* The same states again, dark enough to be read as small text. The bright
+     versions stay for dots, bars and fills, where they are shapes rather
+     than words. */
   --s-optimal-ink: #0e7048; /* 6.1:1 */
   --s-stable-ink: #0a6a7c; /* 6.2:1 */
   --s-monitor-ink: #7d5108; /* 6.9:1 */
-  --s-attention-ink: #b03409; /* 6.3:1 */
+  --s-attention-ink: #9c2e07; /* 7.5:1 */
   --s-clinical-ink: #c0163a; /* 6.2:1 */
   --s-women-ink: #b41770; /* 6.4:1 */
 
-  /* ---- Elevation — what carries depth now that colour does not -------- */
+  /* ---- Elevation ------------------------------------------------------
+     Three layers each, because one blurred drop is what a cheap card looks
+     like: a tight contact shadow that anchors the object to the sheet, a
+     mid shadow that gives it thickness, and a wide ambient one that gives
+     the room a light source. Tinted with the brand's own dark rather than
+     with black — black on a green-grey page reads as dirt. */
   --sh-1:
-    0 1px 2px rgba(6, 42, 38, 0.05),
-    0 4px 12px -6px rgba(6, 42, 38, 0.1);
+    0 1px 1px rgba(5, 38, 34, 0.04),
+    0 2px 6px -2px rgba(5, 38, 34, 0.06),
+    0 8px 18px -12px rgba(5, 38, 34, 0.1);
   --sh-2:
-    0 1px 2px rgba(6, 42, 38, 0.045),
-    0 8px 22px -10px rgba(6, 42, 38, 0.12),
-    0 24px 48px -28px rgba(6, 42, 38, 0.18);
+    0 1px 1px rgba(5, 38, 34, 0.04),
+    0 4px 10px -4px rgba(5, 38, 34, 0.06),
+    0 14px 30px -14px rgba(5, 38, 34, 0.12),
+    0 34px 60px -34px rgba(5, 38, 34, 0.16);
   --sh-3:
-    0 2px 4px rgba(6, 42, 38, 0.05),
-    0 18px 40px -18px rgba(6, 42, 38, 0.16),
-    0 50px 90px -40px rgba(6, 42, 38, 0.3);
+    0 1px 2px rgba(5, 38, 34, 0.045),
+    0 6px 14px -6px rgba(5, 38, 34, 0.07),
+    0 22px 46px -20px rgba(5, 38, 34, 0.14),
+    0 60px 100px -46px rgba(5, 38, 34, 0.26);
+  /* The one-pixel highlight along a top edge. It is the difference between
+     a rectangle with a border and an object with a lit edge. */
+  --edge: inset 0 1px 0 var(--line-lit);
+
+  /* ---- Surfaces -------------------------------------------------------
+     A card is a sheet lifted off the page, so it is lit: a fraction
+     brighter at the top than at the bottom. Flat white with a border is
+     what a component library looks like; a surface with a light direction
+     is what a made object looks like. The difference between the two ends
+     of these gradients is about three levels of grey. */
+  --surface: linear-gradient(176deg, #ffffff 0%, #fdfefe 48%, #f7faf9 100%);
+  --surface-2: linear-gradient(176deg, #ffffff 0%, #fbfdfc 46%, #f3f8f6 100%);
+  --surface-sunk: linear-gradient(176deg, #f4f8f6 0%, #f9fbfa 100%);
 
   /* ---- Type ---------------------------------------------------------- */
   --fs-mega: clamp(3.6rem, 15.5vw, 15rem);
@@ -124,12 +163,12 @@ body {
 
 html {
   scroll-behavior: smooth;
-  background: var(--bg);
+  background: var(--paper);
   -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background: var(--bg);
+  background: var(--paper);
   color: var(--ink);
   font-size: var(--fs-body);
   line-height: 1.55;
@@ -666,29 +705,39 @@ body {
    the tall wrapper, and --pin-ground stays put behind the panel. Together
    they give a sticky section both a stable pool of light and a sense of
    travelling somewhere. */
+/* Two layers, and they are split for a reason.
+
+   The plate is the only thing here that changes as you scroll, and it is a
+   flat colour whose opacity is a function of the run-up. The ground is three
+   wide radial gradients that never change. Putting both in one
+   background-image list — as this once did — meant the browser re-parsed and
+   re-rasterised the expensive half on every single frame: measured at
+   1920x1080 it took the page from sixty frames a second to twenty. Split, the
+   ground rasterises once and the plate is a compositor-only fade. */
 .pin::before {
   content: '';
   position: absolute;
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  /* An opaque plate, but only while the panel is still climbing over the
-     section before it. Without it the previous section's text shows straight
-     through the rising panel and the two collide — worst at phone widths,
-     where there is no room to spare. It clears as the panel settles, so the
-     section's own --ground wash is never hidden once it is pinned.
-
-     It is drawn as a gradient rather than a flat colour so its leading edge
-     is soft. A hard horizontal line cutting through the heading above it is
-     the one thing that would make the handoff look like a bug. */
-  --plate: color-mix(
-    in srgb,
-    var(--pin-base, var(--bg)) clamp(0%, calc((1 - var(--ap, 1)) * 400%), 100%),
-    transparent
-  );
-  background-image:
-    var(--pin-ground, none),
-    linear-gradient(180deg, transparent 0%, var(--plate) 5%, var(--plate) 100%);
+  /* An opaque plate while the panel is still climbing over the section
+     before it. Without it the previous section's text shows straight through
+     the rising panel and the two collide — worst at phone widths, where
+     there is no room to spare. Its leading edge is feathered by a static
+     mask: a hard horizontal line cutting through the heading above it is the
+     one thing that would make the hand-over look like a bug. */
+  background: var(--pin-base, var(--paper));
+  opacity: clamp(0, calc((1 - var(--ap, 1)) * 4), 1);
+  mask-image: linear-gradient(180deg, transparent 0%, #000 5%, #000 100%);
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 5%, #000 100%);
+}
+.pin::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: var(--pin-ground, none);
 }
 
 /* Every pinned panel clears itself before the next section arrives. Without

@@ -56,6 +56,7 @@ export function useSteps(
   const el = useRef<HTMLDivElement>(null)
   const pin = useRef<HTMLDivElement>(null)
   const [step, setStep] = useState(0)
+  const [prev, setPrev] = useState(-1)
   const stepRef = useRef(0)
   const prog = useRef(onProgress)
   prog.current = onProgress
@@ -64,14 +65,26 @@ export function useSteps(
     if (!el.current) return
     const stopApproach = mode === 'pin' ? registerApproach(el.current) : undefined
     const span = Math.max(0.0001, 1 - lead - tail)
+    let lastF = -1
     const stop = register(el.current, {
       mode,
       pin: pin.current,
       onChange: (p) => {
         const t = Math.max(0, Math.min(0.9999, (p - lead) / span)) * count
         const next = Math.min(count - 1, Math.floor(t))
-        prog.current?.(next, t - next)
+        const frac = t - next
+        prog.current?.(next, frac)
+        // --sf is the fraction *through the current step*. Publishing it lets
+        // a step's copy cross-fade against distance scrolled rather than
+        // against elapsed time: a time-based fade that is slower than the
+        // step itself can never finish, which is how captions end up
+        // permanently half-visible to anyone scrolling at a normal pace.
+        if (Math.abs(frac - lastF) > 0.004) {
+          lastF = frac
+          el.current?.style.setProperty('--sf', frac.toFixed(3))
+        }
         if (next === stepRef.current) return
+        setPrev(stepRef.current)
         stepRef.current = next
         setStep(next)
         el.current?.style.setProperty('--step', String(next))
@@ -105,7 +118,7 @@ export function useSteps(
     [count, lead, tail],
   )
 
-  return { ref: el, pinRef: pin, step, goTo }
+  return { ref: el, pinRef: pin, step, prev, goTo }
 }
 
 /** Mount heavy things only when they are near. Never un-mounts once shown. */

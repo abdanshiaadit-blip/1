@@ -61,7 +61,7 @@ export default function AppTour() {
     h.scrollScreen(top, false)
   }, [])
 
-  const { ref, pinRef, step, goTo } = useSteps(tour.length, {
+  const { ref, pinRef, step, prev, goTo } = useSteps(tour.length, {
     lead: 0.03,
     tail: 0.05,
     onProgress,
@@ -113,7 +113,7 @@ export default function AppTour() {
               {tour.map((s, i) => (
                 <li
                   key={s.id}
-                  className={`tourstop ${i === step ? 'is-on' : ''}`}
+                  className={`tourstop ${i === step ? 'is-on' : i === prev ? 'is-prev' : ''}`}
                   style={{ '--i': i } as React.CSSProperties}
                 >
                   <span className="cap tourstop__cap">{s.eyebrow}</span>
@@ -123,28 +123,41 @@ export default function AppTour() {
               ))}
             </ol>
 
-            {/* Not just a progress bar — an index. Eleven stops is a lot to
-                scroll past twice, so each one is reachable directly. */}
+            {/* Not a progress bar — a contents page. Eleven screens is a lot
+                to scroll past twice, and naming them turns the section from a
+                slideshow into something you can read the shape of and jump
+                around in. The tab each screen lives on is the app's own, so
+                the index doubles as a map of the product. On a phone there is
+                no room for the words and the list collapses back into marks. */}
             <div className="tour__foot">
-              <span className="tour__count tnum" aria-hidden="true">
-                {String(step + 1).padStart(2, '0')}
+              <div className="tour__count tnum" aria-hidden="true">
+                <span className="tour__countnow">{String(step + 1).padStart(2, '0')}</span>
                 <span className="tour__countsep">/</span>
                 {String(tour.length).padStart(2, '0')}
-              </span>
-              <div className="tour__ticks" role="tablist" aria-label="Jump to a part of the app">
-                {tour.map((s, i) => (
-                  <button
-                    key={s.id}
-                    type="button"
-                    role="tab"
-                    aria-selected={i === step}
-                    aria-label={`${s.eyebrow}: ${s.title}`}
-                    title={s.eyebrow}
-                    className={`tour__tick ${i <= step ? 'is-on' : ''} ${i === step ? 'is-now' : ''}`}
-                    onClick={() => goTo(i)}
-                  />
-                ))}
               </div>
+              <ol className="tour__idx" role="tablist" aria-label="Jump to a part of the app">
+                {tour.map((s, i) => (
+                  <li key={s.id}>
+                    <button
+                      type="button"
+                      role="tab"
+                      aria-selected={i === step}
+                      aria-label={`${s.eyebrow}: ${s.title}`}
+                      title={s.eyebrow}
+                      className={`tour__tick ${i <= step ? 'is-on' : ''} ${i === step ? 'is-now' : ''}`}
+                      onClick={() => goTo(i)}
+                    >
+                      <span className="tour__idxn tnum" aria-hidden="true">
+                        {String(i + 1).padStart(2, '0')}
+                      </span>
+                      <span className="tour__idxk">{s.eyebrow}</span>
+                      <span className="tour__idxtab" aria-hidden="true">
+                        {s.tab}
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ol>
             </div>
           </div>
 

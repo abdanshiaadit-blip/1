@@ -86,12 +86,16 @@ export default function Problem() {
                 ))}
               </ol>
             </div>
+            {/* The honesty label belongs to the chart, not to the punch line
+                after it — and down here it is on screen the whole time the
+                chart is, rather than being pushed below the fold by copy
+                that arrives later. */}
+            <p className="prob__note">{problem.note}</p>
           </div>
 
           <div className="prob__punch">
             <p className="prob__punchline h3">{problem.punch}</p>
             <p className="prob__after body">{problem.after}</p>
-            <p className="prob__note">{problem.note}</p>
           </div>
         </div>
       </div>

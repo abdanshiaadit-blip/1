@@ -18,7 +18,7 @@ const span = m.range.ceil - m.range.floor
 const pct = (v: number) => ((v - m.range.floor) / span) * 100
 
 export default function Transform() {
-  const { ref, pinRef, step, goTo } = useSteps(transform.states.length, {
+  const { ref, pinRef, step, prev, goTo } = useSteps(transform.states.length, {
     lead: 0.08,
     tail: 0.14,
   })
@@ -76,7 +76,10 @@ export default function Transform() {
 
               <div className="xf__slides">
                 {transform.states.map((st, i) => (
-                  <div key={st.cap} className={`xf__slide ${i === step ? 'is-on' : ''}`}>
+                  <div
+                    key={st.cap}
+                    className={`xf__slide ${i === step ? 'is-on' : i === prev ? 'is-prev' : ''}`}
+                  >
                     <span className="cap xf__cap">{st.cap}</span>
                     <h3 className="xf__head3 h3">{st.head}</h3>
                     <p className="xf__body body">{st.body}</p>

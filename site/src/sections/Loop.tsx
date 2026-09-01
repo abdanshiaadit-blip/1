@@ -17,8 +17,7 @@ const N = loop.length
 const R = 39 // node radius, as a % of the ring box
 
 export default function Loop() {
-  const { ref, pinRef, step, goTo } = useSteps(N, { lead: 0.08, tail: 0.2 })
-  const active = loop[step]
+  const { ref, pinRef, step, prev, goTo } = useSteps(N, { lead: 0.06, tail: 0.15 })
 
   return (
     <section ref={ref} className="pinwrap loopsec" id="how" aria-labelledby="loop-title">
@@ -90,18 +89,34 @@ export default function Loop() {
               })}
             </ol>
 
+            {/* Both the outgoing and the incoming stage stay mounted so the
+                swap is a cross-fade rather than one element blinking through
+                zero. Which is which, and how far through, is decided by the
+                scroll position — never by a timer. */}
             <div className="loopcentre" aria-hidden="true">
-              <div className="loopcentre__inner" key={active.stage}>
-                <span className="loopcentre__cap">{active.stage}</span>
-                <p className="loopcentre__plain">{active.plain}</p>
-              </div>
+              {loop.map((s, i) => (
+                <div
+                  key={s.stage}
+                  className={`loopcentre__inner ${i === step ? 'is-on' : i === prev ? 'is-prev' : ''}`}
+                >
+                  <span className="loopcentre__cap">{s.stage}</span>
+                  <p className="loopcentre__plain">{s.plain}</p>
+                </div>
+              ))}
             </div>
           </div>
 
           {/* Kept out of the ring so it can never collide with a label. */}
-          <p className="loopsec__body" aria-hidden="true" key={active.stage}>
-            {active.body}
-          </p>
+          <div className="loopsec__bodies" aria-hidden="true">
+            {loop.map((s, i) => (
+              <p
+                key={s.stage}
+                className={`loopsec__body ${i === step ? 'is-on' : i === prev ? 'is-prev' : ''}`}
+              >
+                {s.body}
+              </p>
+            ))}
+          </div>
 
           <p className="loopsec__closing">{loopIntro.closing}</p>
         </div>

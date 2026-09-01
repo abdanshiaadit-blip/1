@@ -34,38 +34,48 @@
    bleeds into the next and no seam ever announces itself.
    ========================================================================== */
 
-/* Soft-edged plane, written once. */
+/* Soft-edged plane, written once.
+
+   Two layers rather than one: a vertical wash that fades in and out at the
+   section's edges, and over it a very wide, very low-chroma light from the
+   upper left. A single flat tint is what makes alternating sections read as
+   stripes; a tint with a light source in it reads as one room. */
 @supports (color: rgb(0 0 0 / 0)) {
   .prob,
   .what,
   .sys,
   .cta {
-    --ground: linear-gradient(
-      180deg,
-      transparent 0%,
-      var(--plane) 14%,
-      var(--plane) 86%,
-      transparent 100%
-    );
+    --ground:
+      radial-gradient(
+        120% 74% at 22% 0%,
+        rgba(255, 255, 255, 0.85),
+        rgba(255, 255, 255, 0) 62%
+      ),
+      linear-gradient(180deg, transparent 0%, var(--plane) 14%, var(--plane) 86%, transparent 100%);
   }
 }
 
 .hu-hero {
   /* A breath of brand light where the device comes to rest. */
-  --pin-ground: radial-gradient(58% 42% at 50% 86%, rgba(0, 194, 166, 0.07), transparent 72%);
-  --ground: linear-gradient(180deg, var(--bg-1), transparent 40%);
+  --pin-ground:
+    radial-gradient(52% 38% at 50% 88%, rgba(0, 194, 166, 0.085), transparent 70%),
+    radial-gradient(78% 52% at 50% 96%, rgba(10, 162, 224, 0.05), transparent 72%);
+  --ground: linear-gradient(180deg, var(--bg-1) 0%, rgba(248, 251, 250, 0.4) 26%, transparent 46%);
 }
 
 .prob {
   --plane: var(--bg-2);
   /* Cool for eight years, warm in the ninth — the story the line tells. */
-  --pin-ground: radial-gradient(46% 34% at 76% 56%, rgba(240, 96, 44, 0.055), transparent 72%);
+  --pin-ground:
+    radial-gradient(44% 32% at 78% 58%, rgba(240, 96, 44, 0.07), transparent 70%),
+    radial-gradient(50% 36% at 18% 40%, rgba(0, 194, 166, 0.045), transparent 72%);
 }
 
 .loopsec {
   --pin-ground:
-    radial-gradient(38% 30% at 50% 56%, rgba(10, 162, 224, 0.07), transparent 72%),
-    radial-gradient(60% 44% at 50% 54%, rgba(0, 194, 166, 0.05), transparent 74%);
+    radial-gradient(34% 27% at 50% 55%, rgba(10, 162, 224, 0.085), transparent 70%),
+    radial-gradient(56% 42% at 50% 54%, rgba(0, 194, 166, 0.055), transparent 74%),
+    radial-gradient(110% 70% at 50% 8%, rgba(255, 255, 255, 0.8), transparent 58%);
 }
 
 .what {
@@ -76,20 +86,24 @@
    a real shadow needs ground to stand on — this is the one section where the
    product, not the page, is the brightest thing. */
 .tour {
-  --ground: linear-gradient(
-    180deg,
-    transparent 0%,
-    var(--bg-lit) 9%,
-    var(--bg-lit) 91%,
-    transparent 100%
-  );
-  --pin-ground: radial-gradient(44% 36% at 72% 46%, rgba(255, 255, 255, 0.7), transparent 70%);
+  --ground:
+    radial-gradient(90% 46% at 78% 4%, rgba(255, 255, 255, 0.7), transparent 60%),
+    linear-gradient(180deg, transparent 0%, var(--bg-lit) 9%, var(--bg-lit) 91%, transparent 100%);
+  /* A pool of light exactly where the device stands, so the phone reads as
+     lit from the front rather than pasted onto a tinted rectangle. */
+  --pin-ground:
+    radial-gradient(38% 32% at 72% 44%, rgba(255, 255, 255, 0.92), transparent 68%),
+    radial-gradient(60% 48% at 72% 52%, rgba(255, 255, 255, 0.5), transparent 72%),
+    radial-gradient(46% 40% at 16% 74%, rgba(0, 194, 166, 0.05), transparent 72%);
   /* The plate this panel rises on is the stage tone, not the page white. */
   --pin-base: var(--bg-lit);
 }
 
 .xf {
-  --pin-ground: radial-gradient(40% 32% at 50% 52%, rgba(0, 194, 166, 0.05), transparent 72%);
+  --pin-ground:
+    radial-gradient(36% 30% at 50% 50%, rgba(255, 255, 255, 0.9), transparent 66%),
+    radial-gradient(58% 44% at 50% 54%, rgba(0, 194, 166, 0.06), transparent 72%),
+    radial-gradient(70% 50% at 84% 96%, rgba(10, 162, 224, 0.04), transparent 70%);
 }
 
 .sys {
@@ -97,7 +111,9 @@
 }
 
 .india {
-  --ground: radial-gradient(46% 34% at 14% 26%, rgba(224, 140, 0, 0.05), transparent 70%);
+  --ground:
+    radial-gradient(44% 32% at 14% 24%, rgba(224, 140, 0, 0.065), transparent 70%),
+    radial-gradient(56% 40% at 88% 82%, rgba(0, 194, 166, 0.045), transparent 72%);
 }
 
 /* The one change of register. The page darkens into the statement and lifts
@@ -143,22 +159,28 @@
 }
 
 .end {
-  --pin-ground: radial-gradient(60% 50% at 50% 46%, rgba(0, 194, 166, 0.055), transparent 72%);
+  --pin-ground:
+    radial-gradient(46% 38% at 50% 44%, rgba(255, 255, 255, 0.85), transparent 66%),
+    radial-gradient(72% 56% at 50% 48%, rgba(0, 194, 166, 0.07), transparent 72%),
+    radial-gradient(90% 60% at 50% 100%, rgba(10, 162, 224, 0.045), transparent 70%);
 }
 
 /* ==========================================================================
    01 · HERO
    ========================================================================== */
 
-.hu-hero { height: 285svh; }
+.hu-hero { height: 330svh; }
 
 .hu-hero__pin {
-  --m1: clamp(0, calc((var(--p, 0) - 0.1) / 0.2), 1);   /* wordmark leaves   */
-  --m2: clamp(0, calc((var(--p, 0) - 0.2) / 0.16), 1);  /* the line arrives  */
-  /* The headline is the most important sentence on the site, so it holds for
-     a while before handing over. Copy out at 0.72, device up at 0.88. */
-  --m4: clamp(0, calc((var(--p, 0) - 0.54) / 0.18), 1); /* copy hands over   */
-  --m3: clamp(0, calc((var(--p, 0) - 0.58) / 0.3), 1);  /* the device builds */
+  /* Four beats, and the only one that matters is the third: the headline is
+     the most important sentence on the site and it has to be still, sharp
+     and alone for a long stretch. Written as it was — in at 0.36, out from
+     0.54 — it was fully legible for three hundred pixels of a scroll two
+     thousand pixels long. It now holds for roughly a screen and a half. */
+  --m1: clamp(0, calc((var(--p, 0) - 0.05) / 0.13), 1); /* wordmark leaves   */
+  --m2: clamp(0, calc((var(--p, 0) - 0.1) / 0.12), 1);  /* the line arrives  */
+  --m4: clamp(0, calc((var(--p, 0) - 0.62) / 0.14), 1); /* copy hands over   */
+  --m3: clamp(0, calc((var(--p, 0) - 0.58) / 0.16), 1); /* the device builds */
   place-items: center;
   text-align: center;
 }
@@ -236,7 +258,11 @@
   display: grid;
   place-items: center;
   opacity: var(--m3);
-  translate: 0 calc(74svh - var(--m3) * 62svh);
+  /* Rests at zero, not at twelve viewport-percent below it. Landing low left
+     the bottom of the phone permanently under the edge of the panel, so the
+     product's own tab bar — the thing the whole section is introducing — was
+     never once fully on screen. */
+  translate: 0 calc((1 - var(--m3)) * 74svh);
   scale: calc(0.9 + var(--m3) * 0.1);
   pointer-events: auto;
   will-change: translate, scale, opacity;
@@ -266,19 +292,31 @@
    02 · THE PROBLEM
    ========================================================================== */
 
-.prob { height: 290svh; }
+/* Taller than it looks it needs to be, and deliberately so: the section has
+   to draw nine years of drift, land its punch line, and then hold that line
+   still long enough to be read before the panel hands over. */
+.prob { height: 320svh; }
 
 .prob__pin {
-  --pd: clamp(0, calc((var(--t) - 0.2) / 0.46), 1);  /* the line draws */
-  --pu: clamp(0, calc((var(--t) - 0.78) / 0.13), 1); /* the punch      */
+  --pd: clamp(0, calc((var(--t) - 0.18) / 0.4), 1);  /* the line draws */
+  /* Full at --t 0.70, which is a comfortable margin before this panel starts
+     to leave. Timed any later — as it once was — the most important sentence
+     in the section peaks at seven-tenths opacity and is never once fully
+     legible. Nothing that matters may arrive during the exit. */
+  --pu: clamp(0, calc((var(--t) - 0.58) / 0.12), 1); /* the punch      */
   align-content: stretch;
 }
 .prob__inner {
   display: grid;
-  grid-template-rows: auto 1fr auto;
-  gap: clamp(1rem, 2.6vh, 2rem);
+  /* minmax(0, 1fr), not 1fr: a bare 1fr track cannot shrink below its
+     content's min-content height, so the chart pushed the punch line — and
+     with it the whole panel — past the bottom of the screen it is pinned to.
+     The last line of the section was simply never on screen. */
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: clamp(0.8rem, 2vh, 1.4rem);
   height: 100%;
-  padding-block: clamp(0.5rem, 2vh, 1.5rem) clamp(1.6rem, 5vh, 3rem);
+  min-height: 0;
+  padding-block: clamp(0.4rem, 1.4vh, 1rem) clamp(0.8rem, 2vh, 1.4rem);
 }
 
 .prob__title {
@@ -287,15 +325,23 @@
 }
 
 .prob__chartwrap {
+  position: relative;
   display: grid;
   place-items: center;
   min-height: 0;
+  /* The year stamps and the honesty label hang below the chart in absolute
+     position, so the wrapper has to reserve their height or they land on the
+     punch line. */
+  padding-bottom: 5.2rem;
 }
 .prob__chart {
   position: relative;
   width: 100%;
   max-width: 1200px;
-  max-height: 100%;
+  /* Capped against the viewport, not against its own grid track: a track
+     sized by 1fr and a chart sized by the track size each other in a circle,
+     and the panel ends up taller than the screen it is pinned to. */
+  max-height: min(100%, 40svh);
   aspect-ratio: 1000 / 420;
 }
 .prob__svg {
@@ -358,12 +404,12 @@
   gap: 0.28rem;
   justify-items: center;
   text-align: center;
-  opacity: clamp(0, calc(min(var(--t) * 3, (1.5 - var(--t)) * 3)), 1);
-  translate: 0 calc((1 - clamp(0, calc(var(--t) * 3), 1)) * 8px);
+  opacity: clamp(0, calc(min(var(--t) * 2, (1.5 - var(--t)) * 2)), 1);
+  translate: 0 calc((1 - clamp(0, calc(var(--t) * 2), 1)) * 8px);
 }
 .prob__year.is-last {
   /* The last one stays. That is the moment the section exists for. */
-  opacity: clamp(0, calc(var(--t) * 3), 1);
+  opacity: clamp(0, calc(var(--t) * 2), 1);
 }
 .prob__yearn {
   font-size: 0.58rem;
@@ -392,7 +438,9 @@
 .prob__punchline { letter-spacing: -0.03em; max-width: 24ch; }
 .prob__after { margin-top: 0.7rem; max-width: 58ch; }
 .prob__note {
-  margin-top: 0.9rem;
+  position: absolute;
+  inset: auto 0 0 0;
+  text-align: center;
   font-size: 0.68rem;
   color: var(--ink-4);
   letter-spacing: 0.02em;
@@ -402,12 +450,17 @@
    03 · THE LOOP
    ========================================================================== */
 
-.loopsec { height: 300svh; }
+/* Eight stages, each of which has to be readable at a normal scrolling pace,
+   plus a closing line that has to land before the panel leaves. */
+.loopsec { height: 420svh; }
 
 .loopsec__pin {
   /* The arc draws behind the nodes and closes in the final tenth. */
-  --arc: clamp(0, calc((var(--p, 0) - 0.08) / 0.76), 1);
-  --lc: clamp(0, calc((var(--p, 0) - 0.86) / 0.12), 1);
+  --arc: clamp(0, calc((var(--p, 0) - 0.06) / 0.68), 1);
+  /* Full at 0.78 — the closing line arrives over the last stage and then
+     holds. Written to finish at 0.98, as it once was, it only ever appeared
+     underneath the panel's own exit fade and peaked at a quarter strength. */
+  --lc: clamp(0, calc((var(--p, 0) - 0.7) / 0.08), 1);
 }
 .loopsec__inner {
   display: grid;
@@ -539,12 +592,36 @@
   inset: 26%;
   display: grid;
   place-content: center;
+  place-items: center;
   text-align: center;
   pointer-events: none;
 }
-.loopcentre__inner { animation: centrein 520ms var(--sp) both; }
-@keyframes centrein {
-  from { opacity: 0; transform: translateY(8px); }
+/* The centre label and the sentence under the ring cross-fade between two
+   stacked copies, driven by scroll position. One element dipping through
+   zero and back would read as a blink; two elements passing through each
+   other read as a change of subject. */
+.loopcentre__inner,
+.loopsec__body {
+  grid-area: 1 / 1;
+  opacity: 0;
+  pointer-events: none;
+}
+.loopcentre__inner.is-on,
+.loopsec__body.is-on {
+  --sr: clamp(0, calc(var(--sf, 1) / 0.22), 1);
+  opacity: var(--sr);
+  translate: 0 calc((1 - var(--sr)) * 9px);
+}
+.loopcentre__inner.is-prev,
+.loopsec__body.is-prev {
+  --sr: clamp(0, calc(1 - var(--sf, 1) / 0.22), 1);
+  opacity: var(--sr);
+  translate: 0 calc((1 - var(--sr)) * -7px);
+}
+.loopcentre__inner { display: grid; }
+.loopsec__bodies {
+  display: grid;
+  justify-items: inherit;
 }
 .loopcentre__cap {
   font-size: 0.55rem;
@@ -571,7 +648,6 @@
   line-height: 1.55;
   color: var(--ink-2);
   text-wrap: pretty;
-  animation: centrein 520ms var(--sp) both;
 }
 
 .loopsec__closing {
@@ -626,7 +702,11 @@
   grid-template-columns: 2.4rem 1.5rem minmax(0, 1fr);
   align-items: start;
   gap: 0 0.5rem;
-  opacity: calc(0.2 + var(--in) * 0.8);
+  /* A step that has not arrived yet is quiet, not broken. At two-tenths it
+     read as text that had failed to load; at a third it reads as the shape
+     of a list you have not got to. Either way it finishes at full strength
+     and stays there. */
+  opacity: calc(0.34 + var(--in) * 0.66);
   translate: 0 calc((1 - var(--in)) * 14px);
 }
 .rail__n {
@@ -682,10 +762,10 @@
 .tabs { position: sticky; top: 18vh; }
 .tabs__card {
   border: 1px solid var(--line);
-  background: var(--bg);
+  background: var(--surface);
   border-radius: 22px;
   padding: clamp(1.2rem, 2vw, 1.7rem);
-  box-shadow: var(--sh-2);
+  box-shadow: var(--sh-2), var(--edge);
 }
 .tabs__note {
   margin-top: 0.7rem;
@@ -750,15 +830,16 @@
 .tour__head { grid-area: head; align-self: end; }
 .tour__copy {
   grid-area: copy;
-  /* Must fill its row, or space-between has nothing to distribute. */
+  /* Must fill its row, or the contents page has nothing to sit on. */
   align-self: stretch;
   display: grid;
-  /* The words sit under the headline; the progress sits on the baseline.
-     Centring both left a hole between the title and the copy. */
+  /* The stop's words sit under the headline and the contents page sits on
+     the baseline; the space between them is what gives. */
   align-content: space-between;
-  gap: 1.4rem;
+  gap: 1rem;
   min-width: 0;
-  padding-block: clamp(0.5rem, 3vh, 1.6rem) clamp(0.5rem, 4vh, 2.5rem);
+  min-height: 0;
+  padding-block: clamp(0.5rem, 3vh, 1.6rem) clamp(0.5rem, 2.5vh, 1.4rem);
 }
 .tour__title { margin-top: 0.7rem; max-width: 15ch; }
 
@@ -768,75 +849,132 @@
   /* Sized to the tallest stop so the layout never shifts between them. */
   display: grid;
 }
+/* The stops cross-fade against distance scrolled, not against elapsed time.
+
+   A 560ms fade sounds gentle until you notice that a stop lasts about 370px
+   — under half a second for anyone scrolling at a normal pace. The caption
+   then never finishes arriving before it is asked to leave, which is how a
+   sentence ends up permanently at half strength. Keyed to --sf (the fraction
+   through the current stop) the hand-over takes the first tenth of the stop
+   at any speed, and the words are at full strength for the other nine
+   tenths. No blur on text: caught mid-fade it reads as a printing fault. */
 .tourstop {
   grid-area: 1 / 1;
   opacity: 0;
-  translate: 0 14px;
-  filter: blur(6px);
-  transition:
-    opacity 560ms var(--sp),
-    translate 560ms var(--sp),
-    filter 560ms var(--sp);
   pointer-events: none;
 }
 .tourstop.is-on {
-  opacity: 1;
-  translate: 0;
-  filter: none;
+  --sr: clamp(0, calc(var(--sf, 1) / 0.16), 1);
+  opacity: var(--sr);
+  translate: 0 calc((1 - var(--sr)) * 12px);
+}
+.tourstop.is-prev {
+  --sr: clamp(0, calc(1 - var(--sf, 1) / 0.16), 1);
+  opacity: var(--sr);
+  translate: 0 calc((1 - var(--sr)) * -10px);
 }
 .tourstop__cap { color: var(--b-ink); }
 .tourstop__title { margin-top: 0.55rem; max-width: 19ch; }
 .tourstop__body { margin-top: 0.7rem; max-width: 46ch; }
 
 .tour__foot {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+  display: grid;
+  gap: clamp(0.5rem, 1.4svh, 0.9rem);
+  align-content: start;
+  min-height: 0;
 }
 .tour__count {
+  display: flex;
+  align-items: baseline;
   font-size: 0.72rem;
   font-weight: 620;
   letter-spacing: 0.1em;
-  color: var(--ink-3);
+  color: var(--ink-4);
 }
-.tour__countsep { margin: 0 0.3em; color: var(--ink-4); }
-.tour__ticks {
-  display: flex;
-  gap: 4px;
-  flex: 1;
+.tour__countnow {
+  font-size: clamp(0.82rem, 1.9svh, 1.05rem);
+  font-weight: 640;
+  letter-spacing: -0.01em;
+  color: var(--ink);
 }
-/* A 2px bar is not a target, so each button keeps a 24px band of padding and
-   draws its bar with a pseudo-element. Twenty-four is the smallest target
-   WCAG will accept; the bar itself stays two pixels. */
+.tour__countsep { margin: 0 0.35em; color: var(--ink-4); }
+
+/* The contents page. One row per screen: its number, its name, and the tab
+   of the app it lives on. The row you are on is marked by a rule that fills
+   from the left rather than by a colour swap, so the eye can find it
+   without the list flashing as you scroll. */
+.tour__idx {
+  list-style: none;
+  display: grid;
+  gap: 1px;
+  max-width: 30rem;
+  border-top: 1px solid var(--line);
+}
+.tour__idx li { border-bottom: 1px solid var(--line); }
 .tour__tick {
   position: relative;
-  flex: 1;
-  height: 24px;
-  padding: 0;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 2.1rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.7rem;
+  /* Eleven rows have to fit whatever height the window is, so the row is
+     sized against the viewport rather than against the text. */
+  min-height: clamp(19px, 2.8svh, 30px);
+  padding: 0 0.1rem 0 0;
   border: none;
   background: none;
   cursor: pointer;
-  border-radius: 3px;
+  text-align: left;
+  transition: color 300ms var(--sp);
 }
+/* The rule that fills. It sits on the row's own bottom border line. */
 .tour__tick::before {
   content: '';
   position: absolute;
-  inset: 11px 0;
-  border-radius: 2px;
-  background: var(--line-2);
-  transition:
-    background 420ms var(--sp),
-    inset 260ms var(--sp);
-}
-.tour__tick.is-on::before { background: var(--b2); }
-.tour__tick.is-now::before {
-  inset: 9px 0;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
   background: var(--b-ink);
+  transform-origin: 0 50%;
+  scale: 0 1;
+  transition: scale 420ms var(--sp);
 }
-.tour__tick:hover::before {
-  inset: 5px 0;
-  background: var(--b-ink);
+.tour__tick.is-on::before { scale: 1 1; background: color-mix(in oklab, var(--b2) 55%, transparent); }
+.tour__tick.is-now::before { scale: 1 1; background: var(--b-ink); height: 2px; }
+.tour__idxn {
+  font-size: 0.66rem;
+  font-weight: 620;
+  letter-spacing: 0.06em;
+  color: var(--ink-4);
+  transition: color 300ms var(--sp);
 }
+.tour__idxk {
+  font-size: clamp(0.76rem, 1.7svh, 0.86rem);
+  font-weight: 520;
+  letter-spacing: -0.012em;
+  color: var(--ink-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: color 300ms var(--sp);
+}
+.tour__idxtab {
+  font-size: 0.56rem;
+  font-weight: 660;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-4);
+  opacity: 0;
+  transition: opacity 300ms var(--sp);
+}
+.tour__tick.is-now .tour__idxn { color: var(--b-ink); }
+.tour__tick.is-now .tour__idxk { color: var(--ink); font-weight: 600; }
+.tour__tick.is-now .tour__idxtab { opacity: 1; color: var(--b-ink); }
+.tour__tick:hover .tour__idxk { color: var(--ink); }
+.tour__tick:hover .tour__idxn { color: var(--b-ink); }
+.tour__tick:hover .tour__idxtab { opacity: 1; }
 
 .tour__stage {
   grid-area: stage;
@@ -963,8 +1101,8 @@
   padding: 0.7rem 1rem;
   border-radius: 16px;
   border: 1px solid var(--line);
-  background: var(--bg);
-  box-shadow: var(--sh-2);
+  background: var(--surface);
+  box-shadow: var(--sh-1), var(--edge);
   font-size: 0.8rem;
   color: var(--ink-2);
   opacity: calc(var(--gi) * 0.92);
@@ -1003,8 +1141,8 @@
   padding: clamp(1.2rem, 2.4vw, 1.9rem);
   border-radius: 26px;
   border: 1px solid var(--line);
-  background: var(--bg);
-  box-shadow: var(--sh-3);
+  background: var(--surface-2);
+  box-shadow: var(--sh-3), var(--edge);
   transition: transform 620ms var(--sp);
 }
 .xf__cardtop {
@@ -1088,17 +1226,21 @@
   margin-top: 1.2rem;
   min-height: 7.2rem;
 }
+/* Same hand-over as the app tour, for the same reason. */
 .xf__slide {
   grid-area: 1 / 1;
   opacity: 0;
-  translate: 0 12px;
-  filter: blur(5px);
-  transition:
-    opacity 560ms var(--sp),
-    translate 560ms var(--sp),
-    filter 560ms var(--sp);
 }
-.xf__slide.is-on { opacity: 1; translate: 0; filter: none; }
+.xf__slide.is-on {
+  --sr: clamp(0, calc(var(--sf, 1) / 0.16), 1);
+  opacity: var(--sr);
+  translate: 0 calc((1 - var(--sr)) * 10px);
+}
+.xf__slide.is-prev {
+  --sr: clamp(0, calc(1 - var(--sf, 1) / 0.16), 1);
+  opacity: var(--sr);
+  translate: 0 calc((1 - var(--sr)) * -8px);
+}
 .xf__cap { color: var(--b-ink); }
 .xf__head3 { margin-top: 0.5rem; max-width: 26ch; }
 .xf__body {
@@ -1200,7 +1342,7 @@
     radial-gradient(120% 100% at 100% 0, color-mix(in oklab, var(--st, var(--b2)) 12%, transparent), transparent 62%),
     var(--tint);
   padding: clamp(1.1rem, 2.4vw, 2rem);
-  box-shadow: var(--sh-2);
+  box-shadow: var(--sh-2), var(--edge);
   transition: background 700ms var(--sp);
 }
 
@@ -1442,7 +1584,9 @@
    09 · PHILOSOPHY
    ========================================================================== */
 
-.philo { height: 185svh; }
+/* Long enough that the statement can be held rather than passed through: at
+   185svh the sub-line was fully legible for forty pixels of scrolling. */
+.philo { height: 275svh; }
 .philo__pin { place-items: center; text-align: center; }
 .philo__lines {
   display: grid;
@@ -1453,13 +1597,13 @@
   line-height: 1.1;
 }
 .philo__line {
-  --lp: clamp(0, calc((var(--t) - 0.06 - var(--i) * 0.17) / 0.2), 1);
+  --lp: clamp(0, calc((var(--t) - 0.05 - var(--i) * 0.11) / 0.14), 1);
   opacity: var(--lp);
   translate: 0 calc((1 - var(--lp)) * 18px);
-  filter: blur(calc((1 - var(--lp)) * 8px));
+  filter: blur(calc((1 - var(--lp)) * 6px));
 }
 .philo__sub {
-  --sp2: clamp(0, calc((var(--t) - 0.5) / 0.2), 1);
+  --sp2: clamp(0, calc((var(--t) - 0.42) / 0.12), 1);
   margin-top: clamp(2rem, 6vh, 3.6rem);
   font-size: clamp(0.92rem, 1.3vw, 1.14rem);
   font-weight: 500;
@@ -1494,7 +1638,8 @@
   border-radius: 22px;
   overflow: hidden;
   border: 1px solid var(--line);
-  background: var(--bg-1);
+  background: var(--surface-sunk);
+  box-shadow: var(--sh-1), var(--edge);
 }
 .fnd__media {
   display: block;
@@ -1530,7 +1675,8 @@
   padding: clamp(1.1rem, 2vw, 1.5rem);
   border-radius: 20px;
   border: 1px solid var(--line);
-  background: var(--tint);
+  background: var(--surface-sunk);
+  box-shadow: var(--edge);
 }
 .fnd__prevname {
   margin-top: 0.5rem;
@@ -1595,7 +1741,9 @@
    12 · THE LAST WORD
    ========================================================================== */
 
-.end { height: 175svh; }
+/* Same reason as the philosophy panel: the closing statement, the wordmark
+   and the safety line all have to be read, not glimpsed. */
+.end { height: 260svh; }
 .end__pin { place-items: center; text-align: center; }
 .end__inner { display: grid; justify-items: center; gap: clamp(1.6rem, 5vh, 3rem); }
 .end__lines {
@@ -1607,13 +1755,13 @@
   line-height: 1.1;
 }
 .end__line {
-  --lp: clamp(0, calc((var(--t) - 0.08 - var(--i) * 0.15) / 0.18), 1);
+  --lp: clamp(0, calc((var(--t) - 0.06 - var(--i) * 0.1) / 0.13), 1);
   opacity: var(--lp);
   translate: 0 calc((1 - var(--lp)) * 16px);
 }
 .end__line:last-child { color: var(--ink-3); }
 .end__mark {
-  --mp: clamp(0, calc((var(--t) - 0.44) / 0.2), 1);
+  --mp: clamp(0, calc((var(--t) - 0.34) / 0.14), 1);
   font-size: clamp(2.6rem, 11vw, 8rem);
   font-weight: 620;
   letter-spacing: 0.02em;
@@ -1622,7 +1770,9 @@
   scale: calc(0.94 + var(--mp) * 0.06);
 }
 .end__safety {
-  --np: clamp(0, calc((var(--t) - 0.66) / 0.2), 1);
+  /* A medical disclaimer that is never fully opaque is not a disclaimer.
+     Full at --t 0.62, well before this panel begins to hand over. */
+  --np: clamp(0, calc((var(--t) - 0.5) / 0.12), 1);
   max-width: 44ch;
   font-size: 0.74rem;
   line-height: 1.6;
@@ -1728,18 +1878,61 @@
   .tour__badge { font-size: 0.58rem; padding: 0.34em 0.75em; }
   .tour__link { display: none; }
   .tour__stage { grid-template-rows: auto minmax(0, 1fr); }
+
+  /* Eleven named rows will not fit over a phone screen, so the contents page
+     folds back into the row of marks it replaces. Same buttons, same labels
+     for anything reading the page aloud — only the words are dropped. */
+  .tour__foot {
+    grid-auto-flow: column;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 0.8rem;
+    pointer-events: auto;
+  }
+  .tour__count { font-size: 0.62rem; }
+  .tour__countnow { font-size: 0.82rem; }
+  .tour__idx {
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    gap: 4px;
+    max-width: none;
+    border-top: none;
+  }
+  .tour__idx li { border-bottom: none; }
+  .tour__tick {
+    display: block;
+    min-height: 24px;
+    height: 24px;
+    padding: 0;
+  }
+  .tour__tick::before {
+    inset: 11px 0 auto 0;
+    bottom: auto;
+    height: 2px;
+    border-radius: 2px;
+    scale: 1 1;
+    background: var(--line-2);
+  }
+  .tour__tick.is-on::before { background: color-mix(in oklab, var(--b2) 70%, transparent); }
+  .tour__tick.is-now::before { inset: 9px 0 auto 0; height: 4px; background: var(--b-ink); }
+  .tour__idxn,
+  .tour__idxk,
+  .tour__idxtab { display: none; }
 }
 
 @media (max-width: 760px) {
   .hu-hero__pin {
     /* Words first, then the product. On a phone there is no room for both
        at once, so the handover happens earlier and completely. */
-    --m3: clamp(0, calc((var(--p, 0) - 0.56) / 0.3), 1);
-    --m4: clamp(0, calc((var(--p, 0) - 0.5) / 0.22), 1);
+    --m3: clamp(0, calc((var(--p, 0) - 0.56) / 0.16), 1);
+    --m4: clamp(0, calc((var(--p, 0) - 0.58) / 0.14), 1);
   }
   .hu-hero__device {
     width: min(100%, 360px);
-    translate: 0 calc(80svh - var(--m3) * 62svh);
+    /* Zero at rest, like the desktop rule: on a phone the panel is the whole
+       screen, so eighteen viewport-percent of offset put the product's tab
+       bar under the fold for the entire section. */
+    translate: 0 calc((1 - var(--m3)) * 80svh);
   }
   .hu-hero__actions { gap: 0.5rem; }
   .hu-btn { padding: 0.85em 1.35em; }
@@ -1785,7 +1978,7 @@
   }
   /* The year stamps hang below the chart in absolute position, so the chart
      has to reserve their height or the ninth year lands on the punch line. */
-  .prob__chartwrap { padding-bottom: 3.8rem; }
+  .prob__chartwrap { padding-bottom: 5.6rem; }
   .prob__punch { min-height: 8.5rem; }
 
   .sys__metric { flex-direction: column; align-items: flex-start; gap: 0.9rem; }
