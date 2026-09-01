@@ -1,4 +1,5 @@
 import { useMediaQuery, useNearViewport, useReveal } from '../lib/hooks'
+import Words from '../components/Words'
 import LiveApp from '../app/LiveApp'
 import { explore, PROTOTYPE_URL } from '../content/product'
 
@@ -25,9 +26,13 @@ export default function Explore() {
       <div className="wrap cta__wrap">
         <div ref={head.ref} className={`cta__inner rev ${head.shown ? 'in' : ''}`}>
           <span className="cap">{explore.eyebrow}</span>
-          <h2 id="cta-title" className="display cta__title">
-            {explore.title}
-          </h2>
+          <Words
+            as="h2"
+            id="cta-title"
+            className="display cta__title"
+            text={explore.title}
+            shown={head.shown}
+          />
           <p className="lead cta__lead">{explore.lead}</p>
 
           <a

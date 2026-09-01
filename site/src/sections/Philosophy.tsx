@@ -13,7 +13,7 @@ export default function Philosophy() {
   const { ref, pinRef } = useProgress('pin')
 
   return (
-    <section ref={ref} className="pinwrap philo" aria-labelledby="philo-title">
+    <section ref={ref} className="pinwrap philo on-dark" aria-labelledby="philo-title">
       <div ref={pinRef} className="pin philo__pin">
         <div className="wrap">
           <h2 id="philo-title" className="philo__lines">

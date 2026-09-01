@@ -40,7 +40,7 @@ export default function Hero() {
               Explore the prototype
               <span className="hu-btn__arrow" aria-hidden="true">→</span>
             </a>
-            <a className="hu-btn hu-btn--ghost" href="#how">
+            <a className="hu-btn hu-btn--quiet" href="#how">
               See how it works
             </a>
           </div>

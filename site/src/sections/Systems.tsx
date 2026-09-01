@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useReveal } from '../lib/hooks'
+import Words from '../components/Words'
 import { aadit, meera, systems as copy } from '../content/product'
 import type { BodySystem } from '../../../src/data/types'
 
@@ -49,11 +50,15 @@ export default function Systems() {
   return (
     <section className="hu-sec sys" id="systems" aria-labelledby="sys-title">
       <div className="wrap">
-        <div ref={head.ref} className={`sys__head rev ${head.shown ? 'in' : ''}`}>
+        <div ref={head.ref} className={`sys__head headrev ${head.shown ? 'in' : ''}`}>
           <span className="cap">{copy.eyebrow}</span>
-          <h2 id="sys-title" className="display sys__title">
-            {copy.title}
-          </h2>
+          <Words
+            as="h2"
+            id="sys-title"
+            className="display sys__title"
+            text={copy.title}
+            shown={head.shown}
+          />
           <p className="lead sys__lead">{copy.lead}</p>
         </div>
 

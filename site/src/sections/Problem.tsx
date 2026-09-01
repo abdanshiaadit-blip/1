@@ -1,4 +1,4 @@
-import { useProgress, usePinEntrance } from '../lib/hooks'
+import { useProgress } from '../lib/hooks'
 import { problem } from '../content/product'
 
 /* ==========================================================================
@@ -20,12 +20,11 @@ const AREA = `${D} L960,346 L40,346 Z`
 
 export default function Problem() {
   const { ref, pinRef } = useProgress('pin')
-  const enter = usePinEntrance()
 
   return (
     <section ref={ref} className="pinwrap prob" aria-labelledby="prob-title">
       <div ref={pinRef} className="pin prob__pin">
-        <div ref={enter.ref} className={`wrap prob__inner rev ${enter.shown ? 'in' : ''}`}>
+        <div className="wrap prob__inner">
           <header className="prob__head">
             <span className="cap">{problem.eyebrow}</span>
             <h2 id="prob-title" className="prob__title h2">

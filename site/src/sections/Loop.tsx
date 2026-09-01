@@ -1,4 +1,4 @@
-import { usePinEntrance, useSteps } from '../lib/hooks'
+import { useSteps } from '../lib/hooks'
 import { loop, loopIntro } from '../content/product'
 
 /* ==========================================================================
@@ -17,14 +17,13 @@ const N = loop.length
 const R = 39 // node radius, as a % of the ring box
 
 export default function Loop() {
-  const { ref, pinRef, step } = useSteps(N, { lead: 0.08, tail: 0.2 })
+  const { ref, pinRef, step, goTo } = useSteps(N, { lead: 0.08, tail: 0.2 })
   const active = loop[step]
-  const enter = usePinEntrance()
 
   return (
     <section ref={ref} className="pinwrap loopsec" id="how" aria-labelledby="loop-title">
       <div ref={pinRef} className="pin loopsec__pin">
-        <div ref={enter.ref} className={`wrap loopsec__inner rev ${enter.shown ? 'in' : ''}`}>
+        <div className="wrap loopsec__inner">
           <header className="loopsec__head">
             <span className="cap">{loopIntro.eyebrow}</span>
             <h2 id="loop-title" className="loopsec__title h2">
@@ -71,13 +70,21 @@ export default function Loop() {
                       } as React.CSSProperties
                     }
                   >
-                    <span className="loopnode__dot" aria-hidden="true" />
-                    {/* Pushed radially outward so no label ever sits on the arc. */}
-                    <span className="loopnode__name">{s.stage}</span>
-                    {/* Read by assistive tech in order; shown visually below. */}
-                    <span className="sr-only">
-                      {s.plain}. {s.body}
-                    </span>
+                    {/* The ring is a control, not a diagram — every stage on
+                        it takes you to its own moment in the section. */}
+                    <button
+                      type="button"
+                      className="loopnode__hit"
+                      aria-current={i === step ? 'step' : undefined}
+                      onClick={() => goTo(i)}
+                    >
+                      <span className="loopnode__dot" aria-hidden="true" />
+                      {/* Pushed radially outward so no label sits on the arc. */}
+                      <span className="loopnode__name">{s.stage}</span>
+                      <span className="sr-only">
+                        {s.plain}. {s.body}
+                      </span>
+                    </button>
                   </li>
                 )
               })}

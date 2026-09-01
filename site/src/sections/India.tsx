@@ -1,4 +1,5 @@
 import { useProgress, useReveal } from '../lib/hooks'
+import Words from '../components/Words'
 import { india } from '../content/product'
 
 /* ==========================================================================
@@ -21,11 +22,15 @@ export default function India() {
       <span className="india__layer india__layer--b" aria-hidden="true" />
 
       <div className="wrap india__wrap">
-        <div ref={head.ref} className={`india__head rev ${head.shown ? 'in' : ''}`}>
+        <div ref={head.ref} className={`india__head headrev ${head.shown ? 'in' : ''}`}>
           <span className="cap">{india.eyebrow}</span>
-          <h2 id="india-title" className="display india__title">
-            {india.title}
-          </h2>
+          <Words
+            as="h2"
+            id="india-title"
+            className="display india__title"
+            text={india.title}
+            shown={head.shown}
+          />
           <p className="lead india__lead">{india.lead}</p>
         </div>
 

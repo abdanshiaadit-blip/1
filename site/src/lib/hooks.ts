@@ -83,7 +83,29 @@ export function useSteps(
     }
   }, [count, mode, lead, tail])
 
-  return { ref: el, pinRef: pin, step }
+  /**
+   * Scroll the page to the middle of a given step. This is what turns a
+   * scroll-driven story into something you can also navigate: the same
+   * geometry the engine reads, run backwards.
+   */
+  const goTo = useCallback(
+    (index: number) => {
+      const section = el.current
+      if (!section) return
+      const span = Math.max(0.0001, 1 - lead - tail)
+      const p = lead + ((index + 0.5) / count) * span
+      const pinH = pin.current?.offsetHeight || innerHeight
+      const travel = section.offsetHeight - pinH
+      const top = section.getBoundingClientRect().top + scrollY
+      scrollTo({
+        top: top + travel * p,
+        behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+      })
+    },
+    [count, lead, tail],
+  )
+
+  return { ref: el, pinRef: pin, step, goTo }
 }
 
 /** Mount heavy things only when they are near. Never un-mounts once shown. */
@@ -133,12 +155,6 @@ export function useReveal<T extends HTMLElement = HTMLDivElement>(
     return () => io.disconnect()
   }, [shown, threshold, rootMargin])
   return { ref, shown }
-}
-
-/** The entrance every pinned section uses: begins while the section is still
- *  below the fold, so the outgoing panel and the incoming one overlap. */
-export function usePinEntrance<T extends HTMLElement = HTMLDivElement>() {
-  return useReveal<T>(0, '0px 0px 45% 0px')
 }
 
 export function usePageProgress(onChange: (p: number) => void) {
@@ -209,19 +225,17 @@ export function useCursorLight(ref: React.RefObject<HTMLElement | null>) {
     if (!matchMedia('(hover: hover) and (pointer: fine)').matches) return
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
+    // The lag that makes this feel like light rather than a cursor is a long
+    // CSS transition on the transform, not a per-frame chase in script. Same
+    // motion, and the compositor carries it instead of the main thread.
     let tx = innerWidth / 2
     let ty = innerHeight / 2
-    let x = tx
-    let y = ty
     let raf = 0
     let seen = false
 
-    const loop = () => {
-      x += (tx - x) * 0.09
-      y += (ty - y) * 0.09
-      node.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`
-      if (Math.abs(tx - x) > 0.4 || Math.abs(ty - y) > 0.4) raf = requestAnimationFrame(loop)
-      else raf = 0
+    const write = () => {
+      raf = 0
+      node.style.transform = `translate3d(${tx.toFixed(0)}px, ${ty.toFixed(0)}px, 0)`
     }
     const move = (e: PointerEvent) => {
       tx = e.clientX
@@ -230,7 +244,7 @@ export function useCursorLight(ref: React.RefObject<HTMLElement | null>) {
         seen = true
         node.classList.add('is-on')
       }
-      if (!raf) raf = requestAnimationFrame(loop)
+      if (!raf) raf = requestAnimationFrame(write)
     }
     const leave = () => node.classList.remove('is-on')
     const enter = () => seen && node.classList.add('is-on')
@@ -284,6 +298,49 @@ export function useActiveSection(ids: string[]) {
     }
   }, [ids])
   return active
+}
+
+/**
+ * Splits a heading into words so each can arrive on its own beat. Returns
+ * the words with an index; the stagger itself is a CSS expression of --i, so
+ * this costs no per-frame work.
+ */
+export function splitWords(text: string) {
+  return text.split(' ').map((word, i) => ({ word, i }))
+}
+
+/**
+ * True while a dark section's ground is under the navigation bar.
+ *
+ * The section's plane fades in and out at its own edges, so the test is not
+ * "is the section on screen" but "has its fully dark band reached the line
+ * the nav sits on" — `edge` is the fraction of the section's height that the
+ * fade occupies at each end.
+ */
+export function useDarkUnderNav(selector: string, edge = 0.13, line = 42) {
+  const [dark, setDark] = useState(false)
+  useEffect(() => {
+    const el = document.querySelector(selector)
+    if (!el) return
+    let raf = 0
+    const measure = () => {
+      raf = 0
+      const r = el.getBoundingClientRect()
+      setDark(r.top + r.height * edge <= line && r.top + r.height * (1 - edge) >= line)
+    }
+    const on = () => {
+      if (!raf) raf = requestAnimationFrame(measure)
+    }
+    measure()
+    addEventListener('scroll', on, { passive: true })
+    addEventListener('resize', on, { passive: true })
+    return () => {
+      removeEventListener('scroll', on)
+      removeEventListener('resize', on)
+      if (raf) cancelAnimationFrame(raf)
+    }
+  }, [selector, edge, line])
+  return dark
 }
 
 /** Live media-query match. Used to keep heavy things off small screens. */

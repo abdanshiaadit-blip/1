@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useActiveSection, useCursorLight, usePageProgress } from './lib/hooks'
+import { useActiveSection, useCursorLight, useDarkUnderNav, usePageProgress } from './lib/hooks'
 import { register } from './lib/scroll'
 import { PROTOTYPE_URL, legal } from './content/product'
 
@@ -31,6 +31,8 @@ export default function Site() {
   const light = useRef<HTMLDivElement>(null)
   const [navIn, setNavIn] = useState(false)
   const active = useActiveSection(SECTION_IDS)
+  // The philosophy section changes register; the nav follows it.
+  const navDark = useDarkUnderNav('.philo')
   useCursorLight(light)
 
   // One subscription drives both the hairline and the moment the wordmark
@@ -50,6 +52,28 @@ export default function Site() {
     return () => stops.forEach((stop) => stop())
   }, [])
 
+  // How long a pinned panel takes to fade out, as a share of its own travel.
+  // Written here because only the layout knows the travel: a section that
+  // scrolls for two viewports and one that scrolls for six should both hand
+  // over in about the same 300 pixels, which is the distance the next panel
+  // needs to rise into place.
+  useEffect(() => {
+    const HANDOFF = 300
+    const measure = () => {
+      for (const el of document.querySelectorAll<HTMLElement>('main > section')) {
+        const pin = el.querySelector<HTMLElement>('.pin')
+        if (!pin) continue
+        const travel = el.offsetHeight - pin.offsetHeight
+        if (travel <= 0) continue
+        const span = Math.min(0.4, Math.max(0.05, HANDOFF / travel))
+        el.style.setProperty('--exitspan', span.toFixed(4))
+      }
+    }
+    measure()
+    addEventListener('resize', measure)
+    return () => removeEventListener('resize', measure)
+  }, [])
+
   useEffect(() => {
     const onScroll = () => setNavIn(window.scrollY > window.innerHeight * 0.75)
     onScroll()
@@ -64,10 +88,11 @@ export default function Site() {
       </a>
 
       <div className="aurora" aria-hidden="true" />
+      <div className="grain" aria-hidden="true" />
       <div ref={light} className="cursorlight" aria-hidden="true" />
       <div ref={bar} className="pbar" aria-hidden="true" />
 
-      <header className={`nav ${navIn ? 'in' : ''}`}>
+      <header className={`nav ${navIn ? 'in' : ''} ${navDark ? 'on-dark' : ''}`}>
         <a className="nav__mark" href="#top">
           HUMAN
         </a>

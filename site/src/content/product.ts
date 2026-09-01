@@ -75,7 +75,7 @@ export const loop: { stage: string; plain: string; body: string }[] = [
   {
     stage: 'LEARN',
     plain: 'See what worked',
-    body: 'What moved and what didn’t — said as what we saw, never as a promise.',
+    body: 'What moved and what didn’t — what we saw, not what we promised.',
   },
   {
     stage: 'ADAPT',
@@ -141,7 +141,7 @@ export const tour: TourStop[] = [
     id: 'score',
     eyebrow: 'Health Intelligence',
     title: 'A number you can question.',
-    body: 'Your body systems, weighted by what matters most right now. Tap it and HUMAN shows the full working — every system, and how much it counts. It is a HUMAN measure, not a medical grade.',
+    body: 'Your body systems, weighted by what matters most right now. Tap it and HUMAN shows how it got there — every system, and how much it counts. It is a HUMAN measure, not a medical score.',
     tab: 'home',
     sheet: { kind: 'intel' },
   },
@@ -165,7 +165,7 @@ export const tour: TourStop[] = [
     id: 'marker',
     eyebrow: 'Your results',
     title: 'Every marker, explained like a person would.',
-    body: 'Where your value sits, which way it is moving, and what it means here — with Indian food and Indian habits. Not a range table and a colour.',
+    body: 'Where your value sits, which way it is moving, and what to do about it — with Indian food and Indian habits. Not a range table and a colour.',
     tab: 'health',
     sheet: { kind: 'biomarker', id: 'hba1c' },
   },
@@ -173,7 +173,7 @@ export const tour: TourStop[] = [
     id: 'priority',
     eyebrow: 'What matters most',
     title: 'Out of everything, one thing.',
-    body: 'HUMAN reads every finding, ranks them, and hands you one — with the evidence, the plan, and the date it will check.',
+    body: 'HUMAN reads every finding, ranks them, and hands you one — with the evidence, the plan, and the date it checks again.',
     tab: 'action',
     sheet: { kind: 'priority', id: 'p_metabolic' },
   },
@@ -181,7 +181,7 @@ export const tour: TourStop[] = [
     id: 'notnow',
     eyebrow: 'Not now',
     title: 'And what it is holding back.',
-    body: 'The things HUMAN found but did not put in front of you, and the reason for each. Two plans at once works worse than one.',
+    body: 'The things HUMAN found but did not put in front of you, and the reason for each. Doing two things at once works worse than doing one.',
     tab: 'action',
     sheet: { kind: 'nextup' },
   },
@@ -295,7 +295,7 @@ export const india = {
     },
     {
       k: 'Your family already knows your risk',
-      v: 'A father with diabetes at 47. A mother with a thyroid. HUMAN takes that seriously and starts there.',
+      v: 'A father with diabetes at 47. A mother on thyroid medicine. HUMAN takes that seriously and starts there.',
     },
   ],
 }

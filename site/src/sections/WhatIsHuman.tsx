@@ -1,4 +1,5 @@
 import { useProgress, useReveal } from '../lib/hooks'
+import Words from '../components/Words'
 import { what } from '../content/product'
 
 /* ==========================================================================
@@ -18,11 +19,15 @@ export default function WhatIsHuman() {
   return (
     <section className="hu-sec what" aria-labelledby="what-title">
       <div className="wrap">
-        <div ref={head.ref} className={`what__head rev ${head.shown ? 'in' : ''}`}>
+        <div ref={head.ref} className={`what__head headrev ${head.shown ? 'in' : ''}`}>
           <span className="cap">{what.eyebrow}</span>
-          <h2 id="what-title" className="display what__title">
-            {what.title}
-          </h2>
+          <Words
+            as="h2"
+            id="what-title"
+            className="display what__title"
+            text={what.title}
+            shown={head.shown}
+          />
           <p className="lead what__lead">{what.lead}</p>
         </div>
 

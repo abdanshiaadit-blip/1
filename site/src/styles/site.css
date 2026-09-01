@@ -5,44 +5,80 @@
    app and therefore inherits its globals. The few rules below that reset
    html/body exist only to undo the app's fixed, non-scrolling shell.
 
-   The site is near-black. The app is near-white. That contrast is the whole
-   design idea: everywhere the product appears, it is the brightest object
-   on the page.
+   The site is white. The product is a black object sitting on it, and that
+   is the whole design idea: on a page made of paper, a dark phone with a
+   real shadow is the most present thing on the screen.
+
+   Separation between sections comes from four shades of white and from
+   elevation, never from blocks of colour. One section — the philosophy
+   statement — goes dark on purpose, because a page that never changes
+   register has no emphasis left to spend.
+
+   Token names say what they are for: --bg-* is ground, --ink-* is text,
+   --line-* is a border, --tint-* is a fill.
    ========================================================================== */
 
 :root {
-  /* ---- Ground --------------------------------------------------------
-     Four steps, not one. Every section sits on one of them, so the page
-     reads as a sequence of planes rather than a single flat field. */
-  --ink-deep: #04100d;     /* philosophy, the last word */
-  --ink: #071613;          /* the page */
-  --ink-1: #0a1e1a;        /* raised */
-  --ink-2: #0e2622;        /* raised further */
-  --ink-lit: #123029;      /* the lit stage — the app sections */
+  /* ---- Ground — four shades of white, plus one dark ------------------- */
+  --bg: #ffffff;      /* the page */
+  --bg-1: #fafcfb;    /* a breath of tint */
+  --bg-2: #f1f5f4;    /* recessed — the alternating sections */
+  --bg-lit: #e4ecea;  /* the product stage, so the dark device has ground */
+  --bg-dark: #06231f; /* the one section that changes register */
 
-  --paper: #f4faf8;
-  --mute: rgba(230, 246, 242, 0.7);
-  --faint: rgba(230, 246, 242, 0.48);
-  --ghost: rgba(230, 246, 242, 0.29);
-  --hair: rgba(230, 246, 242, 0.11);
-  --hair-2: rgba(230, 246, 242, 0.19);
-  --glass: rgba(230, 246, 242, 0.045);
-  --glass-2: rgba(230, 246, 242, 0.078);
+  /* ---- Ink — the app's own text ramp, so site and product agree ------- */
+  /* Four steps, and every one of them passes 4.5:1 on white. On paper you
+     simply cannot have five legible greys below that threshold, so the ramp
+     is compressed and the hierarchy is carried by size and weight instead —
+     which is where it belongs. */
+  --ink: #06231f;                    /* 15.9:1 */
+  --ink-2: rgba(6, 35, 31, 0.82);    /*  8.7:1 — body */
+  --ink-3: rgba(6, 35, 31, 0.72);    /*  6.1:1 — secondary */
+  --ink-4: rgba(6, 35, 31, 0.66);    /*  5.5:1 — the faintest that is still text */
 
-  /* ---- Brand — the app's own ring gradient, unchanged ---------------- */
+  --line: rgba(6, 42, 38, 0.09);
+  --line-2: rgba(6, 42, 38, 0.16);
+  --tint: rgba(6, 42, 38, 0.032);
+  --tint-2: rgba(6, 42, 38, 0.062);
+
+  /* ---- Brand — the app's own ring gradient, unchanged ----------------- */
   --b1: #45d97f;
   --b2: #00c2a6;
   --b3: #0aa2e0;
+  --b-ink: #006e5c; /* the brand at text contrast — 6.2:1 on white, so it
+                       still clears 4.5:1 on the tinted grounds */
   --grad: linear-gradient(112deg, var(--b1) 0%, var(--b2) 48%, var(--b3) 100%);
-  --grad-soft: linear-gradient(112deg, rgba(69, 217, 127, 0.16), rgba(10, 162, 224, 0.16));
+  --grad-deep: linear-gradient(112deg, #22b972 0%, #00a892 48%, #0e86bd 100%);
 
-  /* ---- Health states, lifted for a dark ground ----------------------- */
-  --s-optimal: #3fdca0;
-  --s-stable: #35c8e6;
-  --s-monitor: #f0ac36;
-  --s-attention: #ff7d4f;
-  --s-clinical: #ff6079;
-  --s-women: #ff62b0;
+  /* ---- Health states — the app's values, unchanged -------------------- */
+  --s-optimal: #00b478;
+  --s-stable: #00a6c9;
+  --s-monitor: #e08c00;
+  --s-attention: #f0602c;
+  --s-clinical: #e12d4c;
+  --s-women: #e63f96;
+  /* The same two states again, dark enough to be read as small text. The
+     bright versions stay for dots, bars and fills, where they are shapes
+     rather than words. */
+  --s-optimal-ink: #0e7048; /* 6.1:1 */
+  --s-stable-ink: #0a6a7c; /* 6.2:1 */
+  --s-monitor-ink: #7d5108; /* 6.9:1 */
+  --s-attention-ink: #b03409; /* 6.3:1 */
+  --s-clinical-ink: #c0163a; /* 6.2:1 */
+  --s-women-ink: #b41770; /* 6.4:1 */
+
+  /* ---- Elevation — what carries depth now that colour does not -------- */
+  --sh-1:
+    0 1px 2px rgba(6, 42, 38, 0.05),
+    0 4px 12px -6px rgba(6, 42, 38, 0.1);
+  --sh-2:
+    0 1px 2px rgba(6, 42, 38, 0.045),
+    0 8px 22px -10px rgba(6, 42, 38, 0.12),
+    0 24px 48px -28px rgba(6, 42, 38, 0.18);
+  --sh-3:
+    0 2px 4px rgba(6, 42, 38, 0.05),
+    0 18px 40px -18px rgba(6, 42, 38, 0.16),
+    0 50px 90px -40px rgba(6, 42, 38, 0.3);
 
   /* ---- Type ---------------------------------------------------------- */
   --fs-mega: clamp(3.6rem, 15.5vw, 15rem);
@@ -62,6 +98,21 @@
   --sp-soft: cubic-bezier(0.32, 0.72, 0.24, 1);
 }
 
+/* One class flips a whole section to the dark register. Every token below
+   is the same role, re-pointed — so nothing inside needs its own dark rule. */
+.on-dark {
+  --ink: #f2f8f6;
+  --ink-2: rgba(234, 247, 243, 0.8);
+  --ink-3: rgba(234, 247, 243, 0.66);
+  --ink-4: rgba(234, 247, 243, 0.5);
+  --line: rgba(234, 247, 243, 0.12);
+  --line-2: rgba(234, 247, 243, 0.2);
+  --tint: rgba(234, 247, 243, 0.05);
+  --tint-2: rgba(234, 247, 243, 0.09);
+  --b-ink: #4fdcbb;
+  color: var(--ink);
+}
+
 /* ---- Undo the app's fixed shell ------------------------------------- */
 html,
 body {
@@ -73,15 +124,13 @@ body {
 
 html {
   scroll-behavior: smooth;
-  background: var(--ink);
+  background: var(--bg);
   -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background:
-    linear-gradient(180deg, #081815 0%, var(--ink) 26%, var(--ink) 74%, var(--ink-deep) 100%)
-      fixed;
-  color: var(--paper);
+  background: var(--bg);
+  color: var(--ink);
   font-size: var(--fs-body);
   line-height: 1.55;
   letter-spacing: -0.011em;
@@ -95,51 +144,74 @@ body {
 }
 
 ::selection {
-  background: rgba(0, 194, 166, 0.3);
-  color: #fff;
+  background: rgba(0, 194, 166, 0.22);
+  color: var(--ink);
 }
 
-/* A single ambient field behind the whole page. One element, one transform,
-   so the "expensive" gradient costs one composited layer and nothing else. */
+/* A single ambient field behind the whole page. On white this has to be a
+   whisper — anything stronger reads as a stain rather than as light. */
 .aurora {
+  /* Deliberately static. This layer is a full-viewport wash sitting behind
+     every scrolling pixel, so animating it re-rasterises the whole page on
+     every frame — measured at 1920x1080, drifting it cost half the frame
+     budget. At five percent opacity nobody could see the drift anyway. The
+     light stays; the motion goes where it can be felt. */
   position: fixed;
-  inset: -20vmax;
+  inset: 0;
   z-index: -1;
   pointer-events: none;
-  opacity: 0.9;
   background:
-    radial-gradient(40vmax 32vmax at 20% 10%, rgba(0, 200, 172, 0.16), transparent 62%),
-    radial-gradient(36vmax 32vmax at 84% 32%, rgba(20, 168, 228, 0.13), transparent 62%),
-    radial-gradient(32vmax 28vmax at 44% 86%, rgba(69, 217, 127, 0.1), transparent 64%);
-  animation: drift 40s var(--sp-soft) infinite alternate;
-  will-change: transform;
-}
-@keyframes drift {
-  from { transform: translate3d(-2.2%, -1.4%, 0) scale(1); }
-  to { transform: translate3d(2.6%, 2%, 0) scale(1.09); }
+    radial-gradient(40vmax 32vmax at 18% 8%, rgba(0, 194, 166, 0.055), transparent 62%),
+    radial-gradient(36vmax 32vmax at 86% 30%, rgba(10, 162, 224, 0.045), transparent 62%),
+    radial-gradient(34vmax 30vmax at 46% 88%, rgba(69, 217, 127, 0.04), transparent 64%);
 }
 
-/* A soft pool of light that follows the pointer. Ambient, not a cursor —
-   large, faint and heavily eased, so it reads as the page being lit rather
-   than as a effect chasing the mouse. */
+
+/* Dither.
+
+   A wide, low-contrast gradient on a near-white page bands: an 8-bit display
+   simply cannot put enough steps between #ffffff and #fbfdfc across a
+   thousand pixels, and the result is visible rings. A fixed grain layer
+   breaks the steps up. It also gives the white a little tooth, which is the
+   difference between paper and a blank canvas.
+
+   One tile, rasterised once, repeated. It never animates. */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.14'/%3E%3C/svg%3E");
+  background-size: 140px 140px;
+}
+
+/* Over the one dark section the same grain would read as static, so it is
+   held back there by the section's own ground painting on top of it. */
+
+/* A soft pool of light that follows the pointer. On white this can only be a
+   whisper — the moment it is visible as a shape it reads as a smudge, so it
+   is tuned to be felt rather than seen. */
 .cursorlight {
   position: fixed;
   top: 0;
   left: 0;
   z-index: -1;
-  width: 44rem;
-  height: 44rem;
-  margin: -22rem 0 0 -22rem;
+  width: 34rem;
+  height: 34rem;
+  margin: -17rem 0 0 -17rem;
   border-radius: 50%;
   pointer-events: none;
   opacity: 0;
   background: radial-gradient(
     circle,
-    rgba(0, 200, 172, 0.09) 0%,
-    rgba(20, 168, 228, 0.05) 38%,
+    rgba(0, 194, 166, 0.05) 0%,
+    rgba(10, 162, 224, 0.028) 40%,
     transparent 68%
   );
-  transition: opacity 900ms var(--sp);
+  transition:
+    opacity 900ms var(--sp),
+    transform 720ms cubic-bezier(0.22, 1, 0.36, 1);
   will-change: transform;
 }
 .cursorlight.is-on { opacity: 1; }
@@ -157,7 +229,7 @@ body {
   line-height: 1.02;
   font-weight: 620;
   letter-spacing: -0.042em;
-  color: var(--paper);
+  color: var(--ink);
   text-wrap: balance;
 }
 .h2 {
@@ -178,11 +250,11 @@ body {
   line-height: 1.5;
   font-weight: 400;
   letter-spacing: -0.016em;
-  color: var(--mute);
+  color: var(--ink-2);
   text-wrap: pretty;
 }
 .body {
-  color: var(--mute);
+  color: var(--ink-2);
   line-height: 1.62;
   text-wrap: pretty;
 }
@@ -192,10 +264,10 @@ body {
   font-weight: 640;
   letter-spacing: 0.17em;
   text-transform: uppercase;
-  color: var(--faint);
+  color: var(--ink-3);
 }
 .grad {
-  background: var(--grad);
+  background: var(--grad-deep);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -223,8 +295,19 @@ body {
   height: 100svh;
   /* Clears itself before the next section arrives. Without this, an outgoing
      panel and an incoming one share the screen as two unrelated blocks —
-     which is what a "hard cut" actually looks like on a sticky page. */
-  --exit: clamp(0, calc((var(--p, 0) - 0.92) / 0.08), 1);
+     which is what a "hard cut" actually looks like on a sticky page.
+     --exitspan is written per section from script so that the fade is always
+     the same ~300px of scrolling: as a fixed share of travel it would be a
+     flick on a short section and a very long dim on the tall app tour. */
+  --exit: clamp(
+    0,
+    calc((var(--p, 0) - (1 - var(--exitspan, 0.1))) / var(--exitspan, 0.1)),
+    1
+  );
+  /* The other half of the same handoff. The next panel is already rising
+     while this one fades, so the two cross rather than leaving one blank
+     frame between them. */
+  --enter: clamp(0, calc((var(--ap, 1) - 0.24) / 0.19), 1);
   /* One continuous timeline for the whole section, run-up included. --ap
      reaches 1 exactly as --p leaves 0, so the two join without a seam: 0 →
      0.25 is the section arriving, 0.25 → 1 is the section pinned. Anything
@@ -260,7 +343,7 @@ body {
 .rule {
   height: 1px;
   border: 0;
-  background: linear-gradient(90deg, transparent, var(--hair), transparent);
+  background: linear-gradient(90deg, transparent, var(--line), transparent);
   margin: 0;
 }
 
@@ -289,57 +372,59 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 0.7em;
-  padding: 0.95em 1.6em;
+  padding: 0.95em 1.7em;
   border-radius: 999px;
   font-size: clamp(0.92rem, 1.1vw, 1.02rem);
-  font-weight: 580;
+  font-weight: 600;
   letter-spacing: -0.014em;
-  color: #04120f;
+  /* Near-black on the brand gradient. White would sit at about 2:1 on the
+     teal; the ink reads at nine. */
+  color: #05201b;
   background: var(--grad);
   border: none;
   cursor: pointer;
   text-decoration: none;
   isolation: isolate;
+  box-shadow:
+    0 1px 2px rgba(6, 42, 38, 0.08),
+    0 10px 24px -12px rgba(0, 150, 130, 0.55);
   transition:
     transform 420ms var(--sp),
     box-shadow 420ms var(--sp);
-  box-shadow: 0 10px 30px -14px rgba(0, 194, 166, 0.7);
 }
+/* A brighter wash that comes up under the pointer, rather than a blur bloom
+   behind the pill — on white a blur reads as a smudge. */
 .hu-btn::after {
   content: '';
   position: absolute;
-  inset: -1px;
+  inset: 0;
   border-radius: inherit;
-  background: var(--grad);
-  filter: blur(18px);
-  opacity: 0.34;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0));
+  opacity: 0;
   z-index: -1;
-  transition: opacity 420ms var(--sp), filter 420ms var(--sp);
+  transition: opacity 420ms var(--sp);
 }
 .hu-btn:hover {
   transform: translateY(-2px);
+  box-shadow:
+    0 2px 4px rgba(6, 42, 38, 0.08),
+    0 18px 34px -14px rgba(0, 150, 130, 0.6);
 }
-.hu-btn:hover::after {
-  opacity: 0.62;
-  filter: blur(13px);
-}
-.hu-btn__arrow {
-  transition: transform 420ms var(--sp);
-}
-.hu-btn:hover .hu-btn__arrow {
-  transform: translateX(4px);
-}
+.hu-btn:hover::after { opacity: 1; }
+.hu-btn:active { transform: translateY(0); }
+.hu-btn__arrow { transition: transform 420ms var(--sp); }
+.hu-btn:hover .hu-btn__arrow { transform: translateX(4px); }
 
-.hu-btn--ghost {
-  background: transparent;
-  color: var(--paper);
-  border: 1px solid var(--hair-2);
-  box-shadow: none;
+.hu-btn--quiet {
+  background: var(--bg);
+  color: var(--ink);
+  border: 1px solid var(--line-2);
+  box-shadow: var(--sh-1);
 }
-.hu-btn--ghost::after { display: none; }
-.hu-btn--ghost:hover {
-  border-color: rgba(228, 244, 240, 0.34);
-  background: var(--glass);
+.hu-btn--quiet::after { display: none; }
+.hu-btn--quiet:hover {
+  border-color: rgba(6, 42, 38, 0.26);
+  box-shadow: var(--sh-2);
 }
 
 /* --------------------------------------------------------------------------
@@ -347,7 +432,7 @@ body {
    -------------------------------------------------------------------------- */
 
 :where(a, button, [tabindex]):focus-visible {
-  outline: 2px solid var(--b2);
+  outline: 2px solid var(--b-ink);
   outline-offset: 3px;
   border-radius: 6px;
 }
@@ -359,8 +444,8 @@ body {
   translate: -50% -140%;
   z-index: 200;
   padding: 0.7em 1.2em;
-  background: var(--paper);
-  color: var(--ink);
+  background: var(--ink);
+  color: var(--bg);
   border-radius: 0 0 10px 10px;
   font-weight: 600;
   text-decoration: none;
@@ -380,10 +465,13 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 0.85rem var(--pad);
-  background: linear-gradient(180deg, rgba(5, 16, 14, 0.86), rgba(5, 16, 14, 0));
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  padding: 0.8rem var(--pad);
+  background: rgba(255, 255, 255, 0.76);
+  border-bottom: 1px solid transparent;
+  /* No saturate(): a second full-width filter pass over a fixed strip,
+     re-run every scroll frame, for an effect nobody can see on white. */
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   opacity: 0;
   transform: translateY(-10px);
   pointer-events: none;
@@ -393,12 +481,13 @@ body {
   opacity: 1;
   transform: none;
   pointer-events: auto;
+  border-bottom-color: var(--line);
 }
 .nav__mark {
   font-size: 0.95rem;
   font-weight: 660;
   letter-spacing: 0.3em;
-  color: var(--paper);
+  color: var(--ink);
   text-decoration: none;
   padding-left: 0.3em;
 }
@@ -411,19 +500,19 @@ body {
   font-size: 0.78rem;
   font-weight: 520;
   letter-spacing: -0.008em;
-  color: var(--faint);
+  color: var(--ink-3);
   text-decoration: none;
   padding: 0.45em 0.75em;
   border-radius: 999px;
   transition: color 260ms var(--sp), background 260ms var(--sp);
 }
 .nav__links a:hover {
-  color: var(--paper);
-  background: var(--glass);
+  color: var(--ink);
+  background: var(--tint);
 }
 /* Where you are, stated quietly. */
 .nav__links a.is-here {
-  color: var(--paper);
+  color: var(--ink);
 }
 .nav__links a.is-here::after {
   content: '';
@@ -440,18 +529,21 @@ body {
 }
 .nav__cta {
   font-size: 0.78rem;
-  font-weight: 580;
-  color: #04120f;
-  background: var(--paper);
-  padding: 0.55em 1.05em;
+  font-weight: 590;
+  color: #fff;
+  background: var(--ink);
+  padding: 0.58em 1.1em;
   border-radius: 999px;
   text-decoration: none;
   white-space: nowrap;
-  transition: transform 320ms var(--sp), background 320ms var(--sp);
+  box-shadow: var(--sh-1);
+  transition:
+    transform 320ms var(--sp),
+    box-shadow 320ms var(--sp);
 }
 .nav__cta:hover {
   transform: translateY(-1px);
-  background: #fff;
+  box-shadow: var(--sh-2);
 }
 
 @media (max-width: 780px) {
@@ -470,14 +562,26 @@ body {
   background: var(--grad);
   pointer-events: none;
 }
+/* A faint track behind it, or the bar has nothing to be measured against. */
+.pbar::before {
+  content: '';
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 2px;
+  background: var(--line);
+  transform-origin: 0 50%;
+  transform: scaleX(calc(1 / max(var(--pp, 0.001), 0.001)));
+}
 
 /* --------------------------------------------------------------------------
    Footer
    -------------------------------------------------------------------------- */
 
 .foot {
-  border-top: 1px solid var(--hair);
-  padding: clamp(2.4rem, 6vh, 4rem) 0 clamp(2.2rem, 5vh, 3.4rem);
+  position: relative;
+  border-top: 1px solid var(--line);
+  background: var(--bg-2);
+  padding: clamp(2.6rem, 7vh, 4.5rem) 0 clamp(2.2rem, 5vh, 3.4rem);
 }
 .foot__grid {
   display: flex;
@@ -495,14 +599,14 @@ body {
   max-width: 46ch;
   font-size: 0.8rem;
   line-height: 1.6;
-  color: var(--faint);
+  color: var(--ink-3);
 }
 .foot__legal {
   margin-top: 2.2rem;
   padding-top: 1.4rem;
-  border-top: 1px solid var(--hair);
+  border-top: 1px solid var(--line);
   font-size: 0.74rem;
-  color: var(--ghost);
+  color: var(--ink-4);
   display: flex;
   flex-wrap: wrap;
   gap: 0.6rem 1.4rem;
@@ -532,14 +636,16 @@ body {
    reading as one flat black field, and the moment between two sticky panels
    becomes a deliberate change of light rather than an empty gap.
 
-   The light curve across the page is designed, not decorative:
+   The curve across the page is designed, not decorative:
 
-     deep · cool · teal · lifted · LIT (the product) · teal · lifted
-     · warm · BLACK (philosophy) · lifted · LIT (the CTA) · deep
+     white · recessed · white · recessed · STAGE (the product) · white
+     · recessed · white · DARK (philosophy) · white · recessed (the CTA)
+     · white
 
-   Each ground is one or two gradients that fade out at their own edges, so
-   sections bleed into each other and no seam ever announces itself. They are
-   painted once into the section's layer and never animate.
+   Separation comes from shades of white and from elevation. Each ground
+   fades out at its own edges, so sections bleed into each other and no seam
+   announces itself. They are painted once into the section's layer and never
+   animate.
    ========================================================================== */
 
 .pinwrap,
@@ -566,7 +672,23 @@ body {
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background: var(--pin-ground, none);
+  /* An opaque plate, but only while the panel is still climbing over the
+     section before it. Without it the previous section's text shows straight
+     through the rising panel and the two collide — worst at phone widths,
+     where there is no room to spare. It clears as the panel settles, so the
+     section's own --ground wash is never hidden once it is pinned.
+
+     It is drawn as a gradient rather than a flat colour so its leading edge
+     is soft. A hard horizontal line cutting through the heading above it is
+     the one thing that would make the handoff look like a bug. */
+  --plate: color-mix(
+    in srgb,
+    var(--pin-base, var(--bg)) clamp(0%, calc((1 - var(--ap, 1)) * 400%), 100%),
+    transparent
+  );
+  background-image:
+    var(--pin-ground, none),
+    linear-gradient(180deg, transparent 0%, var(--plate) 5%, var(--plate) 100%);
 }
 
 /* Every pinned panel clears itself before the next section arrives. Without
@@ -575,8 +697,8 @@ body {
    sticky page. Applied to the panel rather than to its contents so it cannot
    collide with the entrance reveal inside. */
 .pin {
-  opacity: calc(1 - var(--exit));
-  scale: calc(1 - var(--exit) * 0.015);
+  opacity: calc((1 - var(--exit)) * var(--enter));
+  scale: calc(1 - var(--exit) * 0.015 - (1 - var(--enter)) * 0.012);
   /* The entrance lift. Peaks halfway through the run-up and is exactly zero
      both before the section enters and once it pins, so it can never collide
      with the section before it or displace the pinned composition. */
@@ -591,4 +713,83 @@ body {
     scale: none;
     translate: none;
   }
+}
+
+/* ==========================================================================
+   Animated typography.
+
+   A heading arrives a word at a time. Each word is masked by its own
+   overflow box and rises into it, which reads as type being set rather than
+   as text fading in. The stagger is an expression of --i, so a twelve-word
+   headline costs one class toggle and no timers.
+   ========================================================================== */
+
+.words__w {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  /* Room for descenders and for the letter-spacing of display type. */
+  padding-block: 0.08em;
+  margin-block: -0.08em;
+}
+.words__i {
+  display: inline-block;
+  translate: 0 105%;
+  opacity: 0;
+  transition:
+    translate 900ms var(--sp),
+    opacity 700ms var(--sp);
+  transition-delay: calc(var(--i) * 48ms);
+}
+.words.in .words__i {
+  translate: 0;
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .words__i {
+    translate: none;
+    opacity: 1;
+    transition: none;
+  }
+}
+
+/* A staged heading block: the eyebrow, then the words of the title, then the
+   line underneath. Three beats instead of one block fading in — which is the
+   difference between text appearing and text being set. */
+.headrev > .cap,
+.headrev > .lead {
+  opacity: 0;
+  translate: 0 10px;
+  transition:
+    opacity 700ms var(--sp),
+    translate 700ms var(--sp);
+}
+.headrev > .lead { transition-delay: 260ms; }
+.headrev.in > .cap,
+.headrev.in > .lead {
+  opacity: 1;
+  translate: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .headrev > .cap,
+  .headrev > .lead {
+    opacity: 1;
+    translate: none;
+    transition: none;
+  }
+}
+
+/* The navigation follows the page. Over the one dark section it changes
+   register with it, rather than sitting there as a white band across a
+   statement that is meant to be quiet. */
+.nav.on-dark {
+  background: rgba(6, 30, 26, 0.66);
+}
+.nav.on-dark .nav__cta {
+  /* Not var(--ink): the nav carries .on-dark itself, so --ink is light here
+     and would put white text on this white pill. */
+  color: var(--bg-dark);
+  background: #fff;
 }

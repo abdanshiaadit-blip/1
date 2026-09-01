@@ -31,17 +31,23 @@
   transform: scale(var(--k));
   transform-origin: 0 0;
   border-radius: 56px;
-  background: #01100d;
-  /* Screen bezel → polished chamfer → body → outer edge. The same read as
-     the app's own device, retuned for a dark page. */
+  background: #0b1a17;
+  /* Screen bezel → polished chamfer → body → outer edge, then a real
+     shadow. On a white page the shadow is what makes it an object; the glow
+     it used to carry only worked against black. */
   box-shadow:
-    0 0 0 2px #05100e,
-    0 0 0 3px #38524c,
-    0 0 0 12px #0a1a17,
-    0 0 0 13px #2c433e,
-    0 0 0 14px #071411,
-    0 60px 120px -30px rgba(0, 0, 0, 0.85),
-    0 20px 50px -20px rgba(0, 0, 0, 0.7);
+    0 0 0 2px #0b1a17,
+    0 0 0 3px #46605a,
+    0 0 0 12px #14231f,
+    0 0 0 13px #3b524d,
+    0 0 0 14px #0d1b18,
+    /* Three falloffs: contact, near, ambient. On paper the shadow is the
+       only thing separating the object from the page, so it does more work
+       here than it ever did against black. */
+    0 3px 8px rgba(6, 42, 38, 0.09),
+    0 22px 34px -14px rgba(6, 42, 38, 0.22),
+    0 54px 80px -30px rgba(6, 42, 38, 0.3),
+    0 100px 150px -60px rgba(6, 42, 38, 0.42);
 }
 
 /* The app's own .screen keeps its light canvas, blooms and radius.
@@ -74,8 +80,8 @@
 .hd__btn--down { left: calc(-17px * var(--k)); top: calc(248px * var(--k)); height: calc(62px * var(--k)); }
 .hd__btn--power { right: calc(-17px * var(--k)); top: calc(200px * var(--k)); height: calc(96px * var(--k)); }
 
-/* The product is the brightest thing on a near-black page. This is the light
-   it throws. */
+/* A faint pool of brand light under the device. On white this is almost
+   nothing — the shadow does the work now. */
 .hd__glow {
   position: absolute;
   z-index: -1;
@@ -85,8 +91,8 @@
   pointer-events: none;
   background: radial-gradient(
     circle,
-    rgba(0, 194, 166, 0.22) 0%,
-    rgba(10, 162, 224, 0.13) 38%,
+    rgba(0, 194, 166, 0.1) 0%,
+    rgba(10, 162, 224, 0.055) 38%,
     transparent 68%
   );
   filter: blur(28px);
@@ -103,4 +109,19 @@
 
 @media (prefers-reduced-motion: reduce) {
   .hd--tilt .hd__body { transform: none; }
+}
+
+/* The page owns vertical scrolling.
+
+   Inside the frame the app's own scrollers carry `overscroll-behavior:
+   contain`, which is right in a real phone app and wrong here: on a sticky
+   section the device sits centred for thousands of pixels, and a wheel over
+   it would scroll two and a half screens of app content before the story
+   moved again. Readers read that as a page that has stopped working.
+
+   Clipping the overflow hands the wheel back to the page while leaving the
+   containers programmatically scrollable — which is how the tour drives
+   them. Every tap, sheet and flow inside the app still works. */
+.hd .scroll {
+  overflow: hidden;
 }

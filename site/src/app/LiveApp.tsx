@@ -194,7 +194,7 @@ export function DeviceShell({
   children,
   maxScale = 1,
   className = '',
-  glow = true,
+  glow = false,
   label,
 }: {
   children: ReactNode

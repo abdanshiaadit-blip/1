@@ -33,6 +33,9 @@ let io: IntersectionObserver | null = null
 
 const clamp01 = (n: number) => (n < 0 ? 0 : n > 1 ? 1 : n)
 
+/** How far below the fold a section's run-up begins, in viewports. */
+const APPROACH_LEAD = 1.75
+
 function progressOf(e: Entry, vh: number): number {
   const r = e.el.getBoundingClientRect()
 
@@ -47,10 +50,13 @@ function progressOf(e: Entry, vh: number): number {
   }
 
   if (e.mode === 'approach') {
-    // 0 while the element's top is still at or below the viewport bottom,
-    // 1 once its top reaches the viewport top. This is the run-up to a
-    // sticky section, and it is what the entrance parallax is driven by.
-    return clamp01((vh - r.top) / vh)
+    // The run-up to a sticky section, and what the entrance lift is driven by.
+    // It starts APPROACH_LEAD viewports below the fold rather than exactly at
+    // it: a pinned panel fades out just as the next section's top reaches the
+    // viewport bottom, so a run-up that only begins there leaves one blank
+    // frame between the two. Starting early lets the next panel already be
+    // rising by the time the last one has gone.
+    return clamp01((vh * APPROACH_LEAD - r.top) / (vh * APPROACH_LEAD))
   }
 
   if (e.mode === 'enter') {

@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { useReveal } from '../lib/hooks'
+import Words from '../components/Words'
 import { founder } from '../content/founder'
 
 /* ==========================================================================
@@ -57,11 +58,15 @@ export default function Founder() {
   return (
     <section className="hu-sec fnd" id="founder" aria-labelledby="fnd-title">
       <div className="wrap">
-        <div ref={head.ref} className={`fnd__head rev ${head.shown ? 'in' : ''}`}>
+        <div ref={head.ref} className={`fnd__head headrev ${head.shown ? 'in' : ''}`}>
           <span className="cap">{founder.eyebrow}</span>
-          <h2 id="fnd-title" className="display fnd__title">
-            {founder.title}
-          </h2>
+          <Words
+            as="h2"
+            id="fnd-title"
+            className="display fnd__title"
+            text={founder.title}
+            shown={head.shown}
+          />
         </div>
 
         <div

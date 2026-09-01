@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react'
-import { useNearViewport, usePinEntrance, useSteps } from '../lib/hooks'
+import { useNearViewport, useSteps } from '../lib/hooks'
 import LiveApp, { type AppHandle } from '../app/LiveApp'
 import type { SheetKind, TabId } from '../../../src/state/app'
 import { tour, PROTOTYPE_URL } from '../content/product'
@@ -34,11 +34,16 @@ const SCROLL_RANGE: Record<string, [number, number]> = {
 
 export default function AppTour() {
   const app = useRef<AppHandle | null>(null)
-  const { ref: mountRef, near } = useNearViewport<HTMLDivElement>('40%')
+  // Mounting the real app is the one genuinely expensive moment on the page
+  // (~130ms of main thread). Reaching a viewport and a half ahead pays that
+  // cost while the reader is still in the section before this one, rather
+  // than at the instant the product is supposed to appear.
+  const { ref: mountRef, near } = useNearViewport<HTMLDivElement>('150%')
 
   // Intra-stop scrolling: the app's screen keeps moving between stops, which
   // is what makes it read as use rather than as a slideshow. Instant, never
   // smooth, so it cannot fight the page's own scrolling.
+  const lastScroll = useRef(-1)
   const onProgress = useCallback((step: number, frac: number) => {
     const h = app.current
     if (!h) return
@@ -46,17 +51,23 @@ export default function AppTour() {
     if (!range) return
     // Wait out the sheet's entrance before taking over its scroll position.
     const eased = frac < 0.18 ? 0 : (frac - 0.18) / 0.82
-    h.scrollScreen(range[0] + (range[1] - range[0]) * eased, false)
+    const top = range[0] + (range[1] - range[0]) * eased
+    // Every write to scrollTop recomposites a screenful of the app's glass
+    // surfaces, which are backdrop-filtered. Writing sub-pixel deltas sixty
+    // times a second was the most expensive thing on the page and looked
+    // identical to writing whole pixels.
+    if (Math.abs(top - lastScroll.current) < 3) return
+    lastScroll.current = top
+    h.scrollScreen(top, false)
   }, [])
 
-  const { ref, pinRef, step } = useSteps(tour.length, {
+  const { ref, pinRef, step, goTo } = useSteps(tour.length, {
     lead: 0.03,
     tail: 0.05,
     onProgress,
   })
 
   const stop = tour[step]
-  const enter = usePinEntrance()
 
   // Take the app to the stop. Sheets and the booking modal are opened a beat
   // after the tab change so their own spring entrance is visible.
@@ -65,6 +76,7 @@ export default function AppTour() {
     if (!h) return
     let t = 0
 
+    lastScroll.current = -1
     h.closeBooking()
     h.closeSheets()
     h.setTab(stop.tab as TabId)
@@ -85,7 +97,7 @@ export default function AppTour() {
   return (
     <section ref={ref} className="pinwrap tour" id="app" aria-labelledby="tour-title">
       <div ref={pinRef} className="pin tour__pin">
-        <div ref={enter.ref} className={`wrap tour__inner rev ${enter.shown ? 'in' : ''}`}>
+        <div className="wrap tour__inner">
           {/* ------------------------------------------------------- copy */}
           <header className="tour__head">
             <span className="cap">The app</span>
@@ -111,17 +123,28 @@ export default function AppTour() {
               ))}
             </ol>
 
+            {/* Not just a progress bar — an index. Eleven stops is a lot to
+                scroll past twice, so each one is reachable directly. */}
             <div className="tour__foot">
               <span className="tour__count tnum" aria-hidden="true">
                 {String(step + 1).padStart(2, '0')}
                 <span className="tour__countsep">/</span>
                 {String(tour.length).padStart(2, '0')}
               </span>
-              <span className="tour__ticks" aria-hidden="true">
+              <div className="tour__ticks" role="tablist" aria-label="Jump to a part of the app">
                 {tour.map((s, i) => (
-                  <span key={s.id} className={`tour__tick ${i <= step ? 'is-on' : ''}`} />
+                  <button
+                    key={s.id}
+                    type="button"
+                    role="tab"
+                    aria-selected={i === step}
+                    aria-label={`${s.eyebrow}: ${s.title}`}
+                    title={s.eyebrow}
+                    className={`tour__tick ${i <= step ? 'is-on' : ''} ${i === step ? 'is-now' : ''}`}
+                    onClick={() => goTo(i)}
+                  />
                 ))}
-              </span>
+              </div>
             </div>
           </div>
 
@@ -129,7 +152,7 @@ export default function AppTour() {
           <div ref={mountRef} className="tour__stage">
             <span className="tour__badge">
               <span className="tour__badgedot" aria-hidden="true" />
-              Live · working prototype
+              Live · you can touch it
             </span>
 
             <div className="tour__devicebox">

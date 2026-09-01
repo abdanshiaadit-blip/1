@@ -1,4 +1,4 @@
-import { usePinEntrance, useSteps } from '../lib/hooks'
+import { useSteps } from '../lib/hooks'
 import { transform, aadit } from '../content/product'
 
 /* ==========================================================================
@@ -18,13 +18,15 @@ const span = m.range.ceil - m.range.floor
 const pct = (v: number) => ((v - m.range.floor) / span) * 100
 
 export default function Transform() {
-  const { ref, pinRef, step } = useSteps(transform.states.length, { lead: 0.08, tail: 0.14 })
-  const enter = usePinEntrance()
+  const { ref, pinRef, step, goTo } = useSteps(transform.states.length, {
+    lead: 0.08,
+    tail: 0.14,
+  })
 
   return (
     <section ref={ref} className="pinwrap xf" aria-labelledby="xf-title">
       <div ref={pinRef} className="pin xf__pin">
-        <div ref={enter.ref} className={`wrap xf__inner rev ${enter.shown ? 'in' : ''}`}>
+        <div className="wrap xf__inner">
           <header className="xf__head">
             <span className="cap">{transform.eyebrow}</span>
             <h2 id="xf-title" className="xf__title h2">
@@ -97,11 +99,20 @@ export default function Transform() {
             </article>
           </div>
 
-          <div className="xf__ticks" aria-hidden="true">
+          {/* The four states, reachable directly. Scrolling is the default
+              way through; this is for the second look. */}
+          <div className="xf__ticks" role="tablist" aria-label="The four states of one result">
             {transform.states.map((st, i) => (
-              <span key={st.cap} className={`xf__tick ${i <= step ? 'is-on' : ''}`}>
+              <button
+                key={st.cap}
+                type="button"
+                role="tab"
+                aria-selected={i === step}
+                className={`xf__tick ${i <= step ? 'is-on' : ''} ${i === step ? 'is-now' : ''}`}
+                onClick={() => goTo(i)}
+              >
                 {st.cap}
-              </span>
+              </button>
             ))}
           </div>
         </div>
