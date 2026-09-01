@@ -49,10 +49,15 @@ export function DeviceFrame({
       raf = Math.abs(tx - x) > 0.001 || Math.abs(ty - y) > 0.001 ? requestAnimationFrame(loop) : 0
     }
 
+    /* Clamped, because the listener is on the window: a pointer three
+       viewports away from the phone yields a position far outside 0..1, and
+       unclamped that is not a four-degree tilt, it is the phone lying flat. */
+    const unit = (v: number) => Math.max(-1, Math.min(1, (v - 0.5) * 2))
+
     const move = (e: PointerEvent) => {
       const r = node.getBoundingClientRect()
-      tx = ((e.clientX - r.left) / r.width - 0.5) * 2
-      ty = ((e.clientY - r.top) / r.height - 0.5) * 2
+      tx = unit((e.clientX - r.left) / r.width)
+      ty = unit((e.clientY - r.top) / r.height)
       if (!raf) raf = requestAnimationFrame(loop)
     }
     const leave = () => {

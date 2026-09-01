@@ -48,7 +48,18 @@ cd web
 npm install
 npm run dev       # http://localhost:3100
 npm run build     # → web/out/, a plain static folder, deploy anywhere
+npm run portable  # → web/HUMAN-website/index.html, one file, opens offline
 ```
+
+`portable` exists for the same reason the app's does: a static export cannot be
+opened from `file://`, because its asset paths are absolute and `/_next/...`
+resolves to the root of the disk. `scripts/portable.mjs` folds the export into
+a single self-contained file — stylesheet, three fonts, the whole bundle, the
+icon and the poster, all inlined, with nothing left to fetch. The scripts go in
+document order and synchronously, which is the sequence webpack's runtime
+expects; the preload hints Next serialises into the flight payload are dropped,
+because React puts them back on hydration and each one is a cross-origin fetch
+a `file://` document is not allowed to make.
 
 It was built from the client's master spec, and three of its decisions are
 worth knowing before editing:
