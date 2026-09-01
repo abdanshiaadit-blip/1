@@ -1,0 +1,571 @@
+/* ==========================================================================
+   The device, and the app rebuilt inside it.
+
+   The frame sizes itself from --device-w, which the sections set. The screen
+   inside is always 390 × 844 and is scaled as a whole, so the proportions of
+   the real product are preserved exactly and no part of any screen can be
+   cropped, masked or clipped away.
+   ========================================================================== */
+
+.device {
+  --device-w: 320px;
+  --mx: 0;
+  --my: 0;
+  width: var(--device-w);
+  /* 390 × 844 is the prototype's own viewport. The frame adds its bezel. */
+  aspect-ratio: 390 / 844;
+  position: relative;
+  z-index: var(--z-content);
+  perspective: 1600px;
+}
+
+.device__body {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--r-phone);
+  background: var(--device-shell);
+  padding: 10px;
+  box-shadow:
+    0 0 0 1px rgba(12, 22, 19, 0.6),
+    0 0 0 8px var(--device-rim),
+    0 0 0 9px rgba(244, 248, 246, 0.08),
+    var(--shadow-lg);
+  transform: rotateY(calc(var(--mx) * 4deg)) rotateX(calc(var(--my) * -4deg));
+  transform-style: preserve-3d;
+  transition: transform var(--t-ui) var(--ease-soft);
+}
+
+.device__screen {
+  position: absolute;
+  inset: 10px;
+  border-radius: calc(var(--r-phone) - 10px);
+  overflow: hidden;
+  background: var(--canvas-2);
+  /* The screen is drawn at the product's own 390px and scaled to fit, so
+     every proportion inside is the real one. */
+  container-type: inline-size;
+}
+
+/* Everything below is drawn against a 390px-wide screen and scales with it,
+   which is what container query units are for. */
+.scr {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  background: var(--canvas-2);
+  font-size: 3.6cqw;
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  text-align: left;
+}
+
+.scr__status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3.4cqw 6cqw 1cqw;
+  font-size: 3.6cqw;
+  font-weight: 600;
+}
+
+.scr__notch {
+  width: 26cqw;
+  height: 7cqw;
+  border-radius: 99px;
+  background: var(--device-shell);
+}
+
+.scr__sig {
+  display: flex;
+  gap: 1cqw;
+  align-items: flex-end;
+}
+.scr__sig i {
+  width: 1.2cqw;
+  background: var(--ink);
+  border-radius: 1px;
+}
+.scr__sig i:nth-child(1) { height: 2cqw; }
+.scr__sig i:nth-child(2) { height: 3cqw; }
+.scr__sig i:nth-child(3) { height: 4cqw; }
+
+.scr__body {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.scr__scroll {
+  display: grid;
+  gap: 3cqw;
+  padding: 2cqw 5cqw 6cqw;
+  translate: 0 calc(var(--scroll, 0px) * -1);
+}
+
+.scr__tabbar {
+  display: grid;
+  grid-auto-flow: column;
+  gap: 1cqw;
+  padding: 2.4cqw 4cqw 4cqw;
+  background: rgba(255, 255, 255, 0.72);
+  border-top: var(--hairline);
+  backdrop-filter: blur(8px);
+}
+
+.scr__tab {
+  display: grid;
+  justify-items: center;
+  gap: 1.2cqw;
+  font-size: 2.6cqw;
+  font-weight: 500;
+  color: var(--ink-3);
+}
+
+.scr__tabdot {
+  width: 5cqw;
+  height: 5cqw;
+  border-radius: 99px;
+  border: 1.6px solid currentColor;
+}
+
+.scr__tab.is-on {
+  color: var(--surface);
+}
+.scr__tab.is-on .scr__tabdot {
+  background: var(--jade);
+  border-color: transparent;
+  box-shadow: 0 0 0 2.4cqw var(--jade);
+  margin-bottom: 0.4cqw;
+}
+.scr__tab.is-on {
+  color: var(--jade-deep);
+}
+
+/* ---- shared screen atoms ---------------------------------------------- */
+
+.scr__wordmark {
+  font-size: 5.4cqw;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+}
+
+.scr__intro {
+  font-size: 3.3cqw;
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+
+.scr__title {
+  font-size: 7.4cqw;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+}
+
+.scr__h {
+  font-size: 4.6cqw;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  margin-top: 1cqw;
+}
+
+.scr__k {
+  display: block;
+  font-size: 2.5cqw;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.scr__k--sp { margin-top: 2cqw; }
+.scr__k--clay { color: var(--clay); }
+
+.scr__v {
+  display: block;
+  font-size: 3.6cqw;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.scr__right { text-align: right; margin-left: auto; }
+
+.scr__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 4cqw;
+  padding: 3cqw 0;
+  border-top: var(--hairline);
+  border-bottom: var(--hairline);
+}
+
+.scr__card {
+  background: var(--surface);
+  border-radius: 5cqw;
+  padding: 4cqw;
+  display: grid;
+  gap: 1.6cqw;
+  box-shadow: var(--shadow-sm);
+}
+
+.scr__card--focus {
+  background: linear-gradient(168deg, rgba(154, 79, 66, 0.07), rgba(255, 255, 255, 0.9) 46%);
+}
+
+.scr__cardh {
+  display: block;
+  font-size: 4.2cqw;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+}
+
+.scr__cardp {
+  display: block;
+  font-size: 3.1cqw;
+  color: var(--ink-2);
+  line-height: 1.45;
+}
+
+.scr__cardfoot {
+  display: flex;
+  align-items: center;
+  gap: 2cqw;
+  font-size: 2.9cqw;
+  color: var(--ink-2);
+  padding-top: 1cqw;
+}
+.scr__cardfoot--top { padding-top: 0; }
+
+.scr__dot {
+  width: 2cqw;
+  height: 2cqw;
+  border-radius: 99px;
+  background: var(--jade);
+  flex: none;
+}
+
+.scr__flag {
+  font-size: 2.4cqw;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--clay);
+  background: rgba(154, 79, 66, 0.1);
+  padding: 0.8cqw 2cqw;
+  border-radius: 99px;
+  margin-left: auto;
+}
+
+.scr__link {
+  font-size: 3cqw;
+  font-weight: 600;
+  color: var(--jade);
+  margin-left: auto;
+}
+
+.scr__tag {
+  font-size: 2.4cqw;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--jade-deep);
+  background: rgba(31, 122, 99, 0.1);
+  padding: 0.8cqw 2cqw;
+  border-radius: 99px;
+  margin-left: auto;
+}
+
+.scr__big {
+  font-size: 9cqw;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+.scr__big span { font-size: 4cqw; color: var(--ink-3); }
+
+.scr__syskey {
+  font-size: 5cqw;
+  font-weight: 600;
+}
+.scr__syskey span { font-size: 3.2cqw; color: var(--ink-3); }
+
+/* ---- the score ring ---------------------------------------------------- */
+
+.scr__ring {
+  aspect-ratio: 1;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 1cqw;
+  border-radius: 14cqw;
+  border: 2.4cqw solid transparent;
+  background:
+    linear-gradient(var(--surface), var(--surface)) padding-box,
+    var(--grad-primary) border-box;
+  margin-inline: 6cqw;
+  box-shadow: var(--shadow-sm);
+}
+.scr__ringlabel {
+  font-size: 2.5cqw;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.scr__ringnum {
+  font-size: 17cqw;
+  font-weight: 600;
+  letter-spacing: -0.05em;
+  line-height: 1;
+}
+.scr__ringdelta {
+  font-size: 3cqw;
+  font-weight: 600;
+  color: var(--jade);
+}
+
+/* ---- tasks ------------------------------------------------------------- */
+
+.scr__task,
+.scr__tasks li {
+  display: flex;
+  gap: 3cqw;
+  align-items: flex-start;
+  background: var(--surface);
+  border-radius: 4.4cqw;
+  padding: 3.4cqw;
+  box-shadow: var(--shadow-sm);
+}
+
+.scr__tasks {
+  display: grid;
+  gap: 2.4cqw;
+}
+
+.scr__check {
+  width: 5.4cqw;
+  height: 5.4cqw;
+  border-radius: 99px;
+  border: 1.6px solid var(--ink-3);
+  flex: none;
+  margin-top: 0.6cqw;
+}
+.scr__check.is-on {
+  background: var(--jade);
+  border-color: transparent;
+}
+
+.scr__taskh {
+  font-size: 3.5cqw;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.scr__taskp {
+  font-size: 2.9cqw;
+  color: var(--ink-3);
+}
+
+/* ---- sheets ------------------------------------------------------------ */
+
+.scr__sheet {
+  background: var(--surface);
+  border-radius: 6cqw;
+  padding: 4.6cqw;
+  display: grid;
+  gap: 2cqw;
+  box-shadow: var(--shadow-md);
+}
+
+.scr__sheeth {
+  font-size: 5.6cqw;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.12;
+}
+
+.scr__bars {
+  display: grid;
+  gap: 2cqw;
+}
+.scr__bars li {
+  display: grid;
+  grid-template-columns: 22cqw minmax(0, 1fr) 8cqw;
+  align-items: center;
+  gap: 2cqw;
+}
+.scr__barlabel { font-size: 2.9cqw; color: var(--ink-2); }
+.scr__bartrack {
+  height: 1.6cqw;
+  border-radius: 99px;
+  background: var(--canvas-3);
+  overflow: hidden;
+}
+.scr__barfill {
+  display: block;
+  height: 100%;
+  background: var(--jade);
+  border-radius: 99px;
+}
+.scr__barval { font-size: 2.7cqw; color: var(--ink-3); text-align: right; }
+
+.scr__panels { display: grid; gap: 2.4cqw; }
+.scr__panel {
+  border: var(--hairline);
+  border-radius: 4.4cqw;
+  padding: 3.4cqw;
+  display: grid;
+  gap: 1cqw;
+}
+.scr__panel.is-on {
+  border-color: rgba(31, 122, 99, 0.36);
+  background: rgba(31, 122, 99, 0.05);
+}
+.scr__panelhead { display: flex; align-items: center; gap: 2cqw; }
+
+.scr__cta {
+  margin-top: 1cqw;
+  background: var(--forest);
+  color: var(--ink-inv);
+  border-radius: 99px;
+  padding: 3.4cqw;
+  text-align: center;
+  font-size: 3.4cqw;
+  font-weight: 600;
+}
+
+.scr__markers { display: grid; }
+.scr__marker {
+  display: flex;
+  justify-content: space-between;
+  gap: 3cqw;
+  padding: 2.6cqw 0;
+  border-bottom: var(--hairline);
+}
+.scr__markerk { font-size: 3.2cqw; color: var(--ink-2); }
+.scr__markerv { font-size: 3.2cqw; font-weight: 600; }
+.scr__markerv.is-flag { color: var(--clay); }
+
+.scr__spark { width: 100%; height: auto; }
+
+/* ---- before / after ---------------------------------------------------- */
+
+.scr__ba { display: grid; gap: 2.4cqw; }
+.scr__barow {
+  display: grid;
+  grid-template-columns: 20cqw minmax(0, 1fr) 10cqw;
+  align-items: center;
+  gap: 2cqw;
+}
+.scr__batrack {
+  height: 3cqw;
+  border-radius: 99px;
+  background: var(--canvas-3);
+  overflow: hidden;
+}
+.scr__bafill { display: block; height: 100%; border-radius: 99px; }
+.scr__delta {
+  font-size: 3.4cqw;
+  font-weight: 600;
+  color: var(--jade);
+}
+
+/* ==========================================================================
+   The two morphs.
+
+   Rows collapse into cards, and a card becomes a task. Both are driven by one
+   clamped number and both use transform and opacity only: the reserved box
+   holds the height for the whole move, so no part of the screen shifts while
+   it happens.
+   ========================================================================== */
+
+.scr__morph {
+  min-height: 58cqw;
+}
+
+/* The two halves cross early and tightly. The rows are still at full
+   strength while the cards arrive, and the cards are at full strength before
+   the rows have gone — so at no point in the move is everything on the
+   screen faint. From a third of the way through the step onward the whole
+   thing sits at rest. */
+.scr__morphrows {
+  display: grid;
+  gap: 1.6cqw;
+  align-content: start;
+  opacity: clamp(0, calc((0.34 - var(--t, 0)) / 0.14), 1);
+}
+.scr__morphrows li {
+  padding: 2.2cqw 3cqw;
+  background: var(--surface);
+  border-radius: 3cqw;
+  box-shadow: var(--shadow-sm);
+  /* Each row travels toward the card it will become. Six rows, three cards:
+     they pair up two-to-one, which is why the divisor is 2. */
+  translate: 0 calc(clamp(0, calc(var(--t, 0) / 0.34), 1) * (round(down, var(--i) / 2) * 18cqw - var(--i) * 8.6cqw));
+  scale: calc(1 - clamp(0, calc(var(--t, 0) / 0.34), 1) * 0.06);
+}
+
+.scr__morphjobs {
+  display: grid;
+  gap: 2.4cqw;
+  align-content: start;
+  opacity: clamp(0, calc((var(--t, 0) - 0.16) / 0.14), 1);
+}
+.scr__morphjobs li {
+  display: flex;
+  gap: 3cqw;
+  align-items: flex-start;
+  padding: 3.4cqw;
+  background: var(--surface);
+  border-radius: 4.4cqw;
+  box-shadow: var(--shadow-sm);
+  translate: 0 calc((1 - clamp(0, calc((var(--t, 0) - 0.16) / 0.14), 1)) * 10px);
+}
+
+.scr__rank {
+  width: 6.4cqw;
+  height: 6.4cqw;
+  flex: none;
+  border-radius: 99px;
+  background: var(--forest);
+  color: var(--ink-inv);
+  font-size: 3cqw;
+  font-weight: 600;
+  display: grid;
+  place-items: center;
+}
+
+.scr__becomes {
+  display: flex;
+  gap: 3cqw;
+  align-items: flex-start;
+  padding: 3.4cqw;
+  background: var(--surface);
+  border-radius: 4.4cqw;
+  box-shadow: var(--shadow-sm);
+  /* Contracts as the plan resolves beneath it: the card does not vanish, it
+     settles into being the header of the thing it produced. */
+  scale: calc(1 - clamp(0, calc(var(--t, 0) / 0.34), 1) * 0.04);
+  opacity: calc(1 - clamp(0, calc(var(--t, 0) / 0.34), 1) * 0.18);
+}
+
+.scr__tasks li {
+  opacity: clamp(0, calc((var(--t, 0) - 0.06 - var(--i) * 0.07) / 0.1), 1);
+  translate: 0 calc((1 - clamp(0, calc((var(--t, 0) - 0.06 - var(--i) * 0.07) / 0.1), 1)) * 10px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .device__body { transform: none; }
+  .scr__morphrows { opacity: 0; }
+  .scr__morphjobs,
+  .scr__tasks li {
+    opacity: 1;
+    translate: none;
+  }
+  .scr__morphrows li,
+  .scr__becomes {
+    translate: none;
+    scale: none;
+    opacity: 1;
+  }
+}

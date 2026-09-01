@@ -1,0 +1,1195 @@
+/* ==========================================================================
+   Page furniture and the eight sections.
+   ========================================================================== */
+
+/* ---- skip link --------------------------------------------------------- */
+
+.skip {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  translate: -50% -140%;
+  z-index: var(--z-overlay);
+  background: var(--forest);
+  color: var(--ink-inv);
+  padding: var(--s-12) var(--s-24);
+  border-radius: 0 0 var(--r-sm) var(--r-sm);
+  font-weight: 600;
+  text-decoration: none;
+  transition: translate var(--t-ui) var(--ease);
+}
+.skip:focus-visible { translate: -50% 0; }
+
+/* ---- ambient glow ------------------------------------------------------ */
+
+.glow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: var(--z-ambient);
+  width: 30rem;
+  height: 30rem;
+  margin: -15rem 0 0 -15rem;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    circle,
+    rgba(31, 122, 99, 0.08) 0%,
+    rgba(24, 106, 116, 0.05) 42%,
+    transparent 68%
+  );
+  transition:
+    opacity var(--t-scene) var(--ease),
+    transform var(--t-scene) var(--ease);
+  will-change: transform;
+}
+.glow.is-on { opacity: 1; }
+
+/* ---- progress hairline -------------------------------------------------- */
+
+.pbar {
+  position: fixed;
+  inset: 0 auto auto 0;
+  z-index: var(--z-header);
+  width: 100%;
+  height: 2px;
+  background: var(--grad-primary);
+  transform-origin: 0 50%;
+  /* Clamped here as well as at the source, so the invariant is visible
+     where the value is actually used. */
+  transform: scaleX(clamp(0, var(--pp, 0), 1));
+  pointer-events: none;
+}
+
+/* ---- header ------------------------------------------------------------- */
+
+.hdr {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: var(--z-header);
+  height: 64px;
+  display: flex;
+  align-items: center;
+  padding-top: env(safe-area-inset-top);
+  background: transparent;
+  border-bottom: 1px solid transparent;
+  transition:
+    background var(--t-ui) var(--ease-soft),
+    border-color var(--t-ui) var(--ease-soft),
+    translate var(--t-ui) var(--ease),
+    color var(--t-ui) var(--ease-soft);
+  color: var(--ink);
+}
+
+.hdr.is-solid {
+  background: rgba(247, 249, 247, 0.82);
+  backdrop-filter: blur(20px);
+  border-bottom-color: rgba(12, 22, 19, 0.08);
+}
+
+.hdr.is-dark {
+  background: rgba(11, 46, 39, 0.82);
+  backdrop-filter: blur(20px);
+  border-bottom-color: rgba(244, 248, 246, 0.1);
+  color: var(--ink-inv);
+}
+
+.hdr.is-hidden { translate: 0 -100%; }
+
+.hdr__in {
+  width: 100%;
+  max-width: var(--max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+  display: flex;
+  align-items: center;
+  gap: var(--s-32);
+}
+
+.hdr__mark {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+}
+
+.hdr__nav {
+  display: flex;
+  gap: var(--s-24);
+  margin-left: auto;
+}
+
+.hdr__link {
+  position: relative;
+  font-size: 0.86rem;
+  font-weight: 500;
+  text-decoration: none;
+  color: var(--ink-3);
+  transition: color var(--t-micro) var(--ease);
+  padding-block: var(--s-8);
+}
+.hdr.is-dark .hdr__link { color: var(--ink-inv-2); }
+
+.hdr__link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 2px;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transform-origin: 0 50%;
+  scale: 0 1;
+  transition: scale 200ms var(--ease);
+}
+.hdr__link:hover { color: inherit; }
+.hdr__link:hover::after { scale: 1 1; }
+
+.hdr__cta {
+  margin-left: 0;
+  text-decoration: none;
+  background: var(--forest);
+  color: var(--ink-inv);
+  padding: var(--s-12) var(--s-16);
+  border-radius: var(--r-pill);
+  white-space: nowrap;
+  transition:
+    translate var(--t-micro) var(--ease),
+    box-shadow var(--t-micro) var(--ease),
+    background var(--t-ui) var(--ease-soft);
+}
+.hdr__cta:hover { translate: 0 -2px; box-shadow: var(--shadow-md); }
+.hdr.is-dark .hdr__cta { background: var(--ink-inv); color: var(--forest); }
+
+@media (max-width: 767px) {
+  .hdr__nav { display: none; }
+  .hdr__mark { margin-right: auto; }
+}
+
+/* ---- buttons ------------------------------------------------------------ */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-8);
+  padding: var(--s-16) var(--s-24);
+  border-radius: var(--r-pill);
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    translate var(--t-micro) var(--ease),
+    box-shadow var(--t-micro) var(--ease),
+    background var(--t-micro) var(--ease),
+    border-color var(--t-micro) var(--ease);
+}
+.btn__arrow { transition: translate var(--t-micro) var(--ease); flex: none; }
+.btn:hover .btn__arrow { translate: 3px 0; }
+.btn:active { translate: 0; scale: 0.99; }
+
+.btn--primary {
+  background: var(--forest);
+  color: var(--ink-inv);
+  box-shadow: var(--shadow-sm);
+}
+.btn--primary:hover { translate: 0 -2px; box-shadow: var(--shadow-md); }
+
+.btn--secondary {
+  border: var(--hairline-2);
+  color: var(--ink);
+}
+.btn--secondary:hover {
+  border-color: var(--jade);
+  background: rgba(31, 122, 99, 0.05);
+}
+
+.on-dark .btn--secondary { border-color: rgba(244, 248, 246, 0.24); color: var(--ink-inv); }
+.on-dark .btn--secondary:hover { border-color: var(--ink-inv); background: rgba(244, 248, 246, 0.06); }
+.on-dark .btn--primary { background: var(--ink-inv); color: var(--forest); }
+
+/* ==========================================================================
+   1 — Hero
+   ========================================================================== */
+
+.hero { height: 180vh; }
+
+/* No position here. `.scene__pin` is already sticky, which is itself a
+   positioned containing block for the wash — and a `position: relative` on
+   the same element would quietly win the cascade and un-stick the panel. */
+
+.hero__wash {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-ambient);
+  background-image: var(--grain), var(--grad-ambient);
+  background-size: 160px 160px, auto;
+  background-position: 0 0, 50% 34%;
+  pointer-events: none;
+}
+
+.hero__grid {
+  position: relative;
+  z-index: var(--z-content);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  height: 100%;
+  padding-top: calc(64px + var(--s-24));
+  gap: var(--s-24);
+}
+
+.hero__top {
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  text-align: center;
+  gap: var(--s-16);
+  min-height: 0;
+}
+
+/* The wordmark and the H1 share one reserved box, so the hand-off cannot
+   move anything. The wordmark is the only element on the site that ends at
+   opacity 0, and it is decorative by then: the header wordmark has it. */
+.hero__swap { width: 100%; }
+
+.hero__mark {
+  background: var(--grad-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  justify-self: center;
+  align-self: center;
+  /* Gone by 0.42, and the sentence does not begin arriving until 0.44. The
+     gap is what stops the two reading as a collision — they share one box,
+     so any overlap is a literal one. */
+  opacity: clamp(0, calc((0.42 - var(--p, 0)) / 0.1), 1);
+  scale: calc(1 - clamp(0, calc((var(--p, 0) - 0.28) / 0.2), 1) * 0.7);
+  translate: 0 calc(clamp(0, calc((var(--p, 0) - 0.28) / 0.2), 1) * -22svh);
+}
+
+.hero__h1 {
+  align-self: center;
+  max-width: 18ch;
+  margin-inline: auto;
+  opacity: clamp(0, calc((var(--p, 0) - 0.44) / 0.16), 1);
+  translate: 0 calc((1 - clamp(0, calc((var(--p, 0) - 0.44) / 0.16), 1)) * 24px);
+  filter: blur(calc((1 - clamp(0, calc((var(--p, 0) - 0.44) / 0.16), 1)) * 8px));
+}
+
+.hero__sub {
+  opacity: clamp(0, calc((var(--p, 0) - 0.58) / 0.14), 1);
+  translate: 0 calc((1 - clamp(0, calc((var(--p, 0) - 0.58) / 0.14), 1)) * 16px);
+  color: var(--ink-2);
+  text-align: center;
+}
+
+.hero__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-8);
+  border: var(--hairline-2);
+  border-radius: var(--r-pill);
+  padding: var(--s-8) var(--s-16);
+  color: var(--ink-2);
+  opacity: clamp(0, calc((var(--p, 0) - 0.62) / 0.14), 1);
+  translate: 0 calc((1 - clamp(0, calc((var(--p, 0) - 0.62) / 0.14), 1)) * 16px);
+}
+
+.hero__chipdot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--jade);
+  flex: none;
+}
+
+.hero__btn {
+  opacity: clamp(0, calc((var(--p, 0) - 0.72) / 0.14), 1);
+  translate: 0 calc((1 - clamp(0, calc((var(--p, 0) - 0.72) / 0.14), 1)) * 12px);
+}
+
+/* The device rises into the lower band and settles there, showing its upper
+   portion — the brief's composition, and the part of the screen that carries
+   the content. It is not masked, not squashed and not scaled: it is a whole
+   phone standing at the bottom of the frame, the way an object sits at the
+   bottom of a photograph. The sections where the product itself is the
+   subject show all of it. */
+.hero__stage {
+  display: grid;
+  justify-items: center;
+  align-items: end;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.hero__device {
+  --device-w: min(290px, 58vw, calc((100svh - 300px) / 2.164));
+  opacity: clamp(0, calc((var(--p, 0) - 0.55) / 0.2), 1);
+  translate: 0 calc((1 - clamp(0, calc((var(--p, 0) - 0.55) / 0.25), 1)) * 30vh);
+  /* The device settles at 78% and stays. It does not leave — it becomes the
+     device in section 4. */
+  transform: perspective(1400px)
+    rotateX(calc((1 - clamp(0, calc((var(--p, 0) - 0.55) / 0.25), 1)) * 8deg));
+}
+
+.hero__scroll {
+  position: absolute;
+  bottom: var(--s-24);
+  left: 50%;
+  translate: -50% 0;
+  z-index: var(--z-content);
+  color: var(--ink-3);
+  opacity: clamp(0, calc((0.12 - var(--p, 0)) / 0.12), 1);
+}
+
+/* ==========================================================================
+   2 — The problem
+   ========================================================================== */
+
+.prob { height: 280vh; }
+.prob__pin { background: var(--canvas); }
+
+.prob__grid {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: var(--s-24);
+  height: 100%;
+  padding-block: calc(64px + var(--s-32)) var(--s-48);
+}
+
+/* The measure belongs on the element that carries the type size. On a
+   wrapper, `ch` resolves against the wrapper's own font — body size — and
+   the heading ends up a column six words wide. */
+.prob__head > .t-section { max-width: 18ch; }
+.prob__support { color: var(--ink-2); margin-top: var(--s-16); max-width: 52ch; }
+
+.prob__chartwrap {
+  position: relative;
+  display: grid;
+  align-content: center;
+  min-height: 0;
+}
+
+/* The drawing dims once the turn arrives, so the sentence has the screen.
+   The honesty label does not dim with it: a caption that says the data is
+   illustrative has to be readable whenever the data is. */
+.prob__dim {
+  opacity: calc(1 - clamp(0, calc((var(--p, 0) - 0.62) / 0.18), 1) * 0.6);
+}
+
+.prob__chart { width: 100%; height: auto; max-height: 42svh; }
+
+.prob__band { fill: rgba(31, 122, 99, 0.07); }
+.prob__line { fill: none; stroke: var(--jade); stroke-width: 2.5; stroke-linecap: round; }
+.prob__lineover { fill: none; stroke: var(--clay); stroke-width: 2.5; stroke-linecap: round; }
+.prob__tick { fill: var(--ink-3); font-size: 11px; font-weight: 600; letter-spacing: 0.1em; }
+.prob__head-dot { fill: var(--clay); }
+
+.prob__stamps {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: var(--s-8);
+  margin-top: var(--s-16);
+}
+.prob__stamp {
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--ink-3);
+  /* Each stamp fades to a fifth as the next arrives, and never below it. */
+  opacity: clamp(0.2, calc((var(--p, 0) - 0.1 - var(--i) * 0.05) * 9), 1);
+}
+.prob__stamp.is-last { color: var(--clay); font-weight: 600; }
+
+.prob__caption {
+  font-size: 0.72rem;
+  color: var(--ink-3);
+  text-align: center;
+  margin-top: var(--s-12);
+}
+
+.prob__turn > .t-sub { max-width: 26ch; }
+/* Full strength by 0.74, which leaves a quarter of the section — some 400px
+   of scrolling — with the turn readable and the drift still behind it. It
+   used to arrive at 0.92 and the panel began leaving 8% later, so the line
+   the section exists for was only ever read on the way out. */
+.prob__turnline {
+  opacity: clamp(0, calc((var(--p, 0) - 0.64) / 0.1), 1);
+  translate: 0 calc((1 - clamp(0, calc((var(--p, 0) - 0.64) / 0.1), 1)) * 16px);
+}
+.prob__closer {
+  color: var(--ink-2);
+  margin-top: var(--s-8);
+  opacity: clamp(0, calc((var(--p, 0) - 0.7) / 0.1), 1);
+}
+
+/* ==========================================================================
+   3 — The idea
+   ========================================================================== */
+
+/* The ring finishes here, and the phrase in the middle arrives just after.
+   Idea.tsx reads the same number — keep the two in step. */
+.idea { height: 240vh; --ring-end: 0.72; }
+.idea__pin { background: var(--canvas-2); }
+
+.idea__grid {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: var(--s-24);
+  height: 100%;
+  padding-block: calc(64px + var(--s-32)) var(--s-48);
+  justify-items: center;
+  text-align: center;
+}
+
+.idea__ringwrap {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 0;
+  width: min(420px, 74vw, 44svh);
+  aspect-ratio: 1;
+}
+
+.idea__svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.idea__arc {
+  fill: none;
+  stroke: var(--jade);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - clamp(0, calc(var(--p, 0) / var(--ring-end)), 1));
+}
+.idea__track { fill: none; stroke: rgba(12, 22, 19, 0.08); stroke-width: 1.5; }
+
+.idea__node {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: calc(var(--x) * 1px - 50%) calc(var(--y) * 1px - 50%);
+  display: grid;
+  place-items: center;
+}
+
+.idea__hit {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  border-radius: var(--r-pill);
+}
+
+.idea__dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--canvas-2);
+  border: 1.5px solid rgba(12, 22, 19, 0.24);
+  transition:
+    background var(--t-ui) var(--ease),
+    border-color var(--t-ui) var(--ease),
+    scale var(--t-ui) var(--ease);
+}
+.idea__node.is-on .idea__dot {
+  background: var(--jade);
+  border-color: transparent;
+  scale: 1.15;
+}
+.idea__hit:hover .idea__dot { border-color: var(--jade); }
+
+.idea__label {
+  position: absolute;
+  white-space: nowrap;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  /* An inactive node is quiet, not gone. The brief asks for opacity 0.55
+     here; at that value the label composites to roughly 2:1 against the
+     canvas, which is under any legibility floor. De-emphasis is carried by
+     --ink-3 instead — a token specified at 4.6:1 — so the quiet state is
+     still a readable one. */
+  color: var(--ink-3);
+  translate: calc(var(--lx) * 1px) calc(var(--ly) * 1px);
+  /* Colour only. Transitioning font-weight re-measures the text and moves
+     six labels around a circle every time a node lights. */
+  transition: color var(--t-ui) var(--ease);
+}
+.idea__node.is-on .idea__label { color: var(--ink); }
+
+.idea__centre {
+  position: absolute;
+  inset: 26%;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  pointer-events: none;
+}
+.idea__centretext {
+  opacity: clamp(0, calc((var(--p, 0) - 0.74) / 0.1), 1);
+}
+
+/* The description lives in its own reserved box below the ring and can never
+   overlap it. */
+.idea__desc {
+  min-height: 4.5em;
+  display: grid;
+  align-content: start;
+  justify-items: center;
+}
+.idea__descline { max-width: 46ch; margin-inline: auto; }
+.idea__desckey { color: var(--jade-deep); }
+.idea__descline { color: var(--ink-2); margin-top: var(--s-4); max-width: 46ch; margin-inline: auto; }
+
+/* ==========================================================================
+   4 — How it works
+   ========================================================================== */
+
+.how { height: 340vh; }
+.how__pin { background: var(--canvas); }
+
+.how__grid {
+  display: grid;
+  /* An even split rather than the brief's 42/58. The rail carries six lines
+     of prose and the narrower column wrapped most of them onto a third line,
+     which put the whole column over the height of the screen it is pinned
+     to. The device does not need the extra width; the words do. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--s-48);
+  align-items: center;
+  height: 100%;
+  padding-block: calc(64px + var(--s-24)) var(--s-32);
+}
+
+.how__rail {
+  display: grid;
+  /* The rail has to hold six steps inside one screen at any height, so its
+     rhythm is measured against the viewport rather than fixed. */
+  gap: clamp(2px, 0.5vh, 10px);
+  align-content: center;
+  min-width: 0;
+}
+
+.how__step {
+  display: grid;
+  grid-template-columns: 2.6rem minmax(0, 1fr);
+  gap: var(--s-16);
+  align-items: start;
+  padding: clamp(4px, 0.9vh, 12px) 0;
+  border: 0;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  border-top: var(--hairline);
+  /* Same decision as the ring: the brief's 0.42 rest is below anything
+     legible once composited, so an inactive step is de-emphasised by colour
+     rather than by opacity and stays readable at every scroll position. */
+  color: var(--ink-3);
+  transition: color var(--t-ui) var(--ease);
+}
+.how__step.is-on { color: var(--ink); }
+.how__step:hover { color: var(--ink-2); }
+.how__step.is-on:hover { color: var(--ink); }
+.how__step .t-sub { color: inherit; }
+
+
+.how__n {
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--ink-3);
+  padding-top: 0.35em;
+  transition: color var(--t-ui) var(--ease);
+}
+.how__step.is-on .how__n { color: var(--jade); }
+
+.how__step .t-sub { display: block; }
+
+.how__detail {
+  margin-top: var(--s-24);
+  padding-top: var(--s-16);
+  border-top: var(--hairline);
+  min-height: 5.2em;
+}
+.how__line {
+  display: block;
+  color: var(--ink-2);
+  max-width: 46ch;
+}
+
+.how__stage { display: grid; place-items: center; min-width: 0; }
+/* Capped against the panel's own height, so the whole phone is on screen in
+   the sections where the product is the subject. */
+.how__device { --device-w: min(300px, 34vw, calc((100svh - 200px) / 2.164)); }
+
+@media (max-width: 1023px) {
+  .how__grid { grid-template-columns: minmax(0, 1fr); gap: var(--s-32); }
+  .how__stage { display: none; }
+}
+
+/* ==========================================================================
+   5 — The app
+   ========================================================================== */
+
+.app { height: 480vh; }
+.app__pin { background: var(--canvas-2); }
+
+.app__wash {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-ambient);
+  background-image: var(--grain), var(--grad-ambient);
+  background-size: 160px 160px, auto;
+  pointer-events: none;
+}
+
+.app__grid {
+  position: relative;
+  z-index: var(--z-content);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--s-64);
+  align-items: center;
+  height: 100%;
+  padding-block: calc(64px + var(--s-32)) var(--s-48);
+}
+
+.app__copy { display: grid; align-content: center; gap: var(--s-24); min-width: 0; }
+
+.app__label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-8);
+  border: var(--hairline-2);
+  border-radius: var(--r-pill);
+  padding: var(--s-8) var(--s-16);
+  color: var(--ink-2);
+  justify-self: start;
+}
+
+/* Fixed height, sized to the longest caption, so the layout never shifts as
+   the caption changes. */
+.app__captionbox { min-height: 7.5em; }
+.app__caption { display: grid; align-content: start; gap: var(--s-8); }
+.app__caption > * { display: block; }
+.app__captionname { color: var(--jade-deep); }
+
+.app__dots { display: flex; gap: var(--s-8); flex-wrap: wrap; }
+.app__dot {
+  width: 44px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+}
+/* The mark is always three pixels tall and is scaled down at rest, because
+   animating height is animating layout, and layout never animates here. */
+.app__dot::before {
+  content: '';
+  width: 100%;
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(12, 22, 19, 0.14);
+  scale: 1 0.67;
+  transition:
+    background var(--t-ui) var(--ease),
+    scale var(--t-ui) var(--ease);
+}
+.app__dot.is-past::before { background: rgba(31, 122, 99, 0.5); }
+.app__dot.is-on::before { background: var(--jade); scale: 1 1; }
+.app__dot:hover::before { background: var(--jade-deep); }
+
+.app__scope {
+  font-size: 0.78rem;
+  color: var(--ink-3);
+  max-width: 56ch;
+  border-top: var(--hairline);
+  padding-top: var(--s-16);
+}
+
+.app__stage { display: grid; place-items: center; min-width: 0; }
+.app__device { --device-w: min(380px, 38vw, calc((100svh - 200px) / 2.164)); }
+
+/* The swipe rail. It exists only below a laptop; above it the pinned panel
+   is the presentation and the rail is not rendered at all. */
+.app__rail { display: none; }
+
+@media (max-width: 1023px) {
+  /* The panel stops scrubbing and becomes a normal block, and the eight
+     screens become something you swipe through at your own pace. */
+  .app { height: auto; }
+  .app__pin {
+    position: static;
+    height: auto;
+    padding-block: var(--section-y);
+    display: block;
+    overflow: visible;
+  }
+  .app__grid { display: block; height: auto; padding-block: 0; }
+  .app__stage { display: none; }
+  .app__captionbox { display: none; }
+  .app__dots { display: none; }
+  .app__copy { display: grid; gap: var(--s-16); }
+
+  .app__rail {
+    display: flex;
+    gap: var(--s-24);
+    margin-top: var(--block-y);
+    padding-inline: var(--gutter);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--gutter);
+    -webkit-overflow-scrolling: touch;
+  }
+  .app__slide {
+    margin: 0;
+    flex: none;
+    width: min(72vw, 300px);
+    scroll-snap-align: center;
+    display: grid;
+    gap: var(--s-16);
+    justify-items: center;
+    text-align: center;
+  }
+  .app__slidedevice { --device-w: min(72vw, 300px); }
+  .app__slide figcaption { display: grid; gap: var(--s-8); }
+}
+
+/* ==========================================================================
+   6 — What we read
+   ========================================================================== */
+
+.sig { padding-block: var(--section-y); background: var(--canvas); }
+.sig__head { display: grid; gap: var(--s-16); justify-items: center; text-align: center; }
+
+.sig__chips {
+  display: flex;
+  gap: var(--s-8);
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: var(--block-y);
+}
+
+.sig__chip {
+  border: var(--hairline-2);
+  background: none;
+  border-radius: var(--r-pill);
+  padding: var(--s-12) var(--s-24);
+  cursor: pointer;
+  color: var(--ink-3);
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  transition:
+    color var(--t-micro) var(--ease),
+    background var(--t-micro) var(--ease),
+    border-color var(--t-micro) var(--ease);
+}
+.sig__chip:hover { color: var(--ink); background: var(--canvas-3); }
+.sig__chip[aria-selected='true'] {
+  background: var(--forest);
+  border-color: var(--forest);
+  color: var(--ink-inv);
+}
+
+.sig__body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr);
+  gap: var(--s-64);
+  align-items: center;
+  margin-top: var(--block-y);
+}
+
+.sig__visual {
+  aspect-ratio: 16 / 10;
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  border: var(--hairline);
+  box-shadow: var(--shadow-sm);
+  display: grid;
+  place-items: center;
+  padding: var(--s-32);
+}
+.sig__svg { width: 100%; height: 100%; }
+
+/* Fixed height, sized to the longest caption. */
+.sig__captionbox { min-height: 9em; display: grid; align-content: center; gap: var(--s-12); }
+
+.sig__fade {
+  animation: sigIn var(--t-ui) var(--ease) both;
+}
+@keyframes sigIn {
+  from { opacity: 0; scale: 1.04; }
+}
+
+@media (max-width: 767px) {
+  .sig__body { grid-template-columns: minmax(0, 1fr); gap: var(--s-32); }
+  .sig__chips { flex-wrap: nowrap; overflow-x: auto; justify-content: flex-start; scroll-snap-type: x mandatory; padding-bottom: var(--s-8); }
+  .sig__chip { scroll-snap-align: start; flex: none; }
+}
+
+/* ==========================================================================
+   7 — Built for India
+   ========================================================================== */
+
+.india { padding-block: var(--section-y); background: var(--canvas-2); }
+.india__head { max-width: 26ch; }
+
+.india__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s-48);
+  margin-top: var(--block-y);
+}
+.india__line { color: var(--ink-2); margin-top: var(--s-12); }
+
+.india__stat {
+  margin-top: var(--block-y);
+  border-top: var(--hairline);
+  padding-top: var(--s-32);
+}
+.india__statline { max-width: 30ch; }
+.india__statnum { color: var(--jade-deep); }
+
+/* The counter holds the width of its finished value from the first frame, so
+   the sentence around it never moves while the digits climb. Law 1: the
+   animation is allowed to change the number, not the layout. */
+.count {
+  position: relative;
+  display: inline-block;
+}
+.count__slot { visibility: hidden; }
+.count__live {
+  position: absolute;
+  inset: 0;
+  text-align: left;
+}
+.india__cite {
+  display: inline-block;
+  margin-top: var(--s-16);
+  font-size: 0.78rem;
+  color: var(--ink-3);
+}
+.india__cite:hover { color: var(--jade-deep); }
+
+@media (max-width: 767px) {
+  .india__grid { grid-template-columns: minmax(0, 1fr); gap: var(--s-32); }
+}
+
+/* ==========================================================================
+   8 — Philosophy → Founder → CTA
+   ========================================================================== */
+
+.close { background: var(--forest-deep); color: var(--ink-inv); }
+
+/* Two screens tall with the words pinned across the first, so the statement
+   holds a full viewport of scrolling with nothing else on screen. The
+   restraint is the point; it needs the room to be restrained in. */
+.philo { min-height: 200svh; position: relative; }
+.philo__in {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  /* Law 5: a pinned panel is sealed. Nothing here can escape it. */
+  overflow: hidden;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  text-align: center;
+  padding-block: var(--section-y);
+}
+.philo__h { max-width: 18ch; }
+.philo__sub { color: var(--ink-inv-2); margin-top: var(--s-32); }
+
+.founder {
+  background: var(--forest);
+  padding-block: var(--section-y);
+}
+.founder__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
+  gap: var(--s-64);
+  align-items: center;
+}
+.founder__figure {
+  margin: 0;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  border: var(--hairline-inv);
+  background: rgba(244, 248, 246, 0.04);
+  aspect-ratio: 9 / 16;
+  display: grid;
+  place-items: center;
+}
+.founder__video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.founder__placeholder {
+  display: grid;
+  gap: var(--s-8);
+  justify-items: center;
+  color: var(--ink-inv-2);
+  text-align: center;
+  padding: var(--s-24);
+}
+.founder__body { color: var(--ink-inv-2); max-width: 56ch; }
+.founder__sig { margin-top: var(--s-24); }
+.founder__name { color: var(--ink-inv); }
+.founder__role { color: var(--ink-inv-2); }
+
+@media (max-width: 767px) {
+  .founder__grid { grid-template-columns: minmax(0, 1fr); gap: var(--s-32); }
+  .founder__figure { max-width: 280px; }
+}
+
+.cta {
+  padding-block: var(--section-y);
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: var(--s-24);
+}
+.cta__h { max-width: 16ch; }
+.cta__sub { color: var(--ink-inv-2); }
+
+.foot {
+  border-top: var(--hairline-inv);
+  padding-block: var(--s-48);
+}
+.foot__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  gap: var(--s-48);
+  align-items: start;
+}
+.foot__mark { font-size: 18px; font-weight: 600; letter-spacing: 0.05em; }
+.foot__scope { color: var(--ink-inv-2); font-size: 0.82rem; max-width: 60ch; }
+.foot__meta {
+  display: flex;
+  gap: var(--s-24);
+  flex-wrap: wrap;
+  margin-top: var(--s-24);
+  color: var(--ink-inv-2);
+  font-size: 0.82rem;
+}
+.foot__meta a:hover { color: var(--ink-inv); }
+
+@media (max-width: 767px) {
+  .foot__grid { grid-template-columns: minmax(0, 1fr); gap: var(--s-24); }
+}
+
+/* ==========================================================================
+   The rest state of everything the scroll engine drives.
+
+   Two situations need the whole page resolved to its finished state at once:
+   a reader who has asked for reduced motion, and a phone, where there is no
+   scrubbing at all. Both get the same list, so neither can drift out of date
+   while the other is maintained.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce), (scripting: none) {
+  .philo { min-height: 0; }
+  .philo__in { position: static; height: auto; }
+
+  /* The wordmark is decorative once the sentence is on screen — and with no
+     motion the two would simply be printed on top of each other. */
+  .hero__mark { display: none; }
+
+  .hero__h1,
+  .hero__sub,
+  .hero__chip,
+  .hero__btn,
+  .hero__device,
+  .hero__scroll,
+  .prob__dim,
+  .prob__stamp,
+  .prob__turnline,
+  .prob__closer,
+  .idea__centretext {
+    opacity: 1 !important;
+    translate: none !important;
+    scale: none !important;
+    filter: none !important;
+    transform: none !important;
+  }
+
+  .idea__arc { stroke-dashoffset: 0 !important; }
+  .hero__scroll { display: none; }
+}
+
+/* ==========================================================================
+   Mobile: no scrubbing anywhere.
+
+   Every sticky section becomes a stack of blocks that reveal once on entry.
+   Same content, same order, same story — nothing that depends on scrubbing a
+   sticky panel with a touch scroller that has momentum and rubber-banding.
+   ========================================================================== */
+
+@media (max-width: 767px) {
+  :root { --section-y: 72px; }
+
+  .philo { min-height: 0; }
+  .philo__in { position: static; height: auto; min-height: 78svh; }
+
+  .scene { height: auto !important; }
+  .scene__pin {
+    position: static;
+    height: auto;
+    padding-block: var(--section-y);
+    display: block;
+  }
+
+  /* Anything driven by --p resolves to its rest state and stays there. */
+  .hero__mark,
+  .hero__h1,
+  .hero__sub,
+  .hero__chip,
+  .hero__btn,
+  .hero__device,
+  .prob__turnline,
+  .prob__closer,
+  .prob__chartwrap,
+  .prob__dim,
+  .prob__stamp,
+  .idea__centretext {
+    opacity: 1 !important;
+    translate: none !important;
+    scale: none !important;
+    filter: none !important;
+    transform: none !important;
+  }
+
+  .hero__grid { grid-template-rows: auto auto; gap: var(--s-48); padding-top: 0; }
+  .hero__top { gap: var(--s-16); }
+  .hero__mark { font-size: clamp(2.6rem, 16vw, 5rem); }
+  .hero__device { --device-w: min(78vw, 320px); }
+  .hero__scroll { display: none; }
+
+  .prob__grid,
+  .idea__grid,
+  .how__grid,
+  .app__grid { display: block; height: auto; padding-block: 0; }
+
+  .prob__chartwrap { margin-block: var(--s-32); }
+  .prob__chart { max-height: none; }
+  .prob__turn { margin-top: var(--s-32); }
+
+  .idea__ringwrap { display: none; }
+  .idea__list { display: grid; gap: var(--s-24); margin-top: var(--s-32); text-align: left; }
+  .idea__listrow { border-top: var(--hairline); padding-top: var(--s-16); }
+  .idea__grid { justify-items: stretch; text-align: left; }
+
+  .how__rail { margin-top: var(--s-32); }
+  .app__copy { gap: var(--s-16); }
+  .app__captionbox { min-height: 0; }
+}
+
+/* ==========================================================================
+   Short viewports: a landscape phone, or a laptop window dragged down.
+
+   A pinned panel is 100svh tall, and at 390px that leaves room for a headline
+   and nothing else: the hero's button falls out of the bottom of its own pin
+   and the device inside it collapses to a 40px sliver. Below 560px of height
+   every scene un-pins and becomes a block, at any width — the same treatment
+   the phone gets, for the same reason.
+   ========================================================================== */
+
+@media (max-height: 560px) {
+  :root { --section-y: 56px; }
+
+  .scene { height: auto !important; }
+  .scene__pin {
+    position: static;
+    height: auto;
+    padding-block: var(--section-y);
+    display: block;
+  }
+  .philo { min-height: 0; }
+  .philo__in { position: static; height: auto; }
+
+  /* Anything driven by --p resolves to its rest state and stays there. */
+  .hero__mark,
+  .hero__h1,
+  .hero__sub,
+  .hero__chip,
+  .hero__btn,
+  .hero__device,
+  .prob__turnline,
+  .prob__closer,
+  .prob__chartwrap,
+  .prob__dim,
+  .prob__stamp,
+  .idea__centretext {
+    opacity: 1 !important;
+    translate: none !important;
+    scale: none !important;
+    filter: none !important;
+    transform: none !important;
+  }
+
+  .hero__grid,
+  .prob__grid,
+  .idea__grid,
+  .how__grid,
+  .app__grid {
+    display: block;
+    height: auto;
+    padding-block: 0;
+  }
+  .hero__top { display: grid; justify-items: center; gap: var(--s-16); }
+  .hero__swap { margin-bottom: var(--s-8); }
+  .hero__mark { display: none; }
+  .hero__stage { margin-top: var(--s-32); }
+  .hero__device { --device-w: min(38vw, 260px); }
+  .hero__scroll { display: none; }
+
+  .prob__chartwrap { margin-block: var(--s-32); }
+  .prob__chart { max-height: none; }
+  .prob__turn { margin-top: var(--s-32); }
+
+  .idea__ringwrap { width: min(320px, 44vw); margin-top: var(--s-24); }
+  .idea__descline { margin-top: var(--s-16); }
+
+  .how__rail { margin-top: var(--s-24); }
+  .how__stage { display: none; }
+
+  .app__pin { overflow: visible; }
+  .app__stage,
+  .app__captionbox,
+  .app__dots { display: none; }
+  .app__copy { display: grid; gap: var(--s-16); }
+  .app__rail {
+    display: flex;
+    gap: var(--s-24);
+    margin-top: var(--block-y);
+    padding-inline: var(--gutter);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--gutter);
+  }
+  .app__slide {
+    margin: 0;
+    flex: none;
+    width: min(46vw, 260px);
+    scroll-snap-align: center;
+    display: grid;
+    gap: var(--s-16);
+    justify-items: center;
+    text-align: center;
+  }
+  .app__slidedevice { --device-w: min(46vw, 260px); }
+  .app__slide figcaption { display: grid; gap: var(--s-8); }
+}
+
+/* The ring is the desktop presentation; the list is the phone's. Exactly one
+   of them exists at any width. */
+.idea__list { display: none; }
+
+@media (min-width: 768px) {
+  .idea__list { display: none; }
+}

@@ -39,8 +39,46 @@ and embeds fonts as data URIs since `file://` font requests are blocked too.
 
 ## The website
 
-The official HUMAN site lives in **`site/`** and is a second Vite root, so the app
-at `./index.html` is untouched.
+The official HUMAN site lives in **`web/`**. It is a Next.js 15 app that builds
+to a static folder, and it is a separate project from the app at
+`./index.html` — its own `package.json`, its own dependencies, nothing shared.
+
+```bash
+cd web
+npm install
+npm run dev       # http://localhost:3100
+npm run build     # → web/out/, a plain static folder, deploy anywhere
+```
+
+It was built from the client's master spec, and three of its decisions are
+worth knowing before editing:
+
+- **The app screens are DOM, not screenshots.** `components/app-screens/`
+  rebuilds eight real screens of the prototype in HTML and CSS, sized in
+  container-query units so they scale with the device frame. They carry the
+  prototype's own strings. Two of them morph — marker rows collapse into three
+  ranked jobs, and the top job becomes something to do today — and both morphs
+  happen *inside one screen*, driven by one clamped number, so a transition
+  cannot strand a half-flown element.
+- **Motion is one number.** `lib/useScrollProgress.ts` runs a single
+  `requestAnimationFrame` loop that writes `--p`, 0 → 1, on each section as it
+  passes the viewport; every animation is a CSS expression of it. No animation
+  library. Sections outside the viewport are skipped and the loop parks when
+  nothing is moving.
+- **Nothing animates layout.** Every animated element sits in a reserved box,
+  every scroll-driven value is inside a `clamp()`, and every element's rest
+  state is opacity 1. `prefers-reduced-motion` — and `scripting: none`, which
+  covers both a reader with JavaScript off and printing — un-pins every sticky
+  panel and renders the page as stacked, readable blocks.
+
+Every word on the site is in `lib/content.ts`. There is one statistic, it is
+cited, and it links to its source; there is no pricing, and the scope line
+appears in the footer and beneath the app showcase.
+
+### The earlier website
+
+The first version of the site is still in **`site/`**, a second Vite root, so
+the app at `./index.html` is untouched.
 
 ```bash
 npm run dev:site      # http://localhost:5174

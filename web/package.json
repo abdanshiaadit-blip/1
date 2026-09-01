@@ -1,0 +1,35 @@
+{
+  "name": "human-web",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3100",
+    "build": "next build",
+    "start": "npx serve out -l 3100",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "next": "^15.5.25",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "@types/node": "^26.4.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.5",
+    "autoprefixer": "^10.5.4",
+    "postcss": "^8.5.26",
+    "tailwindcss": "^3.4.19",
+    "typescript": "^5.9.3"
+  },
+  "browserslist": [
+    "chrome >= 108",
+    "edge >= 108",
+    "firefox >= 121",
+    "safari >= 16.4",
+    "ios_saf >= 16.4",
+    "and_chr >= 108",
+    "samsung >= 21"
+  ]
+}
