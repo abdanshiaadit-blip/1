@@ -1,0 +1,1532 @@
+/* ==========================================================================
+   Section choreography.
+
+   Every animation below is an expression of one number: --p, published on
+   each section by the scroll engine and running 0 → 1 as that section passes
+   through the viewport. No keyframes are driven by JavaScript, no library is
+   loaded, and a section with --p missing simply renders at rest.
+
+   The recurring idiom is a sub-range:
+       --a: clamp(0, calc((var(--p) - START) / LENGTH), 1);
+   which turns the section's overall progress into one movement's progress.
+   ========================================================================== */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ==========================================================================
+   01 · HERO
+   ========================================================================== */
+
+.hu-hero { height: 300svh; }
+
+.hu-hero__pin {
+  --m1: clamp(0, calc((var(--p, 0) - 0.13) / 0.24), 1); /* wordmark leaves   */
+  --m2: clamp(0, calc((var(--p, 0) - 0.26) / 0.2), 1);  /* the line arrives  */
+  --m3: clamp(0, calc((var(--p, 0) - 0.44) / 0.36), 1); /* the device builds */
+  --m4: clamp(0, calc((var(--p, 0) - 0.62) / 0.24), 1); /* copy hands over   */
+  place-items: center;
+  text-align: center;
+}
+
+.hu-hero__markwrap {
+  position: absolute;
+  inset-inline: 0;
+  display: grid;
+  place-items: center;
+  translate: 0 calc(var(--m1) * -34svh);
+  scale: calc(1 - var(--m1) * 0.8);
+  opacity: calc(1 - var(--m1));
+  will-change: translate, scale, opacity;
+}
+.hu-hero__mark {
+  font-size: var(--fs-mega);
+  font-weight: 620;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  background: var(--grad);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: markshift 14s ease-in-out infinite alternate;
+}
+@keyframes markshift {
+  from { background-position: 0% 50%; }
+  to { background-position: 100% 50%; }
+}
+
+/* The words and the product cross-fade: for a beat both are on screen, then
+   the copy hands over and the device is alone. Nothing rises into the nav. */
+.hu-hero__copy {
+  position: absolute;
+  inset-inline: 0;
+  padding-inline: var(--pad);
+  max-width: 1100px;
+  margin-inline: auto;
+  opacity: calc(var(--m2) * (1 - var(--m4)));
+  filter: blur(calc((1 - var(--m2)) * 13px + var(--m4) * 7px));
+  translate: 0 calc((1 - var(--m2)) * 26px + var(--m4) * -7svh);
+  scale: calc(1 - var(--m4) * 0.07);
+  will-change: translate, scale, opacity, filter;
+}
+.hu-hero__title {
+  max-width: 17ch;
+  margin-inline: auto;
+  text-wrap: balance;
+}
+.hu-hero__sub {
+  margin: 1.1rem auto 0;
+  max-width: 46ch;
+}
+.hu-hero__actions {
+  margin-top: 1.9rem;
+  display: flex;
+  gap: 0.7rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  pointer-events: auto;
+}
+
+.hu-hero__stage {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+.hu-hero__device {
+  width: min(100%, 460px);
+  height: 100%;
+  display: grid;
+  place-items: center;
+  opacity: var(--m3);
+  translate: 0 calc(74svh - var(--m3) * 62svh);
+  scale: calc(0.9 + var(--m3) * 0.1);
+  pointer-events: auto;
+  will-change: translate, scale, opacity;
+}
+
+.hu-hero__hint {
+  position: absolute;
+  bottom: 2.2rem;
+  inset-inline: 0;
+  display: grid;
+  justify-items: center;
+  gap: 0.55rem;
+  font-size: 0.62rem;
+  font-weight: 620;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ghost);
+  opacity: calc(1 - clamp(0, calc(var(--p, 0) / 0.12), 1));
+}
+.hu-hero__hintline {
+  width: 1px;
+  height: 32px;
+  background: linear-gradient(180deg, var(--hair-2), transparent);
+}
+
+/* ==========================================================================
+   02 · THE PROBLEM
+   ========================================================================== */
+
+.prob { height: 340svh; }
+
+.prob__pin {
+  --pd: clamp(0, calc((var(--p, 0) - 0.1) / 0.56), 1);  /* the line draws */
+  --pu: clamp(0, calc((var(--p, 0) - 0.72) / 0.16), 1); /* the punch      */
+  align-content: stretch;
+}
+.prob__inner {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: clamp(1rem, 2.6vh, 2rem);
+  height: 100%;
+  padding-block: clamp(0.5rem, 2vh, 1.5rem) clamp(1.6rem, 5vh, 3rem);
+}
+
+.prob__title {
+  margin-top: 0.7rem;
+  max-width: 16ch;
+}
+
+.prob__chartwrap {
+  display: grid;
+  place-items: center;
+  min-height: 0;
+}
+.prob__chart {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  max-height: 100%;
+  aspect-ratio: 1000 / 420;
+}
+.prob__svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.prob__band { fill: rgba(63, 220, 160, 0.05); }
+.prob__bandline {
+  stroke: rgba(63, 220, 160, 0.3);
+  stroke-width: 1;
+  stroke-dasharray: 4 6;
+  vector-effect: non-scaling-stroke;
+}
+.prob__wipe {
+  transform-origin: 0 0;
+  scale: var(--pd) 1;
+}
+.prob__trace {
+  fill: none;
+  stroke: url(#driftline);
+  stroke-width: 3;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--pd));
+  filter: drop-shadow(0 0 8px rgba(255, 125, 79, 0.28));
+}
+.prob__dot {
+  fill: var(--paper);
+  offset-distance: calc(var(--pd) * 100%);
+  offset-rotate: 0deg;
+  opacity: clamp(0, calc(var(--pd) * 10), 1);
+  filter: drop-shadow(0 0 10px rgba(255, 160, 120, 0.9));
+}
+.prob__bandlabel {
+  position: absolute;
+  left: 0;
+  top: 62%;
+  font-size: 0.6rem;
+  font-weight: 640;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(63, 220, 160, 0.5);
+}
+
+.prob__years {
+  position: absolute;
+  inset: auto 0 -3.4rem 0;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  list-style: none;
+  gap: 0.4rem;
+}
+.prob__year {
+  --t: calc(var(--pd) * 5 - var(--i));
+  display: grid;
+  gap: 0.28rem;
+  justify-items: center;
+  text-align: center;
+  opacity: clamp(0, calc(min(var(--t) * 3, (1.5 - var(--t)) * 3)), 1);
+  translate: 0 calc((1 - clamp(0, calc(var(--t) * 3), 1)) * 8px);
+}
+.prob__year.is-last {
+  /* The last one stays. That is the moment the section exists for. */
+  opacity: clamp(0, calc(var(--t) * 3), 1);
+}
+.prob__yearn {
+  font-size: 0.58rem;
+  font-weight: 640;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ghost);
+}
+.prob__yearline {
+  font-size: clamp(0.85rem, 1.2vw, 1.05rem);
+  font-weight: 520;
+  color: var(--mute);
+  letter-spacing: -0.014em;
+  white-space: nowrap;
+}
+.prob__year.is-last .prob__yearline {
+  color: var(--s-attention);
+  font-weight: 580;
+}
+
+.prob__punch {
+  opacity: var(--pu);
+  translate: 0 calc((1 - var(--pu)) * 18px);
+  min-height: 7.5rem;
+}
+.prob__punchline { letter-spacing: -0.03em; max-width: 24ch; }
+.prob__after { margin-top: 0.7rem; max-width: 58ch; }
+.prob__note {
+  margin-top: 0.9rem;
+  font-size: 0.68rem;
+  color: var(--ghost);
+  letter-spacing: 0.02em;
+}
+
+/* ==========================================================================
+   03 · THE LOOP
+   ========================================================================== */
+
+.loopsec { height: 340svh; }
+
+.loopsec__pin {
+  /* The arc draws behind the nodes and closes in the final tenth. */
+  --arc: clamp(0, calc((var(--p, 0) - 0.08) / 0.76), 1);
+  --lc: clamp(0, calc((var(--p, 0) - 0.86) / 0.12), 1);
+}
+.loopsec__inner {
+  display: grid;
+  gap: clamp(0.8rem, 2.2vh, 1.6rem);
+  align-content: center;
+  justify-items: center;
+  text-align: center;
+  width: 100%;
+}
+.loopsec__title { margin-top: 0.5rem; }
+.loopsec__lead {
+  margin: 0.7rem auto 0;
+  max-width: 50ch;
+}
+
+.loopring {
+  position: relative;
+  width: min(100%, 46svh, 480px);
+  aspect-ratio: 1;
+  margin-block: clamp(0.5rem, 2vh, 1.6rem);
+}
+.loopring__svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.loopring__track {
+  fill: none;
+  stroke: var(--hair);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.loopring__arc {
+  fill: none;
+  stroke: url(#loopgrad);
+  stroke-width: 2;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--arc));
+  filter: drop-shadow(0 0 6px rgba(0, 194, 166, 0.4));
+}
+
+.loopring__nodes {
+  position: absolute;
+  inset: 0;
+  list-style: none;
+}
+.loopnode {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: 10px;
+  height: 10px;
+  translate: -50% -50%;
+  opacity: 0.34;
+  transition: opacity 480ms var(--sp);
+}
+.loopnode.is-past { opacity: 0.62; }
+.loopnode.is-on { opacity: 1; }
+
+.loopnode__dot {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--ink-2);
+  border: 1px solid var(--hair-2);
+  transition:
+    background 420ms var(--sp),
+    box-shadow 420ms var(--sp),
+    border-color 420ms var(--sp),
+    scale 420ms var(--sp);
+}
+.loopnode.is-past .loopnode__dot { background: rgba(0, 194, 166, 0.5); border-color: transparent; }
+.loopnode.is-on .loopnode__dot {
+  background: var(--b2);
+  border-color: transparent;
+  scale: 1.25;
+  box-shadow: 0 0 0 5px rgba(0, 194, 166, 0.16), 0 0 18px rgba(0, 194, 166, 0.7);
+}
+
+/* Pushed out along the radius, so the label sits outside the ring and the
+   arc is never written over. */
+.loopnode__name {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  /* Anchored by its outer edge: a label on the right of the ring hangs off to
+     the right, one on the left hangs off to the left, and one at the top or
+     bottom stays centred. Nothing is ever written over the arc. */
+  translate:
+    calc(var(--ux) * 50% - 50% + var(--ux) * 1.15em)
+    calc(-50% + var(--uy) * 1.9em);
+  font-size: clamp(0.5rem, 0.8vw, 0.64rem);
+  font-weight: 660;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--faint);
+  transition: color 420ms var(--sp);
+}
+.loopnode.is-on .loopnode__name { color: var(--paper); }
+
+.loopcentre {
+  position: absolute;
+  inset: 26%;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  pointer-events: none;
+}
+.loopcentre__inner { animation: centrein 520ms var(--sp) both; }
+@keyframes centrein {
+  from { opacity: 0; transform: translateY(8px); }
+}
+.loopcentre__cap {
+  font-size: 0.55rem;
+  font-weight: 680;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--b2);
+}
+.loopcentre__plain {
+  margin-top: 0.4rem;
+  font-size: clamp(1.05rem, 2.1vw, 1.65rem);
+  font-weight: 620;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+  text-wrap: balance;
+}
+
+/* The explanation lives below the ring rather than inside it — nothing to
+   collide with, and it can be read at a comfortable size. */
+.loopsec__body {
+  min-height: 3.6em;
+  max-width: 48ch;
+  font-size: clamp(0.88rem, 1.15vw, 1.02rem);
+  line-height: 1.55;
+  color: var(--mute);
+  text-wrap: pretty;
+  animation: centrein 520ms var(--sp) both;
+}
+
+.loopsec__closing {
+  font-size: clamp(0.92rem, 1.4vw, 1.16rem);
+  font-weight: 520;
+  letter-spacing: -0.02em;
+  color: var(--paper);
+  opacity: var(--lc);
+  translate: 0 calc((1 - var(--lc)) * 12px);
+}
+
+/* ==========================================================================
+   04 · WHAT IS HUMAN
+   ========================================================================== */
+
+.what__title { margin-top: 0.8rem; max-width: 14ch; }
+.what__lead { margin-top: 1rem; max-width: 44ch; }
+
+.what__grid {
+  margin-top: clamp(2.4rem, 6vh, 4.5rem);
+  display: grid;
+  gap: clamp(2rem, 5vw, 4rem);
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  align-items: start;
+}
+
+.rail {
+  --ra: var(--p, 0);
+  list-style: none;
+  position: relative;
+  display: grid;
+  gap: clamp(1.4rem, 3.4vw, 2.4rem);
+}
+/* The line that connects them, drawn as the section transits. */
+.rail::before {
+  content: '';
+  position: absolute;
+  left: 3.15rem;
+  top: 0.55rem;
+  bottom: 0.55rem;
+  width: 1px;
+  background: linear-gradient(180deg, var(--b2), rgba(10, 162, 224, 0.15));
+  transform-origin: 50% 0;
+  scale: 1 clamp(0, calc((var(--ra) - 0.12) / 0.5), 1);
+}
+.rail__i {
+  --in: clamp(0, calc((var(--ra) - 0.1 - var(--i) * 0.055) / 0.16), 1);
+  display: grid;
+  grid-template-columns: 2.4rem 1.5rem minmax(0, 1fr);
+  align-items: start;
+  gap: 0 0.5rem;
+  opacity: calc(0.2 + var(--in) * 0.8);
+  translate: 0 calc((1 - var(--in)) * 14px);
+}
+.rail__n {
+  font-size: 0.66rem;
+  font-weight: 640;
+  letter-spacing: 0.1em;
+  color: var(--ghost);
+  padding-top: 0.32rem;
+}
+.rail__dot {
+  width: 9px;
+  height: 9px;
+  margin-top: 0.42rem;
+  justify-self: center;
+  border-radius: 50%;
+  background: var(--ink);
+  border: 1px solid var(--hair-2);
+  position: relative;
+  z-index: 1;
+}
+.rail__i:nth-child(-n + 6) .rail__dot {
+  background: color-mix(in oklab, var(--b2) calc(var(--in) * 100%), var(--ink));
+  border-color: color-mix(in oklab, var(--b2) calc(var(--in) * 100%), var(--hair-2));
+}
+.rail__k {
+  font-size: clamp(1.02rem, 1.6vw, 1.32rem);
+  font-weight: 600;
+  letter-spacing: -0.026em;
+  line-height: 1.2;
+}
+.rail__v {
+  margin-top: 0.32rem;
+  color: var(--mute);
+  font-size: clamp(0.88rem, 1.02vw, 1rem);
+  line-height: 1.55;
+  max-width: 42ch;
+}
+
+.tabs { position: sticky; top: 18vh; }
+.tabs__card {
+  border: 1px solid var(--hair);
+  background: var(--glass);
+  border-radius: 22px;
+  padding: clamp(1.2rem, 2vw, 1.7rem);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+.tabs__note {
+  margin-top: 0.7rem;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--mute);
+}
+.tabs__list {
+  margin-top: 1.1rem;
+  list-style: none;
+  display: grid;
+}
+.tabs__row {
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.72rem 0;
+  border-top: 1px solid var(--hair);
+}
+.tabs__name {
+  font-size: 0.94rem;
+  font-weight: 600;
+  letter-spacing: -0.016em;
+}
+.tabs__q { font-size: 0.82rem; color: var(--faint); }
+
+/* ==========================================================================
+   05 · THE APP
+   ========================================================================== */
+
+.tour { height: 760svh; }
+.tour__pin {
+  overflow: clip;
+  align-content: stretch;
+}
+
+/* Absolutely positioned inside the sticky panel so its height is definite.
+   Without that, the panel is sized by the device and the device is sized by
+   the panel — and the circle resolves at whatever the first frame measured. */
+.tour__inner {
+  position: absolute;
+  /* The pin's own top padding is not part of an absolute child's containing
+     block, so the nav clearance is restated here. */
+  inset: clamp(3.4rem, 8vh, 5rem) 0 0 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.92fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-areas:
+    'head stage'
+    'copy stage';
+  column-gap: clamp(1.5rem, 4vw, 4rem);
+  row-gap: clamp(1rem, 3vh, 2rem);
+  align-items: center;
+  padding-block: 0 clamp(1.2rem, 4vh, 2.2rem);
+}
+
+.tour__head { grid-area: head; align-self: end; }
+.tour__copy {
+  grid-area: copy;
+  display: grid;
+  align-content: center;
+  gap: 1.4rem;
+  min-width: 0;
+}
+.tour__title { margin-top: 0.7rem; max-width: 15ch; }
+
+.tour__stops {
+  position: relative;
+  list-style: none;
+  /* Sized to the tallest stop so the layout never shifts between them. */
+  display: grid;
+}
+.tourstop {
+  grid-area: 1 / 1;
+  opacity: 0;
+  translate: 0 14px;
+  filter: blur(6px);
+  transition:
+    opacity 560ms var(--sp),
+    translate 560ms var(--sp),
+    filter 560ms var(--sp);
+  pointer-events: none;
+}
+.tourstop.is-on {
+  opacity: 1;
+  translate: 0;
+  filter: none;
+}
+.tourstop__cap { color: var(--b2); }
+.tourstop__title { margin-top: 0.55rem; max-width: 19ch; }
+.tourstop__body { margin-top: 0.7rem; max-width: 46ch; }
+
+.tour__foot {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.tour__count {
+  font-size: 0.72rem;
+  font-weight: 620;
+  letter-spacing: 0.1em;
+  color: var(--faint);
+}
+.tour__countsep { margin: 0 0.3em; color: var(--ghost); }
+.tour__ticks {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+}
+.tour__tick {
+  height: 2px;
+  flex: 1;
+  border-radius: 2px;
+  background: var(--hair);
+  transition: background 420ms var(--sp);
+}
+.tour__tick.is-on { background: var(--b2); }
+
+.tour__stage {
+  grid-area: stage;
+  position: relative;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  justify-items: center;
+  gap: 0.85rem;
+  height: 100%;
+  min-height: 0;
+}
+/* The device sizes itself against this box, so the badge above and the link
+   below are accounted for and it can never overflow the pinned panel. */
+.tour__devicebox {
+  position: relative;
+  width: 100%;
+  min-height: 0;
+}
+/* Taken out of flow for the same reason: the device must never be able to
+   push the box that it measures itself against. */
+.tour__devicebox > .hd {
+  position: absolute;
+  inset: 0;
+}
+.tour__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.4em 0.9em;
+  border-radius: 999px;
+  border: 1px solid var(--hair-2);
+  background: var(--glass);
+  font-size: 0.66rem;
+  font-weight: 620;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--mute);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.tour__badgedot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--s-optimal);
+  box-shadow: 0 0 0 3px rgba(63, 220, 160, 0.18);
+  animation: pulse 2.4s var(--sp-soft) infinite;
+}
+@keyframes pulse {
+  50% { box-shadow: 0 0 0 6px rgba(63, 220, 160, 0.04); }
+}
+.tour__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  font-size: 0.82rem;
+  font-weight: 560;
+  color: var(--mute);
+  text-decoration: none;
+  transition: color 300ms var(--sp);
+}
+.tour__link:hover { color: var(--paper); }
+.tour__link:hover .hu-btn__arrow { transform: translateX(3px); }
+
+/* ==========================================================================
+   06 · DATA → ACTION
+   ========================================================================== */
+
+.xf { height: 400svh; }
+.xf__pin {
+  --xa: clamp(0, calc((var(--p, 0) - 0.03) / 0.12), 1);
+}
+.xf__inner {
+  display: grid;
+  gap: clamp(1.2rem, 3vh, 2.2rem);
+  align-content: center;
+  justify-items: center;
+  text-align: center;
+  width: 100%;
+}
+.xf__head {
+  opacity: var(--xa);
+  translate: 0 calc((1 - var(--xa)) * 16px);
+}
+.xf__title { margin-top: 0.6rem; max-width: 13ch; margin-inline: auto; }
+.xf__lead { margin-top: 0.7rem; max-width: 40ch; margin-inline: auto; }
+
+.xf__stagewrap {
+  position: relative;
+  width: min(100%, 620px);
+  display: grid;
+  place-items: center;
+  margin-bottom: 5.4rem;
+}
+
+.xf__ghosts {
+  position: absolute;
+  inset: 100% 5% auto 5%;
+  display: grid;
+  gap: 0.45rem;
+  pointer-events: none;
+  z-index: 0;
+}
+.xf__ghost {
+  --gi: clamp(0, calc((var(--s, 0) - 1.4) * 1.8), 1);
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.7rem 1rem;
+  border-radius: 16px;
+  border: 1px solid var(--hair);
+  background: rgba(8, 25, 22, 0.72);
+  font-size: 0.8rem;
+  color: var(--faint);
+  opacity: calc(var(--gi) * 0.92);
+  /* Tucked under the card, then slid out as the ranking is explained. */
+  translate: 0 calc(-64px + var(--gi) * (72px + var(--g) * 4px));
+  scale: calc(0.93 + var(--gi) * 0.05 - var(--g) * 0.015);
+  transition:
+    opacity 620ms var(--sp),
+    translate 620ms var(--sp),
+    scale 620ms var(--sp);
+}
+.xf__ghostrank {
+  width: 1.4rem;
+  height: 1.4rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--glass-2);
+  font-size: 0.68rem;
+  font-weight: 640;
+}
+.xf__ghostname { flex: 1; text-align: left; }
+.xf__ghostwait {
+  font-size: 0.62rem;
+  font-weight: 620;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ghost);
+}
+
+.xf__card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  text-align: left;
+  padding: clamp(1.2rem, 2.4vw, 1.9rem);
+  border-radius: 26px;
+  border: 1px solid var(--hair-2);
+  background:
+    linear-gradient(180deg, rgba(228, 244, 240, 0.055), rgba(228, 244, 240, 0.018)),
+    rgba(5, 16, 14, 0.93);
+  backdrop-filter: blur(26px) saturate(140%);
+  -webkit-backdrop-filter: blur(26px) saturate(140%);
+  box-shadow: 0 30px 70px -40px rgba(0, 0, 0, 0.9);
+  transition: transform 620ms var(--sp);
+}
+.xf__cardtop {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.xf__markerlabel {
+  display: block;
+  font-size: 0.62rem;
+  font-weight: 640;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.xf__value {
+  display: block;
+  margin-top: 0.2rem;
+  font-weight: 620;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  /* Shrinks as the card stops being about the number. */
+  font-size: calc(clamp(2.2rem, 5vw, 3.6rem) * (1 - clamp(0, calc(var(--s, 0) / 3), 1) * 0.42));
+  transition: font-size 620ms var(--sp);
+}
+.xf__value em {
+  font-style: normal;
+  font-size: 0.42em;
+  font-weight: 560;
+  color: var(--faint);
+  margin-left: 0.14em;
+}
+.xf__state {
+  font-size: 0.72rem;
+  font-weight: 560;
+  color: var(--s-optimal);
+  white-space: nowrap;
+}
+
+.xf__range {
+  position: relative;
+  height: 6px;
+  margin: 1.1rem 0 0;
+  opacity: clamp(0, calc(var(--s, 0) * 1.2), 1);
+  transition: opacity 620ms var(--sp);
+}
+.xf__rangetrack {
+  position: absolute;
+  inset: 2px 0;
+  border-radius: 99px;
+  background: linear-gradient(
+    90deg,
+    rgba(63, 220, 160, 0.22),
+    rgba(63, 220, 160, 0.22) 46%,
+    rgba(240, 172, 54, 0.3) 62%,
+    rgba(255, 125, 79, 0.36)
+  );
+}
+.xf__rangeopt {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-radius: 99px;
+  background: rgba(63, 220, 160, 0.55);
+}
+.xf__rangepin {
+  position: absolute;
+  top: 50%;
+  width: 3px;
+  height: 16px;
+  translate: -50% -50%;
+  border-radius: 99px;
+  background: var(--paper);
+  box-shadow: 0 0 0 3px rgba(5, 16, 14, 0.9), 0 0 14px rgba(255, 255, 255, 0.5);
+}
+
+.xf__slides {
+  position: relative;
+  display: grid;
+  margin-top: 1.2rem;
+  min-height: 7.2rem;
+}
+.xf__slide {
+  grid-area: 1 / 1;
+  opacity: 0;
+  translate: 0 12px;
+  filter: blur(5px);
+  transition:
+    opacity 560ms var(--sp),
+    translate 560ms var(--sp),
+    filter 560ms var(--sp);
+}
+.xf__slide.is-on { opacity: 1; translate: 0; filter: none; }
+.xf__cap { color: var(--b2); }
+.xf__head3 { margin-top: 0.5rem; max-width: 26ch; }
+.xf__body {
+  margin-top: 0.55rem;
+  font-size: clamp(0.85rem, 1vw, 0.96rem);
+  line-height: 1.6;
+  max-width: 60ch;
+}
+
+.xf__action {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-top: 0.6rem;
+  padding: 0.7rem 0.85rem;
+  border-radius: 16px;
+  border: 1px solid rgba(63, 220, 160, 0.28);
+  background: rgba(63, 220, 160, 0.07);
+  opacity: clamp(0, calc(var(--s, 0) - 2), 1);
+  translate: 0 calc((1 - clamp(0, calc(var(--s, 0) - 2), 1)) * 10px);
+  transition: opacity 560ms var(--sp) 120ms, translate 560ms var(--sp) 120ms;
+}
+.xf__check {
+  display: grid;
+  place-items: center;
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 50%;
+  background: var(--s-optimal);
+  color: #04120f;
+  flex: none;
+}
+.xf__actiontitle {
+  flex: 1;
+  font-size: 0.88rem;
+  font-weight: 560;
+  letter-spacing: -0.014em;
+}
+.xf__actionmeta {
+  font-size: 0.7rem;
+  color: var(--faint);
+  white-space: nowrap;
+}
+
+.xf__ticks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.1rem;
+  justify-content: center;
+}
+.xf__tick {
+  font-size: 0.6rem;
+  font-weight: 640;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--ghost);
+  transition: color 420ms var(--sp);
+}
+.xf__tick.is-on { color: var(--b2); }
+
+/* ==========================================================================
+   07 · NINE SYSTEMS
+   ========================================================================== */
+
+.sys__title { margin-top: 0.8rem; max-width: 14ch; }
+.sys__lead { margin-top: 1rem; max-width: 46ch; }
+
+.sys__body {
+  margin-top: clamp(2rem, 5vh, 3.4rem);
+  display: grid;
+  grid-template-columns: minmax(0, 0.72fr) minmax(0, 1fr);
+  gap: clamp(1.4rem, 3vw, 3rem);
+  align-items: start;
+  border-radius: 28px;
+  border: 1px solid var(--hair);
+  background:
+    radial-gradient(120% 100% at 100% 0, color-mix(in oklab, var(--st, var(--b2)) 12%, transparent), transparent 62%),
+    var(--glass);
+  padding: clamp(1.1rem, 2.4vw, 2rem);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transition: background 700ms var(--sp);
+}
+
+.sys__pick {
+  display: grid;
+  gap: 2px;
+}
+.sys__b {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  padding: 0.62rem 0.75rem;
+  border-radius: 12px;
+  background: transparent;
+  border: none;
+  color: var(--faint);
+  font-size: clamp(0.84rem, 1vw, 0.95rem);
+  font-weight: 520;
+  letter-spacing: -0.014em;
+  text-align: left;
+  cursor: pointer;
+  transition: background 260ms var(--sp), color 260ms var(--sp);
+}
+.sys__b:hover { color: var(--paper); background: var(--glass); }
+.sys__b.is-on {
+  color: var(--paper);
+  background: var(--glass-2);
+  font-weight: 580;
+}
+.sys__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex: none;
+  background: var(--st, var(--b2));
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--st, var(--b2)) 18%, transparent);
+}
+.sys__name { min-width: 0; }
+
+.sys__panel {
+  min-width: 0;
+  animation: sysin 520ms var(--sp) both;
+}
+@keyframes sysin {
+  from { opacity: 0; transform: translateY(10px); }
+}
+.sys__panelhead {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+}
+.sys__badge {
+  font-size: 0.6rem;
+  font-weight: 660;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  padding: 0.3em 0.7em;
+  border-radius: 999px;
+  color: var(--st, var(--b2));
+  background: color-mix(in oklab, var(--st, var(--b2)) 14%, transparent);
+}
+.sys__member {
+  font-size: 0.68rem;
+  color: var(--ghost);
+  letter-spacing: 0.02em;
+}
+.sys__headline {
+  margin-top: 0.85rem;
+  font-size: clamp(1.15rem, 2.1vw, 1.7rem);
+  font-weight: 620;
+  letter-spacing: -0.03em;
+  line-height: 1.14;
+  max-width: 22ch;
+}
+.sys__summary {
+  margin-top: 0.7rem;
+  font-size: clamp(0.86rem, 1vw, 0.97rem);
+  max-width: 58ch;
+}
+.sys__metric {
+  margin-top: 1.4rem;
+  padding-top: 1.4rem;
+  border-top: 1px solid var(--hair);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.2rem;
+  flex-wrap: wrap;
+}
+.sys__metriclabel {
+  display: block;
+  font-size: 0.6rem;
+  font-weight: 640;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.sys__metricnum {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: clamp(1.6rem, 3vw, 2.3rem);
+  font-weight: 620;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+.sys__metricnum em {
+  font-style: normal;
+  font-size: 0.4em;
+  font-weight: 520;
+  color: var(--faint);
+  margin-left: 0.2em;
+}
+.sys__sparkwrap {
+  display: grid;
+  gap: 0.35rem;
+  justify-items: end;
+  flex: 1;
+  min-width: 150px;
+}
+.hu-spark {
+  width: 100%;
+  max-width: 300px;
+  height: 58px;
+  overflow: visible;
+}
+.hu-spark__line {
+  fill: none;
+  stroke: var(--st, var(--b2));
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+.hu-spark__end { fill: var(--st, var(--b2)); }
+.sys__sparklabel {
+  font-size: 0.66rem;
+  color: var(--ghost);
+}
+.sys__note {
+  margin-top: 1rem;
+  font-size: 0.7rem;
+  color: var(--ghost);
+}
+
+/* ==========================================================================
+   08 · BUILT FOR INDIA
+   ========================================================================== */
+
+.india { position: relative; overflow: clip; }
+.india__layer {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(60px);
+  /* Parallax: subtle depth, never a ride. */
+  translate: 0 calc((0.5 - var(--p, 0.5)) * 120px);
+}
+.india__layer--a {
+  width: 46vmax;
+  height: 46vmax;
+  top: -14vmax;
+  right: -14vmax;
+  background: radial-gradient(circle, rgba(0, 194, 166, 0.12), transparent 66%);
+}
+.india__layer--b {
+  width: 40vmax;
+  height: 40vmax;
+  bottom: -16vmax;
+  left: -12vmax;
+  background: radial-gradient(circle, rgba(10, 162, 224, 0.1), transparent 66%);
+  translate: 0 calc((var(--p, 0.5) - 0.5) * 150px);
+}
+.india__wrap { position: relative; }
+.india__title { margin-top: 0.8rem; max-width: 13ch; }
+.india__lead { margin-top: 1rem; }
+
+.india__list {
+  margin-top: clamp(2.4rem, 6vh, 4rem);
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: clamp(1.6rem, 3.2vw, 3rem) clamp(2rem, 4vw, 4rem);
+}
+.india__i {
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--hair);
+}
+.india__k {
+  font-size: clamp(1rem, 1.5vw, 1.22rem);
+  font-weight: 600;
+  letter-spacing: -0.024em;
+  line-height: 1.24;
+  max-width: 26ch;
+}
+.india__v {
+  margin-top: 0.55rem;
+  color: var(--mute);
+  font-size: clamp(0.86rem, 1vw, 0.97rem);
+  line-height: 1.58;
+  max-width: 44ch;
+}
+
+/* ==========================================================================
+   09 · PHILOSOPHY
+   ========================================================================== */
+
+.philo { height: 200svh; }
+.philo__pin { place-items: center; text-align: center; }
+.philo__lines {
+  display: grid;
+  gap: 0.1em;
+  font-size: clamp(1.7rem, 5.4vw, 4.4rem);
+  font-weight: 560;
+  letter-spacing: -0.042em;
+  line-height: 1.1;
+}
+.philo__line {
+  --lp: clamp(0, calc((var(--p, 0) - 0.16 - var(--i) * 0.16) / 0.2), 1);
+  opacity: var(--lp);
+  translate: 0 calc((1 - var(--lp)) * 18px);
+  filter: blur(calc((1 - var(--lp)) * 8px));
+}
+.philo__sub {
+  --sp2: clamp(0, calc((var(--p, 0) - 0.56) / 0.2), 1);
+  margin-top: clamp(2rem, 6vh, 3.6rem);
+  font-size: clamp(0.92rem, 1.3vw, 1.14rem);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--faint);
+  opacity: var(--sp2);
+  translate: 0 calc((1 - var(--sp2)) * 12px);
+}
+
+/* ==========================================================================
+   10 · FOUNDER
+   ========================================================================== */
+
+.fnd__title { margin-top: 0.8rem; max-width: 15ch; }
+.fnd__grid {
+  margin-top: clamp(2rem, 5vh, 3.4rem);
+  display: grid;
+  grid-template-columns: minmax(0, 1.06fr) minmax(0, 0.94fr);
+  gap: clamp(1.6rem, 4vw, 3.4rem);
+  align-items: start;
+}
+/* With a portrait or a reel, the media takes the first column and the words
+   and the previous-company note stack beside it. */
+.fnd__grid--media {
+  grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+}
+.fnd__grid--media .fnd__figure { grid-row: 1 / span 2; }
+.fnd__grid--media .fnd__prev { margin-top: 0; }
+
+.fnd__figure {
+  margin: 0;
+  border-radius: 22px;
+  overflow: hidden;
+  border: 1px solid var(--hair);
+  background: var(--ink-1);
+}
+.fnd__media {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+}
+.fnd__line {
+  font-size: clamp(1rem, 1.5vw, 1.24rem);
+  line-height: 1.55;
+  letter-spacing: -0.02em;
+  color: var(--paper);
+  max-width: 48ch;
+}
+.fnd__line + .fnd__line { margin-top: 0.9rem; color: var(--mute); }
+.fnd__sign {
+  margin-top: 1.6rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+}
+.fnd__name {
+  font-size: 1.02rem;
+  font-weight: 620;
+  letter-spacing: -0.02em;
+}
+.fnd__role { font-size: 0.8rem; color: var(--faint); }
+
+.fnd__prev {
+  align-self: start;
+  padding: clamp(1.1rem, 2vw, 1.5rem);
+  border-radius: 20px;
+  border: 1px solid var(--hair);
+  background: var(--glass);
+}
+.fnd__prevname {
+  margin-top: 0.5rem;
+  font-size: 1.02rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.fnd__prevwhat {
+  margin-top: 0.2rem;
+  font-size: 0.84rem;
+  color: var(--faint);
+}
+.fnd__prevlearned {
+  margin-top: 0.7rem;
+  font-size: 0.9rem;
+  line-height: 1.58;
+  color: var(--mute);
+  max-width: 50ch;
+}
+
+/* ==========================================================================
+   11 · EXPLORE
+   ========================================================================== */
+
+.cta {
+  position: relative;
+  overflow: clip;
+  padding-block: clamp(6rem, 16vh, 12rem);
+}
+.cta__bg {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  opacity: 0.3;
+  mask-image: radial-gradient(70% 60% at 50% 46%, #000 8%, transparent 72%);
+  -webkit-mask-image: radial-gradient(70% 60% at 50% 46%, #000 8%, transparent 72%);
+}
+.cta__device { filter: saturate(0.85); }
+.cta__wrap { position: relative; }
+.cta__inner {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: 0.9rem;
+}
+.cta__title { margin-top: 0.5rem; max-width: 14ch; }
+.cta__lead { max-width: 46ch; }
+.cta__btn {
+  margin-top: 1.4rem;
+  padding: 1.15em 2em;
+  font-size: clamp(0.98rem, 1.2vw, 1.12rem);
+}
+.cta__note {
+  margin-top: 0.4rem;
+  font-size: 0.74rem;
+  color: var(--ghost);
+}
+
+/* ==========================================================================
+   12 · THE LAST WORD
+   ========================================================================== */
+
+.end { height: 190svh; }
+.end__pin { place-items: center; text-align: center; }
+.end__inner { display: grid; justify-items: center; gap: clamp(1.6rem, 5vh, 3rem); }
+.end__lines {
+  display: grid;
+  gap: 0.08em;
+  font-size: clamp(1.5rem, 4.4vw, 3.6rem);
+  font-weight: 580;
+  letter-spacing: -0.042em;
+  line-height: 1.1;
+}
+.end__line {
+  --lp: clamp(0, calc((var(--p, 0) - 0.14 - var(--i) * 0.14) / 0.18), 1);
+  opacity: var(--lp);
+  translate: 0 calc((1 - var(--lp)) * 16px);
+}
+.end__line:last-child { color: var(--mute); }
+.end__mark {
+  --mp: clamp(0, calc((var(--p, 0) - 0.5) / 0.22), 1);
+  font-size: clamp(2.6rem, 11vw, 8rem);
+  font-weight: 620;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  opacity: var(--mp);
+  scale: calc(0.94 + var(--mp) * 0.06);
+}
+.end__safety {
+  --np: clamp(0, calc((var(--p, 0) - 0.72) / 0.2), 1);
+  max-width: 44ch;
+  font-size: 0.74rem;
+  line-height: 1.6;
+  color: var(--ghost);
+  opacity: var(--np);
+}
+
+/* ==========================================================================
+   Footer links
+   ========================================================================== */
+
+.foot__links {
+  list-style: none;
+  display: grid;
+  gap: 0.45rem;
+}
+.foot__links a {
+  font-size: 0.82rem;
+  color: var(--faint);
+  text-decoration: none;
+  transition: color 240ms var(--sp);
+}
+.foot__links a:hover { color: var(--paper); }
+
+/* ==========================================================================
+   Responsive.
+
+   The site is one story at every size. Nothing is hidden on a phone that
+   carries meaning; the layout changes, the content does not.
+
+   The one thing that genuinely cannot shrink is the product. A 390px app UI
+   scaled to 200px is unreadable, so on a narrow screen the device fills the
+   panel and the words sit over its lower edge, on a scrim. You still get the
+   real app, at a size you can actually read.
+   ========================================================================== */
+
+@media (max-width: 1000px) {
+  .what__grid,
+  .sys__body,
+  .fnd__grid,
+  .fnd__grid--media {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .tabs { position: static; }
+  .fnd__grid--media .fnd__figure { grid-row: auto; max-width: 24rem; }
+  .sys__panel { min-height: 0; }
+
+  /* The system picker becomes a swipeable row of chips. */
+  .sys__pick {
+    grid-auto-flow: column;
+    grid-auto-columns: max-content;
+    overflow-x: auto;
+    scrollbar-width: none;
+    gap: 0.3rem;
+    padding-bottom: 0.4rem;
+    margin-bottom: 0.4rem;
+    border-bottom: 1px solid var(--hair);
+    scroll-snap-type: x proximity;
+  }
+  .sys__pick::-webkit-scrollbar { display: none; }
+  .sys__b {
+    scroll-snap-align: start;
+    white-space: nowrap;
+    border-radius: 999px;
+    padding: 0.5rem 0.85rem;
+    background: var(--glass);
+  }
+}
+
+@media (max-width: 900px) {
+  .tour__inner {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas:
+      'head'
+      'stage';
+    row-gap: 0.7rem;
+    padding-block: 0;
+  }
+  .tour__head { align-self: start; }
+  .tour__title { max-width: 20ch; font-size: clamp(1.5rem, 6.4vw, 2.1rem); }
+
+  /* The words ride over the bottom of the device rather than competing with
+     it for height. The app's own content is top-anchored, so nothing that
+     matters is covered. */
+  .tour__copy {
+    grid-area: stage;
+    align-self: end;
+    z-index: 2;
+    gap: 0.7rem;
+    width: 100%;
+    padding: 3rem 0 0.5rem;
+    background: linear-gradient(
+      180deg,
+      transparent,
+      rgba(5, 16, 14, 0.72) 26%,
+      rgba(5, 16, 14, 0.94) 52%
+    );
+    pointer-events: none;
+  }
+  .tourstop__title { font-size: 1.12rem; max-width: none; }
+  .tourstop__body { font-size: 0.86rem; line-height: 1.5; max-width: none; }
+  .tour__badge { font-size: 0.58rem; padding: 0.34em 0.75em; }
+  .tour__link { display: none; }
+  .tour__stage { grid-template-rows: auto minmax(0, 1fr); }
+}
+
+@media (max-width: 760px) {
+  .hu-hero__pin {
+    /* Words first, then the product. On a phone there is no room for both
+       at once, so the handover happens earlier and completely. */
+    --m3: clamp(0, calc((var(--p, 0) - 0.56) / 0.3), 1);
+    --m4: clamp(0, calc((var(--p, 0) - 0.5) / 0.22), 1);
+  }
+  .hu-hero__device {
+    width: min(100%, 360px);
+    translate: 0 calc(80svh - var(--m3) * 62svh);
+  }
+  .hu-hero__actions { gap: 0.5rem; }
+  .hu-btn { padding: 0.85em 1.35em; }
+
+  /* One year at a time, centred, rather than five columns of clipped text. */
+  .prob__years { inset: auto 0 -3rem 0; }
+  .prob__year { grid-area: 1 / 1; }
+  .prob__punchline { max-width: none; }
+
+  .loopring { width: min(84%, 38svh); }
+  .loopnode__name { font-size: 0.46rem; letter-spacing: 0.1em; }
+  .loopcentre { inset: 22%; }
+  .loopsec__body { min-height: 5em; font-size: 0.86rem; }
+
+  .rail__i { grid-template-columns: 1.9rem 1.2rem minmax(0, 1fr); }
+  .rail::before { left: 2.55rem; }
+
+  .xf__title { font-size: clamp(1.5rem, 7vw, 2.2rem); }
+  .xf__lead { font-size: 0.95rem; }
+  .xf__stagewrap { margin-bottom: 5rem; }
+  .xf__slides { min-height: 8.6rem; }
+  .xf__body { font-size: 0.85rem; }
+  .xf__card { padding: 1.05rem; }
+  /* Four long labels cannot sit on one line at this width, and wrapping them
+     pushes the panel over. They become the same marks the app tour uses. */
+  .xf__ticks { gap: 6px; }
+  .xf__ticks .xf__tick {
+    font-size: 0;
+    width: 30px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--hair);
+  }
+  .xf__ticks .xf__tick.is-on { background: var(--b2); }
+
+  /* The chart sits under the headline rather than floating in the middle of
+     a short panel; the punch takes the space that is left. */
+  .prob__inner { grid-template-rows: auto auto 1fr; gap: 1.6rem; }
+  .prob__chartwrap { align-self: start; }
+  .prob__punch { min-height: 0; }
+
+  .sys__metric { flex-direction: column; align-items: flex-start; gap: 0.9rem; }
+  .sys__sparkwrap { justify-items: start; width: 100%; }
+  .hu-spark { max-width: 100%; }
+
+  .foot__grid { flex-direction: column; }
+}
+
+/* Coarse pointers get no hover-only affordances and no cursor tilt. */
+@media (hover: none) {
+  .hd--tilt .hd__body { transform: none; }
+}

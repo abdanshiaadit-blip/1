@@ -1,0 +1,451 @@
+/* ==========================================================================
+   HUMAN — the official website.
+
+   Loaded AFTER the app's own stylesheets, because the site embeds the real
+   app and therefore inherits its globals. The few rules below that reset
+   html/body exist only to undo the app's fixed, non-scrolling shell.
+
+   The site is near-black. The app is near-white. That contrast is the whole
+   design idea: everywhere the product appears, it is the brightest object
+   on the page.
+   ========================================================================== */
+
+:root {
+  /* ---- Ground -------------------------------------------------------- */
+  --ink: #05100e;          /* the page */
+  --ink-1: #081916;        /* raised */
+  --ink-2: #0c211d;        /* raised further */
+  --paper: #f1f7f5;
+  --mute: rgba(228, 244, 240, 0.66);
+  --faint: rgba(228, 244, 240, 0.44);
+  --ghost: rgba(228, 244, 240, 0.26);
+  --hair: rgba(228, 244, 240, 0.1);
+  --hair-2: rgba(228, 244, 240, 0.16);
+  --glass: rgba(228, 244, 240, 0.038);
+  --glass-2: rgba(228, 244, 240, 0.065);
+
+  /* ---- Brand — the app's own ring gradient, unchanged ---------------- */
+  --b1: #45d97f;
+  --b2: #00c2a6;
+  --b3: #0aa2e0;
+  --grad: linear-gradient(112deg, var(--b1) 0%, var(--b2) 48%, var(--b3) 100%);
+  --grad-soft: linear-gradient(112deg, rgba(69, 217, 127, 0.16), rgba(10, 162, 224, 0.16));
+
+  /* ---- Health states, lifted for a dark ground ----------------------- */
+  --s-optimal: #3fdca0;
+  --s-stable: #35c8e6;
+  --s-monitor: #f0ac36;
+  --s-attention: #ff7d4f;
+  --s-clinical: #ff6079;
+  --s-women: #ff62b0;
+
+  /* ---- Type ---------------------------------------------------------- */
+  --fs-mega: clamp(3.6rem, 15.5vw, 15rem);
+  --fs-display: clamp(2.05rem, 5.9vw, 4.9rem);
+  --fs-h2: clamp(1.7rem, 4.1vw, 3.2rem);
+  --fs-h3: clamp(1.15rem, 2vw, 1.6rem);
+  --fs-lead: clamp(1.02rem, 1.55vw, 1.32rem);
+  --fs-body: clamp(0.95rem, 1.05vw, 1.06rem);
+  --fs-cap: clamp(0.62rem, 0.78vw, 0.72rem);
+
+  /* ---- Layout -------------------------------------------------------- */
+  --pad: clamp(1.15rem, 5vw, 4.5rem);
+  --maxw: 1280px;
+
+  /* ---- Motion -------------------------------------------------------- */
+  --sp: cubic-bezier(0.22, 1, 0.3, 1);
+  --sp-soft: cubic-bezier(0.32, 0.72, 0.24, 1);
+}
+
+/* ---- Undo the app's fixed shell ------------------------------------- */
+html,
+body {
+  height: auto;
+  min-height: 100%;
+  overflow-x: clip;
+  overflow-y: visible;
+}
+
+html {
+  scroll-behavior: smooth;
+  background: var(--ink);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--ink);
+  color: var(--paper);
+  font-size: var(--fs-body);
+  line-height: 1.55;
+  letter-spacing: -0.011em;
+  font-variant-numeric: normal;
+  overscroll-behavior-y: none;
+}
+
+#site {
+  position: relative;
+  isolation: isolate;
+}
+
+::selection {
+  background: rgba(0, 194, 166, 0.3);
+  color: #fff;
+}
+
+/* A single ambient field behind the whole page. One element, one transform,
+   so the "expensive" gradient costs one composited layer and nothing else. */
+.aurora {
+  position: fixed;
+  inset: -20vmax;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.85;
+  background:
+    radial-gradient(38vmax 30vmax at 22% 12%, rgba(0, 194, 166, 0.13), transparent 62%),
+    radial-gradient(34vmax 30vmax at 82% 34%, rgba(10, 162, 224, 0.11), transparent 62%),
+    radial-gradient(30vmax 26vmax at 46% 88%, rgba(69, 217, 127, 0.085), transparent 64%);
+  animation: drift 34s var(--sp-soft) infinite alternate;
+  will-change: transform;
+}
+@keyframes drift {
+  from { transform: translate3d(-2.2%, -1.4%, 0) scale(1); }
+  to { transform: translate3d(2.6%, 2%, 0) scale(1.09); }
+}
+
+/* --------------------------------------------------------------------------
+   Type primitives
+   -------------------------------------------------------------------------- */
+
+.display {
+  font-size: var(--fs-display);
+  line-height: 1.02;
+  font-weight: 620;
+  letter-spacing: -0.042em;
+  color: var(--paper);
+  text-wrap: balance;
+}
+.h2 {
+  font-size: var(--fs-h2);
+  line-height: 1.04;
+  font-weight: 620;
+  letter-spacing: -0.038em;
+  text-wrap: balance;
+}
+.h3 {
+  font-size: var(--fs-h3);
+  line-height: 1.16;
+  font-weight: 600;
+  letter-spacing: -0.026em;
+}
+.lead {
+  font-size: var(--fs-lead);
+  line-height: 1.5;
+  font-weight: 400;
+  letter-spacing: -0.016em;
+  color: var(--mute);
+  text-wrap: pretty;
+}
+.body {
+  color: var(--mute);
+  line-height: 1.62;
+  text-wrap: pretty;
+}
+.cap {
+  display: inline-block;
+  font-size: var(--fs-cap);
+  font-weight: 640;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.grad {
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+.tnum { font-variant-numeric: tabular-nums; }
+
+/* --------------------------------------------------------------------------
+   Layout
+   -------------------------------------------------------------------------- */
+
+.wrap {
+  width: 100%;
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding-inline: var(--pad);
+}
+
+/* A tall wrapper whose child stays put. The mechanic behind every sticky
+   story section: you scroll the wrapper, the panel holds. */
+.pinwrap { position: relative; }
+.pin {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  display: grid;
+  /* An implicit auto column would be sized by its widest child, so a wide
+     chart could blow the panel out and get clipped. Cap it at the panel. */
+  grid-template-columns: minmax(0, 1fr);
+  align-content: center;
+  overflow: clip;
+  /* Clears the fixed navigation bar, which floats over every pinned panel. */
+  padding-top: clamp(3.4rem, 8vh, 5rem);
+}
+
+.hu-sec {
+  position: relative;
+  padding-block: clamp(5rem, 13vh, 10rem);
+}
+
+.rule {
+  height: 1px;
+  border: 0;
+  background: linear-gradient(90deg, transparent, var(--hair), transparent);
+  margin: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Reveal — the one generic entrance, used by ordinary content blocks
+   -------------------------------------------------------------------------- */
+
+.rev {
+  opacity: 0;
+  transform: translate3d(0, 18px, 0);
+  transition:
+    opacity 780ms var(--sp),
+    transform 780ms var(--sp);
+}
+.rev.in {
+  opacity: 1;
+  transform: none;
+}
+
+/* --------------------------------------------------------------------------
+   Controls
+   -------------------------------------------------------------------------- */
+
+.hu-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7em;
+  padding: 0.95em 1.6em;
+  border-radius: 999px;
+  font-size: clamp(0.92rem, 1.1vw, 1.02rem);
+  font-weight: 580;
+  letter-spacing: -0.014em;
+  color: #04120f;
+  background: var(--grad);
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  isolation: isolate;
+  transition:
+    transform 420ms var(--sp),
+    box-shadow 420ms var(--sp);
+  box-shadow: 0 10px 30px -14px rgba(0, 194, 166, 0.7);
+}
+.hu-btn::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: var(--grad);
+  filter: blur(18px);
+  opacity: 0.34;
+  z-index: -1;
+  transition: opacity 420ms var(--sp), filter 420ms var(--sp);
+}
+.hu-btn:hover {
+  transform: translateY(-2px);
+}
+.hu-btn:hover::after {
+  opacity: 0.62;
+  filter: blur(13px);
+}
+.hu-btn__arrow {
+  transition: transform 420ms var(--sp);
+}
+.hu-btn:hover .hu-btn__arrow {
+  transform: translateX(4px);
+}
+
+.hu-btn--ghost {
+  background: transparent;
+  color: var(--paper);
+  border: 1px solid var(--hair-2);
+  box-shadow: none;
+}
+.hu-btn--ghost::after { display: none; }
+.hu-btn--ghost:hover {
+  border-color: rgba(228, 244, 240, 0.34);
+  background: var(--glass);
+}
+
+/* --------------------------------------------------------------------------
+   Focus — visible, on brand, never removed
+   -------------------------------------------------------------------------- */
+
+:where(a, button, [tabindex]):focus-visible {
+  outline: 2px solid var(--b2);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.skip {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  translate: -50% -140%;
+  z-index: 200;
+  padding: 0.7em 1.2em;
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: 0 0 10px 10px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: translate 220ms var(--sp);
+}
+.skip:focus-visible { translate: -50% 0; }
+
+/* --------------------------------------------------------------------------
+   Nav — the wordmark becomes UI
+   -------------------------------------------------------------------------- */
+
+.nav {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem var(--pad);
+  background: linear-gradient(180deg, rgba(5, 16, 14, 0.86), rgba(5, 16, 14, 0));
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  opacity: 0;
+  transform: translateY(-10px);
+  pointer-events: none;
+  transition: opacity 520ms var(--sp), transform 520ms var(--sp);
+}
+.nav.in {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+.nav__mark {
+  font-size: 0.95rem;
+  font-weight: 660;
+  letter-spacing: 0.3em;
+  color: var(--paper);
+  text-decoration: none;
+  padding-left: 0.3em;
+}
+.nav__links {
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+}
+.nav__links a {
+  font-size: 0.78rem;
+  font-weight: 520;
+  letter-spacing: -0.008em;
+  color: var(--faint);
+  text-decoration: none;
+  padding: 0.45em 0.75em;
+  border-radius: 999px;
+  transition: color 260ms var(--sp), background 260ms var(--sp);
+}
+.nav__links a:hover {
+  color: var(--paper);
+  background: var(--glass);
+}
+.nav__cta {
+  font-size: 0.78rem;
+  font-weight: 580;
+  color: #04120f;
+  background: var(--paper);
+  padding: 0.55em 1.05em;
+  border-radius: 999px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: transform 320ms var(--sp), background 320ms var(--sp);
+}
+.nav__cta:hover {
+  transform: translateY(-1px);
+  background: #fff;
+}
+
+@media (max-width: 780px) {
+  .nav__links { display: none; }
+}
+
+/* The hairline that tells you how long the story is. */
+.pbar {
+  position: fixed;
+  inset: 0 auto auto 0;
+  z-index: 80;
+  height: 2px;
+  width: 100%;
+  transform-origin: 0 50%;
+  transform: scaleX(var(--pp, 0));
+  background: var(--grad);
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   Footer
+   -------------------------------------------------------------------------- */
+
+.foot {
+  border-top: 1px solid var(--hair);
+  padding: clamp(2.4rem, 6vh, 4rem) 0 clamp(2.2rem, 5vh, 3.4rem);
+}
+.foot__grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.4rem 2.6rem;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+.foot__mark {
+  font-size: 1rem;
+  font-weight: 660;
+  letter-spacing: 0.3em;
+}
+.foot__note {
+  max-width: 46ch;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: var(--faint);
+}
+.foot__legal {
+  margin-top: 2.2rem;
+  padding-top: 1.4rem;
+  border-top: 1px solid var(--hair);
+  font-size: 0.74rem;
+  color: var(--ghost);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.4rem;
+  justify-content: space-between;
+}
+
+/* --------------------------------------------------------------------------
+   Reduced motion.
+
+   Decorative movement stops. Scroll-driven *content* — the steps a sticky
+   section walks through — keeps working, because removing it would remove
+   information rather than motion. It simply arrives without transitions.
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .aurora { animation: none; }
+  .rev { opacity: 1; transform: none; transition: none; }
+  .hu-btn:hover { transform: none; }
+}

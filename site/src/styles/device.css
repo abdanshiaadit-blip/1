@@ -1,0 +1,106 @@
+/* ==========================================================================
+   Website hardware.
+
+   The app inside is laid out at its native 390 × 844 and the whole layer is
+   scaled once, so the product never crosses one of its own breakpoints
+   because of the website's viewport. Everything inside the scaled layer —
+   bezel, radius, shadows — scales with it, which is what keeps it reading as
+   a physical object rather than a shrunken screenshot.
+   ========================================================================== */
+
+.hd {
+  --k: 1;
+  position: relative;
+  display: grid;
+  place-items: center;
+  justify-self: center;
+}
+
+.hd__body {
+  position: relative;
+  width: calc(390px * var(--k));
+  height: calc(844px * var(--k));
+}
+
+.hd__scale {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 390px;
+  height: 844px;
+  transform: scale(var(--k));
+  transform-origin: 0 0;
+  border-radius: 56px;
+  background: #01100d;
+  /* Screen bezel → polished chamfer → body → outer edge. The same read as
+     the app's own device, retuned for a dark page. */
+  box-shadow:
+    0 0 0 2px #05100e,
+    0 0 0 3px #38524c,
+    0 0 0 12px #0a1a17,
+    0 0 0 13px #2c433e,
+    0 0 0 14px #071411,
+    0 60px 120px -30px rgba(0, 0, 0, 0.85),
+    0 20px 50px -20px rgba(0, 0, 0, 0.7);
+}
+
+/* The app's own .screen keeps its light canvas, blooms and radius.
+
+   Two things have to be restored here. The app's phone breakpoint would
+   square the corners; and the site sets its own colour and typography on
+   <body>, which the product would otherwise inherit — dark-ink text would
+   come out white on the app's white canvas. So the inherited context is put
+   back to what the app expects at its own root. */
+.hd .hd__screen {
+  border-radius: 56px;
+  color: var(--text-1);
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: normal;
+  letter-spacing: normal;
+  font-variant-numeric: tabular-nums;
+  text-align: left;
+}
+
+.hd__btn {
+  position: absolute;
+  z-index: 3;
+  width: calc(3px * var(--k));
+  border-radius: 2px;
+  background: linear-gradient(180deg, #1c2b28, #4a635d 45%, #1c2b28);
+}
+.hd__btn--silent { left: calc(-17px * var(--k)); top: calc(116px * var(--k)); height: calc(32px * var(--k)); }
+.hd__btn--up { left: calc(-17px * var(--k)); top: calc(172px * var(--k)); height: calc(62px * var(--k)); }
+.hd__btn--down { left: calc(-17px * var(--k)); top: calc(248px * var(--k)); height: calc(62px * var(--k)); }
+.hd__btn--power { right: calc(-17px * var(--k)); top: calc(200px * var(--k)); height: calc(96px * var(--k)); }
+
+/* The product is the brightest thing on a near-black page. This is the light
+   it throws. */
+.hd__glow {
+  position: absolute;
+  z-index: -1;
+  width: calc(640px * var(--k));
+  height: calc(640px * var(--k));
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(
+    circle,
+    rgba(0, 194, 166, 0.22) 0%,
+    rgba(10, 162, 224, 0.13) 38%,
+    transparent 68%
+  );
+  filter: blur(28px);
+}
+
+/* Tilt toward the pointer, so it reads as an object rather than an image.
+   --mx / --my are written by usePointerParallax; both default to 0. */
+.hd--tilt .hd__body {
+  transform: perspective(1600px)
+    rotateY(calc(var(--mx, 0) * 5.5deg))
+    rotateX(calc(var(--my, 0) * -4deg));
+  transform-style: preserve-3d;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hd--tilt .hd__body { transform: none; }
+}
