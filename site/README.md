@@ -26,6 +26,25 @@ npm run screens      # placeholder app screens → public/app/*.png
 node scripts/make-brand.mjs   # favicon set and the Open Graph card
 ```
 
+## The standalone preview
+
+`human-site-preview.html` is the home page as one self-contained file —
+stylesheet, both typefaces and all eight app screens embedded, nothing
+loaded from the network. Open it by double-clicking; no Node, no install.
+
+It carries every section at full fidelity, and the Body toggle, waitlist
+modal and mobile menu work. It cannot carry the motion: what it shows is
+the state each animation ends in, which is also what the site shows a
+visitor with JavaScript disabled. The form is inert in it by design.
+
+Regenerate it after a change:
+
+```bash
+npm run build && npm start &
+node scripts/make-standalone.mjs http://127.0.0.1:3000 human-site-preview.html
+node scripts/verify-standalone.mjs        # confirms it opens with no network access
+```
+
 ## QA
 
 The checks in §18 that can be automated are:
