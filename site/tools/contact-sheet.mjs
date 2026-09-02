@@ -1,10 +1,16 @@
 import { chromium } from 'playwright'
+
+/* This environment ships a Chromium that `playwright install` cannot fetch, so
+   CHROMIUM_PATH points at it. Anywhere else, leave it unset and Playwright
+   uses its own (`npx playwright install chromium`). */
+const CHROMIUM = process.env.CHROMIUM_PATH || undefined
+const SITE = process.env.SITE || 'http://localhost:5174/'
 const OUT = process.env.OUT_DIR ? process.env.OUT_DIR.replace(/\/?$/, "/") : "./.shots/"
-const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' })
+const b = await chromium.launch({ executablePath: CHROMIUM })
 
 for (const [w, h, tag] of [[1440, 900, 'desktop'], [390, 844, 'mobile']]) {
   const p = await b.newPage({ viewport: { width: w, height: h }, deviceScaleFactor: 1 })
-  await p.goto('http://localhost:5174/', { waitUntil: 'domcontentloaded' })
+  await p.goto(SITE, { waitUntil: 'domcontentloaded' })
   await p.evaluate(() => window.sessionStorage.setItem('human.intro.played', '1'))
   await p.reload({ waitUntil: 'domcontentloaded' })
   await p.waitForTimeout(2000)

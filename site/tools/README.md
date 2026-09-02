@@ -5,7 +5,13 @@ source. Every number quoted in `DECISIONS.md` D14 came out of one of them, and
 several of those numbers were wrong the first time — the comments in each file
 record how.
 
-The site must already be running on `http://localhost:5174` (`npm run dev`).
+The site must already be running (`npm run dev`, which serves it on
+`http://127.0.0.1:5174`). Point them elsewhere with `SITE=…`.
+
+They drive a real browser through Playwright, so on a fresh machine run
+`npx playwright install chromium` once. Set `CHROMIUM_PATH` only if you have a
+Chromium that Playwright cannot download for itself — which is the case in the
+container this was built in, and almost nowhere else.
 
 | | |
 |---|---|
@@ -20,4 +26,15 @@ node tools/contrast.mjs ".btn--primary,.hdr__in"
 node tools/filter-ab.mjs
 node tools/contact-sheet.mjs
 node tools/scroll-perf.mjs 390
+```
+
+## Running the whole check
+
+```
+npm run dev &                                  # the site, on :5174
+npx playwright test tests/overlap.spec.ts      # 6 widths x 40 scroll positions
+node tools/contrast.mjs                        # exits non-zero on a failure
+node tools/scroll-perf.mjs 1440
+node tools/scroll-perf.mjs 390
+node tools/contact-sheet.mjs                   # then look at the two sheets
 ```
