@@ -9,7 +9,7 @@
  * their place (Part 7.12).
  */
 
-import { useId, useRef, useState } from 'react'
+import { useId, useLayoutEffect, useRef, useState } from 'react'
 import Rule from './Rule'
 import Print from './Print'
 
@@ -22,6 +22,35 @@ export default function Disclosure({ question, answer }: Props) {
   const [open, setOpen] = useState(false)
   const id = useId()
   const body = useRef<HTMLDivElement>(null)
+  const inner = useRef<HTMLDivElement>(null)
+  const [height, setHeight] = useState(0)
+
+  /* Measure AFTER the commit, not during the render that flips `open`.
+     Read inline, `body.current.scrollHeight` is the height of the panel as it
+     was a moment ago — before React has put the answer into it — so it
+     measured nothing but the inner padding and every answer on the page
+     animated open to 24px and stayed there, clipped to its first line by the
+     panel's own `overflow: hidden`.
+
+     useLayoutEffect runs after the children are in the DOM and before the
+     browser paints, so the height is correct on the first frame of the
+     transition rather than one frame late. */
+  useLayoutEffect(() => {
+    if (!open) {
+      setHeight(0)
+      return
+    }
+    const el = inner.current
+    if (!el) return
+    const measure = () => setHeight(el.getBoundingClientRect().height)
+    measure()
+    /* The answer prints in behind a mask and the webfont can land late; both
+       change the height without changing `open`, and a panel that is 4px short
+       clips a descender. */
+    const ro = new ResizeObserver(measure)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [open, answer])
 
   return (
     <div className="disc">
@@ -47,9 +76,9 @@ export default function Disclosure({ question, answer }: Props) {
         id={id}
         ref={body}
         className="disc__body"
-        style={{ height: open ? (body.current?.scrollHeight ?? 'auto') : 0 }}
+        style={{ height }}
       >
-        <div className="disc__inner">
+        <div className="disc__inner" ref={inner}>
           {open && (
             <Print duration={280}>
               <p className="t-body disc__a">{answer}</p>

@@ -198,3 +198,46 @@ And the overlap gate caught a real regression within minutes of my writing it
 in — `position: relative` on the shared material list clobbered the mobile
 bar's `position: fixed`, turning its pinned edges into offsets and giving the
 document a 16px horizontal scrollbar at 390px. Automation, not vigilance.
+
+---
+
+## Session 14, part two — what the review found, and what I had claimed
+
+**The weakest thing** was my own reporting. I told the client the overlap gate
+was green. It was — when I ran it. Then I added the hover capsule for the text
+controls, did not run it again, and shipped a rule whose negative margin let
+the three footer links grow through each other by 18px, so the tail of
+"Privacy" opened `/terms`. The gate failed 40/40 at all six widths and I had
+already said it passed, in the same message where I explained that the gate
+exists precisely so nobody has to be vigilant. A test you run before your last
+edit is a test you did not run.
+
+**An art director would say** the more interesting failure is the second one:
+"the body is not a window" was a good rule, and I wrote it into the file, into
+the decision log and into the commit message, and it was false the whole time.
+Eighty-eight per cent of near-black over a white app screen is not opaque, and
+a blur does not hide a bright shape — it makes a slightly wider bright shape.
+The claim survived because I checked it the way that would confirm it: I looked
+at the bar over a dim numeral and over a dark headline, and never over the one
+thing on the page that is actually bright. The reviewer went straight there.
+
+**What changed as a result.** Both bars are solid now wherever anything is
+behind them, and the header is thin glass only over the hero, where the ground
+is one flat colour and there is nothing to leak. That is a smaller, more honest
+version of the idea: the material is glass when glass costs nothing and page
+ink when it would cost legibility. Four more `backdrop-filter`s came off
+surfaces where they provably changed zero pixels — including the membership
+card, which at 819×637 was the most expensive filtered surface on the page and
+was blurring a flat field — and a full-page scroll now measures the same with
+the material and without it.
+
+The rest of the list is the ordinary humbling kind: a token I deleted and left
+referenced, so focusing the only text input on the site erased its background;
+a focus ring built entirely from `box-shadow`, which forced-colours mode
+discards, so twenty-five tab stops were invisible in High Contrast Mode; a
+reduced-motion fallback that removed the easing from the pointer highlight and
+left the highlight, which is more motion rather than less. And two that predate
+me and were found only because someone finally looked: every FAQ answer on the
+site has been clipped to one line since session 4, and "Take control" has been
+the fifth tab stop on the page at zero opacity. The overlap gate had also never
+tested 320px, which the brief requires; widening it found three more.

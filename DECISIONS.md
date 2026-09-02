@@ -404,10 +404,13 @@ and without the filter and diffing the pixels:
 .hdr__in      0%
 ```
 
-The segmented indicator is the exception because it does not sit over the page
-— it slides over its own two labels. It is the only place on this site where
-glass passes across content, and therefore the only place it can behave like a
-lens instead of looking like one.
+The segmented indicator is the exception because it sits in a WELL. Its
+backdrop is the track it slides in — a recessed fill, a dark inner wall and a
+lit bottom edge, all running underneath it. (Not the labels: those paint on top
+of it, by design. An earlier version of this entry said otherwise and was
+wrong.) A lit groove is the only structured backdrop on the page, and bending
+one is the single moment where the material behaves like a lens rather than
+looking like one.
 
 Narrowing it that way is also what makes the material free. Ten refracting
 surfaces cost median frame time on a full-page scroll 16.7ms → 33.3ms — a
@@ -422,20 +425,30 @@ the material and with every `backdrop-filter` on the page disabled:
          with glass   p50 16.7  p90 16.7  p99  33.3  frames over 50ms: 0
 ```
 
-`.btn--primary` and a resting `.disc__btn` carry no `backdrop-filter` at all,
-by the same test: opaque jade and a transparent row have nothing behind them,
-and the filter provably changed zero pixels on both.
+Four surfaces carry no `backdrop-filter` at all, by the same test — each one
+provably changed zero pixels: `.btn--primary` (opaque jade), a resting
+`.disc__btn` (transparent), `.seg` (a groove over flat ground, max delta 2 of
+765) and `.inc__card` — which at 819×637 was the largest filtered surface on
+the page and therefore the most expensive one, buying nothing.
 
 **What the no-overlap instruction changed.** The client also asked that nothing
 overlap anything else or any text. Three consequences, and the first is the
 important one:
 
-- **The body is not a window.** Transmission carries tone, never content. The
-  floating bar sits at 88% of the page's own ink once scrolled (the brief's own
-  number) and the action bar at 92%. A 30px blur alone was not enough: at 64px
-  the display face survives it as legible smears, and a headline reading
-  *through* the bar while the bar's label reads *over* it is two texts fighting
-  in one place.
+- **The body is not a window** — and the first attempt at that was wrong. The
+  bars were set to 88% and 92% of the page's own ink under a 30px blur, and
+  this file claimed that settled it. It did not: an adversarial review found
+  the headline "…the day you're diagnosed." reading straight through the bar
+  with the bar's own wordmark printed on top of it, and over the app's white
+  screen (backdrop luminance 158–174 against a page ground of 13) it was not
+  close. A blur cannot rescue that — blurring a bright glyph leaves a bright
+  shape where the glyph was. **Both bars are now solid** the moment anything is
+  behind them: the header while it is over the hero is still thin glass,
+  because the ground there is one flat colour, and goes to full `--void` the
+  instant the page scrolls. The action bar is solid always. The material
+  survives the change — the rim, the bevel and the specular were carrying the
+  read anyway. Verified by sampling inside each bar at eight scroll positions:
+  the interior is now numerically identical wherever it sits.
 - **The top bar leaves on the way down.** Reading runs downward, so the bar
   goes with it and returns the moment you scroll up — or the moment it takes
   focus, so a keyboard visitor never tabs into something off-screen.
@@ -467,3 +480,75 @@ than emitting.
 `site/src/components/Glass.tsx`, and their three import lines. The header's
 hide-on-scroll and the docked mobile bar are the only changes outside those
 files, both marked in place.
+
+### D14 addendum · what the adversarial review found
+
+Six reviewers went at the shipped implementation, each with an independent
+skeptic told to refute what they reported. Twelve defects survived. They are
+listed here because several of them were in claims this file was making.
+
+**Mine, introduced by this work:**
+
+1. **The overlap gate was red and I had reported it green.** The hover capsule
+   for the text controls used `padding-inline` with a matching negative
+   `margin-inline`, so the box could grow without taking space — and a negative
+   margin does not politely lend space back, it lets a box grow *through* its
+   neighbours. The three footer links overlapped by 18px (the tail of "Privacy"
+   opened `/terms`), the first escaped its frame cell, and
+   `tests/overlap.spec.ts` failed 40/40 at all six widths. I had run the gate
+   before adding that rule and not after. Fixed by deleting both properties:
+   these controls already carry a 44px minimum box, so the capsule had room
+   without being given any.
+2. **Copy was legible through both bars.** See above — the central claim of
+   this entry was false, and is now fixed by making the bars solid.
+3. **`--lg-fill-hi` no longer exists**, and `.wl__field:focus-within` still
+   referenced it — through the `background` shorthand, so focusing the site's
+   only text input deleted the field's entire background.
+4. **Forced colours removed the focus indicator from every control.** The spec
+   forces `box-shadow` to `none`, and every focus ring here is a box-shadow, so
+   all twenty-five tab stops rendered zero changed pixels in High Contrast
+   Mode. Real outlines are now restored inside that block, along with a border
+   on the segmented control, which was otherwise invisible.
+5. **`prefers-reduced-motion` did not stop the pointer-tracked specular.** The
+   CSS half removed the *easing* and left the tracking, so the highlight jumped
+   between positions — more movement per frame, not less. The runtime now skips
+   it (refraction is not motion, and stays).
+6. **The segmented indicator overshot its own track by 3px.** Its width already
+   subtracts one 3px gutter and it travelled by both, so it ended outside the
+   well with its lit edge on the page, 7px off the label it marks.
+7. **At 320px the mobile bar's buttons no longer fit** — `.btn`'s 40px inline
+   padding wrapped the label to three lines and pushed a 76.8px capsule out of
+   a 64px bar and onto the paragraph above. The bar's controls keep the tighter
+   padding.
+8. Runtime robustness: the lens observer could not be re-armed after a remount
+   (`watched` outlived the disconnected `ResizeObserver`), `scan()` never tested
+   the inserted node itself, the specular stayed lit on a control the page had
+   scrolled out from under, and the specular was pointed at `.seg__b`, which is
+   deliberately bare — it now tracks `.seg`, which has a material to light.
+9. The rim was lit from 315° while the insets were offset purely vertically —
+   one object drawn with two light sources, which is the thing Part 2.3 spends
+   a page forbidding. The insets are now diagonal.
+
+**Pre-existing, found because the review looked:**
+
+10. **Every FAQ answer was clipped to one line.** `Disclosure.tsx` read
+    `scrollHeight` *during* the render that flips `open`, before React had put
+    the answer into the panel, so it measured the inner padding and animated to
+    24px. Measured in a `useLayoutEffect` after commit, with a `ResizeObserver`
+    for the print-in and the late webfont: 78px, the full answer.
+11. **"Take control" was the fifth tab stop on the page, at `opacity: 0`.** The
+    browser scrolled to it, drew a focus ring on nothing visible, and Enter
+    handed keyboard control to the embedded app with no visible change. The
+    wrapper is now `inert` while it is transparent, as `MobileBar` already was.
+12. **"Copy link" — the only control offered after conversion — was 89×20**,
+    under half the 44px Part 10 requires in both directions.
+
+**And the gate itself was too narrow.** Part 12 asks for 320 to 2560;
+`tests/overlap.spec.ts` covered 375 to 1920. Widening it to 320 and 2560
+immediately found three pre-existing failures at 320: the display type's
+minimum no longer fits the brief's own manual line breaks (`--display-*` now
+step down below 375px, because Part 2.5 says the breaks *are* the design, so
+the type gives way), `.sell__item` used `width: max-content` — a definite width
+that forced its column to the full unwrapped sentence and let the cell's
+`overflow: hidden` cut it mid-word — and the drift chart's crossing label ran
+21px past its cell. Eight widths × 40 scroll positions now pass.

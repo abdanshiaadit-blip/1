@@ -89,6 +89,7 @@
   --display-m: clamp(28px, 20.571px + 1.905vw, 48px);
   --heading: clamp(22px, 19.771px + 0.571vw, 28px);
   --body-l: clamp(18px, 16.514px + 0.381vw, 22px);
+
   --body: clamp(16px, 15.629px + 0.095vw, 17px);
   --caption: clamp(13px, 12.629px + 0.095vw, 14px);
   --telemetry: clamp(11px, 10.629px + 0.095vw, 12px);
@@ -209,5 +210,28 @@
 @media (min-width: 1024px) {
   :root {
     --gutter: clamp(32px, -62.8px + 9.26vw, 72px); /* 32 at 1024, 72 at 1456 */
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Below the design's smallest width.
+
+   The ten type clamps are solved for 390 and 1440, so under 390 they sit at
+   their minimum and stop scaling — and at 320 the minimum no longer fits. The
+   longest manually broken display line, "We have nothing else to sell", needs
+   324px at the 28px floor inside a 280px cell; the cell's grid column then
+   grows to fit it and takes everything else in the section out with it.
+
+   Part 12 asks for 320 to 2560 with nothing breaking, and tests/overlap.spec.ts
+   now actually checks 320, which is how this surfaced. Part 2.5 is explicit
+   that the manual line breaks ARE the design, so the type gives way, not the
+   breaks.
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 374px) {
+  :root {
+    --display-xl: 38px;
+    --display-l: 29px;
+    --display-m: 24px;
   }
 }

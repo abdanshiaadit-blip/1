@@ -59,15 +59,21 @@ const BUCKET = 8
  * saturate a flat field into anything but itself.
  *
  * The segmented indicator is the exception because it does not sit over the
- * page — it slides over its own two labels. It is the one place where glass
- * passes across content, which is also the one moment on the site where the
- * material can behave like a lens rather than look like one.
+ * page — it sits in a WELL. Its backdrop is the track it slides in: a recessed
+ * fill, a dark inner wall and a lit bottom edge, all of which run underneath
+ * it. (Not the labels — those paint on top of it, by design. An earlier note
+ * here said otherwise and was wrong.) A lit groove is the only structured
+ * backdrop on this page, and bending one is the single moment where the
+ * material behaves like a lens rather than looking like one.
  *
  * Cost, for the record: ten refracting surfaces take median frame time on a
  * full-page scroll from 16.7ms to 33.3ms. One takes it nowhere measurable.
  */
 const LENS = '.seg__ind'
-const LIVE = '.btn, .seg__b, .disc__btn, .wl__field, .hdr__in, .inc__card'
+/* `.seg`, not `.seg__b`: the segment buttons are bare by design (the glass in
+   that control is the indicator sliding behind them), so pointing the specular
+   at them set --px on an element with nothing to light. */
+const LIVE = '.btn, .seg, .disc__btn, .wl__field, .hdr__in, .inc__card'
 
 let defs: SVGSVGElement | null = null
 const made = new Set<string>()
@@ -193,6 +199,15 @@ function paint() {
   hot.style.setProperty('--py', ((py - r.top) / r.height).toFixed(3))
 }
 
+/** Give the highlight back to its resting position. */
+function cool() {
+  if (!hot) return
+  hot.style.removeProperty('--px')
+  hot.style.removeProperty('--py')
+  hot.classList.remove('is-tracked')
+  hot = null
+}
+
 function onMove(e: PointerEvent) {
   /* Touch never hovers. Tracking a highlight to a finger that is about to lift
      costs a frame and buys nothing. */
@@ -201,13 +216,9 @@ function onMove(e: PointerEvent) {
   const next = t && t.closest ? (t.closest(LIVE) as HTMLElement | null) : null
 
   if (next !== hot) {
-    if (hot) {
-      /* Hand the highlight back to the middle rather than snapping it: a
-         highlight that teleports on pointer-out reads as a bug. */
-      hot.style.removeProperty('--px')
-      hot.style.removeProperty('--py')
-      hot.classList.remove('is-tracked')
-    }
+    /* Hand the highlight back to its rest position rather than snapping it: a
+       highlight that teleports on pointer-out reads as a bug. */
+    cool()
     hot = next
     if (hot) hot.classList.add('is-tracked')
   }
@@ -225,13 +236,21 @@ export function trackSpecular(): () => void {
   tracking = true
   window.addEventListener('pointermove', onMove, { passive: true })
   window.addEventListener('pointerdown', onMove, { passive: true })
+  /* A pointer can also leave a control without moving: the page scrolls out
+     from under it, or the cursor leaves the window entirely. Neither fires
+     pointermove, so without these the highlight stays lit on a control the
+     pointer is no longer anywhere near. */
+  window.addEventListener('scroll', cool, { passive: true })
+  document.addEventListener('pointerleave', cool, { passive: true })
   return () => {
     tracking = false
     window.removeEventListener('pointermove', onMove)
     window.removeEventListener('pointerdown', onMove)
+    window.removeEventListener('scroll', cool)
+    document.removeEventListener('pointerleave', cool)
     if (queued) cancelAnimationFrame(queued)
     queued = 0
-    hot = null
+    cool()
   }
 }
 
@@ -252,7 +271,10 @@ export function resetLenses() {
 
 let ro: ResizeObserver | null = null
 let mo: MutationObserver | null = null
-const watched = new WeakSet<Element>()
+/* Reset on teardown, not a module constant. Held across an unmount it would
+   remember elements the disconnected ResizeObserver is no longer watching, so
+   a remounted runtime would skip exactly the elements that need re-measuring. */
+let watched = new WeakSet<Element>()
 
 function fit(el: HTMLElement) {
   const r = el.getBoundingClientRect()
@@ -265,7 +287,12 @@ function fit(el: HTMLElement) {
 }
 
 function scan(root: ParentNode) {
-  const all = root.querySelectorAll<HTMLElement>(LENS)
+  const all: HTMLElement[] = []
+  /* `querySelectorAll` looks at descendants only. React inserts the element
+     itself, so a lensed surface added without a wrapper around it would never
+     be found. */
+  if (root instanceof Element && root.matches(LENS)) all.push(root as HTMLElement)
+  all.push(...root.querySelectorAll<HTMLElement>(LENS))
   for (const el of all) {
     if (watched.has(el)) continue
     watched.add(el)
@@ -302,5 +329,6 @@ export function autoLens(): () => void {
     mo?.disconnect()
     ro = null
     mo = null
+    watched = new WeakSet<Element>()
   }
 }

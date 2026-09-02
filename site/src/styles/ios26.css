@@ -48,11 +48,11 @@
      bright shoulder where the light lands, a dark one where the surface turns
      away, and a hairline glass wall running between them all the way round.
 
-     THE BODY IS NOT A WINDOW. Transmission is high enough to carry tone and
-     colour from behind and never high enough to carry CONTENT: the blur is
-     deliberately wider than a glyph, so what passes through is light rather
-     than legible text. Type in front of the material must never compete with
-     type behind it. */
+     THE BODY IS NOT A WINDOW. Type in front of the material must never compete
+     with type behind it. Blur alone does not achieve that — a blurred bright
+     glyph is still a bright shape — so the two surfaces that cross running
+     copy, the ruled header and the action bar, are SOLID. Everything else is
+     translucent because it has nothing behind it to leak. */
   --lg-tint-top: rgba(232, 240, 236, 0.075);
   --lg-tint-bot: rgba(232, 240, 236, 0.028);
   /* The sheen across the face. It follows the pointer on anything the visitor
@@ -65,9 +65,9 @@
   --lg-wall: rgba(232, 240, 236, 0.09);
   --lg-shade: rgba(5, 16, 13, 0.62);
   --lg-blur: blur(16px) saturate(200%) brightness(1.18);
-  /* Wider than any glyph on the page, on purpose — see THE BODY IS NOT A
-     WINDOW above. This is what the floating bar and the card use, because they
-     are the two surfaces that actually sit over running copy. */
+  /* Used by the card, and by the header only while it is over the hero. A wide
+     blur softens what passes through; it does not hide it, which is why the
+     bars go solid rather than blurrier once there is a document underneath. */
   --lg-blur-heavy: blur(30px) saturate(205%) brightness(1.12);
   --lg-lift: 0 8px 20px -12px rgba(0, 0, 0, 0.9);
   /* Slot for the focus ring, so :focus-visible can add one without rewriting
@@ -123,7 +123,7 @@
      which is not one material — it is two, and the card looks fogged. */
   background-image:
     radial-gradient(
-      420px 300px at calc(var(--px) * 100%) calc(var(--py) * 100% - 26px),
+      420px 300px at calc(var(--px, 0.32) * 100%) calc(var(--py, 0) * 100% - 26px),
       var(--lg-pool),
       rgba(232, 240, 236, 0.028) 42%,
       transparent 72%
@@ -135,10 +135,16 @@
      field returns the same constant field. */
   backdrop-filter: var(--lg-blur);
   -webkit-backdrop-filter: var(--lg-blur);
+  /* The insets carry the SAME light as the rim. Offset purely vertically they
+     describe a lamp directly overhead while the conic ring describes one at
+     the upper left, which is two light sources drawn on one object — the exact
+     thing Part 2.3 spends a page forbidding. `1px 1px` with a -1px spread
+     lights the top and the left together; the shade takes the opposite
+     corner. */
   box-shadow:
     var(--lg-ring),
-    inset 0 1px 0 0 var(--lg-spec-top),
-    inset 0 -1px 0 0 var(--lg-shade),
+    inset 1px 1px 0 -1px var(--lg-spec-top),
+    inset -1px -1px 0 -1px var(--lg-shade),
     inset 0 0 0 1px var(--lg-wall),
     var(--lg-lift);
   transition:
@@ -317,7 +323,7 @@
      has to stay off the words. Measured, not assumed: .shots/contrast.mjs. */
   background-image:
     radial-gradient(
-      120% 150% at calc(var(--px) * 100%) calc(var(--py) * 100% - 22%),
+      120% 150% at calc(var(--px, 0.32) * 100%) calc(var(--py, 0) * 100% - 22%),
       rgba(232, 240, 236, 0.18),
       transparent 58%
     ),
@@ -329,8 +335,20 @@
     inset 0 0 0 1px rgba(127, 227, 192, 0.16),
     var(--lg-lift);
 }
+/* sections.css sets `background:` on this hover, and a shorthand resets
+   background-image — so hovering the primary deleted the pool, the body tint
+   and the whole material, which is the opposite of what a hover should do.
+   Re-stated here as colour only, plus the layers restated so the shorthand
+   cannot win by specificity. */
 .btn--primary:hover {
   background-color: color-mix(in oklab, var(--jade-deep) 88%, var(--jade));
+  background-image:
+    radial-gradient(
+      120% 150% at calc(var(--px, 0.32) * 100%) calc(var(--py, 0) * 100% - 22%),
+      rgba(232, 240, 236, 0.24),
+      transparent 58%
+    ),
+    linear-gradient(to bottom, rgba(232, 240, 236, 0.12), transparent 62%);
 }
 /* The one place the rim carries the accent rather than the page's own ink:
    the primary is the only lit-from-within object on the page. */
@@ -371,23 +389,30 @@
   height: 56px;
   padding-inline: var(--s3) var(--s1);
   border-radius: 999px;
-  /* The bar spends its whole life over running copy, so it is the surface
-     where "the body is not a window" is load-bearing. Over the hero there is
-     nothing behind it and it can afford to be thin glass; over the document it
-     cannot, and it thickens to the brief's own 88%. A 30px blur alone does not
-     save it: at 64px the display face survives a 30px blur as legible smears,
-     and a headline reading THROUGH the bar while the bar's own label reads
-     over it is two texts fighting in one place. Measured on the contact sheet,
-     not assumed. */
+  /* Over the hero there is nothing behind the bar — the ground there is a
+     single flat colour — so it can afford to be thin glass. The moment there
+     is a document under it, it goes solid: see .is-ruled below. */
   background-color: color-mix(in srgb, var(--void) 58%, transparent);
   backdrop-filter: var(--lg-blur-heavy);
   -webkit-backdrop-filter: var(--lg-blur-heavy);
   gap: var(--s3);
 }
-/* Once the page is scrolled there is copy behind the bar to compete with, so
-   it thickens to the point where nothing behind it can be read. */
+/* SOLID, once anything is behind it. 88% was tried and it is not enough, which
+   is worth stating plainly because the file previously claimed otherwise: 12%
+   transmission of #E8F0EC display type over #05100D is still readable, and
+   over the app's own white screen (backdrop luminance 158-174 against a page
+   ground of 13) it is not even close. The bar's wordmark was printing on top
+   of the word it was letting through. A blur cannot rescue that — blurring a
+   238-luminance glyph still leaves a bright shape where the glyph was.
+
+   So the bar is glass while there is nothing behind it and page ink when there
+   is, which is also what iOS does with a bar that content scrolls under. The
+   material survives the change: the rim, the bevel and the specular are all
+   still there, and they are what was carrying the read anyway. */
 .hdr.is-ruled .hdr__in {
-  background-color: color-mix(in srgb, var(--void) 88%, transparent);
+  background-color: var(--void);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 /* Away. Reading runs downward, so the bar leaves on the way down and returns
@@ -445,19 +470,21 @@
    Part 7.15 makes it scroll-POSITION driven precisely so that it never
    flickers, and direction-driven chrome at the bottom of a phone flickers.
 
-   So it stays, it stays put, and it stays opaque: 92%, the brief's own number,
-   which is where copy passing under it stops being readable through it. The
-   material is the same material — the buttons inside it are still capsules of
-   glass, and the bar still carries the lit top edge. */
+   So it stays, it stays put, and it is SOLID. 92% was tried — the brief's own
+   number — and copy still read through it; 8% transmission of white type is
+   plenty to see, and a blur only softens a bright shape into a slightly wider
+   bright shape. The material survives: the buttons inside it are still
+   capsules of glass and the bar still carries the lit top edge, which is the
+   part that was doing the work anyway. */
 .mbar {
   inset: auto 0 0 0;
   height: 64px;
   border-radius: 0;
   border: 0;
   padding-inline: var(--page-margin);
-  background-color: color-mix(in srgb, var(--void) 92%, transparent);
-  backdrop-filter: var(--lg-blur-heavy);
-  -webkit-backdrop-filter: var(--lg-blur-heavy);
+  background-color: var(--void);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   box-shadow:
     inset 0 1px 0 0 var(--lg-spec-top),
     0 -8px 20px -12px rgba(0, 0, 0, 0.9);
@@ -466,6 +493,15 @@
    three edges that are off-screen and reads as a box. */
 .mbar::after { display: none; }
 .mbar::before { inset: 0; }
+
+/* The bar's own controls keep the tighter padding. `.btn` raises the base 24px
+   to 40px, which adds 32px per button — at 320px the two of them plus the gap
+   and the page margins no longer fit, so the label wrapped to three lines, the
+   capsule grew to 76.8px inside a 64px bar and protruded onto the paragraph
+   above it. Part 12 asks for 320 to 2560 with nothing breaking. */
+.mbar .btn {
+  padding-inline: var(--s3);
+}
 
 /* And the document ends above it, so the last line of the page is never
    underneath the bar at rest. */
@@ -482,10 +518,15 @@
    is the entire difference between a thing that sits proud and a thing that is
    carved into the page — and it is why the moving indicator inside it reads as
    sitting in a groove. */
+/* No backdrop-filter on the track: measured, it changes 0% of its pixels to a
+   maximum delta of 2/765, because what is behind it is the page's single flat
+   colour. A groove does not need to blur a constant. */
 .seg {
   border: 0;
   padding: 3px;
   border-radius: 999px;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   background-color: rgba(5, 16, 13, 0.35);
   box-shadow:
     inset 0 1px 1px 0 var(--lg-shade),
@@ -503,11 +544,18 @@
 .seg__b::after,
 .seg__b::before { display: none; }
 
-/* The indicator is the one piece of glass here, and it slides — which makes it
-   the ONLY surface on the site with real structure behind it, because it
-   travels over its own two labels rather than over the page's flat ground. So
-   it is the one surface that carries the refraction: measured, the lens moves
-   26% of its pixels here and 0% almost everywhere else (lib/glass.ts). */
+/* The indicator is the one piece of glass here, and it is the one surface on
+   the site that carries the refraction — measured, the lens moves 26% of its
+   pixels here and 0% almost everywhere else (lib/glass.ts).
+
+   What it is bending is the TRACK, not the labels. The labels paint on top of
+   the indicator (Panel.tsx puts it first in DOM order deliberately), so they
+   are not in its backdrop at all — an earlier version of this comment claimed
+   they were, and that was wrong. What IS behind it is the well: the track's
+   recessed fill, its dark inner wall and the lit edge along its bottom. That
+   is the only structured backdrop on the page, everything else being a single
+   flat colour, and bending a lit groove is what makes this pill read as a
+   thick piece of glass sitting in a channel. */
 .seg__ind {
   top: 3px;
   bottom: 3px;
@@ -523,7 +571,12 @@
     inset 0 0 0 1px var(--lg-wall),
     0 4px 10px -6px rgba(0, 0, 0, 0.9);
 }
-.seg__ind--him { transform: translateX(calc(100% + 6px)); }
+/* The arithmetic has to close: start (3px) + travel + width = track - 3px.
+   The width already subtracts one 3px gutter, so travelling by BOTH gutters
+   overshoots by exactly one — the pill ended 3px outside its own groove, with
+   its lit edge on the page instead of in the well, and sat 7px right of the
+   label it marks. */
+.seg__ind--him { transform: translateX(calc(100% + 3px)); }
 
 /* The card's corners are ROUND, not a squircle — for the same reason the
    device's are (D13). The brief has this card's border DRAW itself as an SVG
@@ -533,11 +586,15 @@
 .inc__card {
   border-radius: var(--s5);
   corner-shape: round;
-  /* The one card on the site, and it sits over running copy — so it takes the
-     wide blur for the same reason the floating bar does. */
+  /* And no backdrop-filter here either, for the same measured reason: 0% of
+     the card's pixels change with it and without it. At 819x637 this is the
+     largest filtered surface on the page and therefore the most expensive one,
+     and it was buying nothing. The card stays translucent — the tint still
+     picks up the section's ground — it simply stops asking the compositor to
+     blur a flat field. */
   background-color: color-mix(in srgb, var(--surface-1) 62%, transparent);
-  backdrop-filter: var(--lg-blur-heavy);
-  -webkit-backdrop-filter: var(--lg-blur-heavy);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 /* The drawn stroke follows the same curve as the card it traces. */
 .inc__border rect { rx: var(--s5); ry: var(--s5); }
@@ -575,7 +632,7 @@
   -webkit-backdrop-filter: var(--lg-blur);
   background-image:
     radial-gradient(
-      420px 300px at calc(var(--px) * 100%) calc(var(--py) * 100%),
+      420px 300px at calc(var(--px, 0.32) * 100%) calc(var(--py, 0) * 100%),
       var(--lg-pool),
       rgba(232, 240, 236, 0.03) 42%,
       transparent 72%
@@ -604,13 +661,33 @@
    without also putting it on things that are not.
    -------------------------------------------------------------------------- */
 
+/* "Copy link" is a real control and was 89x20 — under half the 44px Part 10
+   requires in both directions, and it is the ONLY thing offered after someone
+   converts. An inline-flex box with a minimum gives it a target without moving
+   the sentence it sits in. */
+.wl__copy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  min-width: 44px;
+  vertical-align: middle;
+}
+
+/* NO padding and NO negative margin here. Both were tried, together, so the
+   capsule could sit a little wider than the words — and a negative margin does
+   not politely lend space back, it lets the box grow THROUGH its neighbours.
+   The three footer links overlapped each other by 18px, so the tail of
+   "Privacy" opened /terms, and the first one escaped its frame cell entirely.
+   tests/overlap.spec.ts failed 40/40 at all six widths.
+
+   These elements already carry a 44px minimum box for touch, so the capsule
+   has room without being given any. */
 .hdr__mark,
 .wl__copy,
 .foot__links a {
   position: relative;
   border-radius: 999px;
-  padding-inline: var(--s2);
-  margin-inline: calc(var(--s2) * -1);
   transition:
     background-color var(--dur-micro) var(--ease-instrument),
     box-shadow var(--dur-micro) var(--ease-instrument);
@@ -705,11 +782,31 @@
 .wl__ticks {
   display: none;
 }
+/* `background-color`, not `background`: the shorthand takes the material's own
+   layers with it, and `--lg-fill-hi` no longer exists — it was a D9 token, and
+   referencing a token that is gone resolves to nothing and DELETES the field's
+   entire background at the exact moment the visitor focuses it. */
 .wl__field:focus-within {
-  background: var(--lg-fill-hi);
+  background-color: rgba(232, 240, 236, 0.06);
   box-shadow:
     inset 0 0 0 1px var(--jade),
-    inset 0 1px 1px -1px var(--lg-spec);
+    inset 0 1px 0 0 var(--lg-spec-top);
+}
+/* The ring belongs to the CAPSULE, not to the input inside it: left to itself
+   the input draws a square-cornered jade rectangle inside a rounded field. So
+   the input's own indicator is removed and the field wears the same ring every
+   other control on the site wears — an indicator on the ancestor is still an
+   indicator, but only if it is the same one, and only if it is actually there. */
+.wl__input:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+.wl__field:has(.wl__input:focus-visible) {
+  box-shadow:
+    0 0 0 2px var(--void),
+    0 0 0 4px var(--jade),
+    inset 0 0 0 1px var(--jade),
+    inset 0 1px 0 0 var(--lg-spec-top);
 }
 
 /* The progress rail's marks take the control shape too. */
@@ -755,8 +852,25 @@
   .mbar,
   .seg,
   .inc__card,
-  .wl__field,
-  .disc__btn { box-shadow: var(--lg-ring), inset 0 0 0 1px var(--hairline); }
+  .wl__field { box-shadow: var(--lg-ring), inset 0 0 0 1px var(--hairline); }
+  /* The FAQ rows stay bare at rest here too. Given the outline every other
+     surface gets, a column of twelve questions becomes twelve outlined boxes —
+     which is the "twelve buttons shouting" failure the resting style exists to
+     avoid, arriving through the accessibility fallback. */
+  .disc__btn { box-shadow: none; background-color: transparent; }
+  /* And the hover/open states have to be listed, or the first hover puts the
+     translucency straight back on a visitor who asked for none of it. */
+  .disc__btn:hover,
+  .disc__btn[aria-expanded='true'] {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background-image: none;
+    background-color: var(--surface-2);
+    box-shadow: var(--lg-ring), inset 0 0 0 1px var(--hairline);
+  }
+  .hdr__mark:hover,
+  .wl__copy:hover,
+  .foot__links a:hover { background-color: var(--surface-2); }
 }
 
 /* 2. The visitor has asked for more contrast. The rim goes from a lit edge to
@@ -807,6 +921,32 @@
     border: 1px solid ButtonBorder;
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
+  }
+  /* Forced colours discards box-shadow entirely, and the focus ring for every
+     control on this site IS a box-shadow — so without this, twenty-five tab
+     stops render zero changed pixels and a keyboard visitor in High Contrast
+     Mode has no idea where they are. An outline is the one indicator the mode
+     keeps. */
+  .btn:focus-visible,
+  .seg__b:focus-visible,
+  .disc__btn:focus-visible,
+  .wl__input:focus-visible,
+  .hdr__mark:focus-visible,
+  .wl__copy:focus-visible,
+  .foot__links a:focus-visible {
+    outline: 3px solid Highlight;
+    outline-offset: 2px;
+  }
+  /* The selected segment is drawn only by its glass, which this mode also
+     discards, so without a border the toggle loses its state entirely. */
+  .seg__b {
+    border: 1px solid ButtonBorder;
+  }
+  .seg__b[aria-pressed='true'] {
+    border-color: Highlight;
+    forced-color-adjust: none;
+    background: Highlight;
+    color: HighlightText;
   }
   .btn::after,
   .btn::before,

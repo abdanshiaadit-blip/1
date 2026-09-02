@@ -20,7 +20,11 @@
 
 import { expect, test } from '@playwright/test'
 
-const WIDTHS = [375, 390, 768, 1024, 1440, 1920]
+/* Part 12 asks for 320 to 2560 with nothing breaking, and the list used to
+   start at 375 — so the brief's own lower bound was never actually covered.
+   320 is where the mobile bar's two buttons stop fitting, which is exactly the
+   kind of thing this gate exists to catch. */
+const WIDTHS = [320, 375, 390, 768, 1024, 1440, 1920, 2560]
 const STEPS = 40
 /** Sub-pixel rounding is real; a genuine collision is never 1px. */
 const TOLERANCE = 1

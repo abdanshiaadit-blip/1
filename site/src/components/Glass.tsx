@@ -24,7 +24,13 @@ export default function Glass() {
     const quiet = window.matchMedia('(prefers-reduced-transparency: reduce)')
     if (quiet.matches) return
     const stopLens = autoLens()
-    const stopSpec = trackSpecular()
+    /* A highlight that follows the cursor is motion, and the CSS half of the
+       reduced-motion fallback only removed its EASING — which left the
+       highlight jumping from position to position, more movement per frame
+       rather than less. The tracking itself has to stop. Refraction is not
+       motion and stays. */
+    const still = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const stopSpec = still.matches ? () => {} : trackSpecular()
     return () => {
       stopLens()
       stopSpec()

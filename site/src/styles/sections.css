@@ -247,7 +247,9 @@
 }
 .drift__crossing {
   position: absolute;
-  left: 62%;
+  /* Pinned at 62% of the stage, except when 62% plus the label's own width no
+     longer fits — at 320px it ran 21px past the cell and was clipped. */
+  left: min(62%, calc(100% - 9rem));
   top: 18%;
   color: var(--text);
   white-space: nowrap;
@@ -528,7 +530,13 @@
 .sell__grid { align-items: start; }
 .sell__head { display: grid; gap: var(--s4); }
 .sell__list { list-style: none; display: grid; gap: var(--s2); }
-.sell__item { position: relative; width: max-content; max-width: 100%; }
+/* `fit-content`, not `max-content`. The strike-through overlay has to be
+   exactly as wide as the text, which is what max-content gave it — but
+   max-content is a DEFINITE width, so the item kept its full unwrapped
+   sentence width (324px at 320px viewport) and the cell's `overflow: hidden`
+   cut the sentence off mid-word. `fit-content` is min(max-content, available):
+   same width whenever there is room, wraps when there is not. */
+.sell__item { position: relative; width: fit-content; max-width: 100%; }
 .sell__text { color: var(--text); transition: color 340ms var(--ease-move); }
 .sell__item.is-struck .sell__text { color: var(--text-3); }
 .sell__strike { position: absolute; left: 0; right: 0; top: 50%; }

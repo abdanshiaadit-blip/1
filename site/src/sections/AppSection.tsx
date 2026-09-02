@@ -284,7 +284,13 @@ function AppStageBody({
                 : undefined
             }
             footer={
-              <div className="app__control" style={{ opacity: control }}>
+              /* inert while it is transparent, for the same reason MobileBar
+                 is: opacity 0 leaves a control in the tab order, so this was
+                 the fifth tab stop on the page — the browser scrolled to it,
+                 drew a focus ring on nothing the visitor could see, and Enter
+                 handed keyboard control to the embedded app with no visible
+                 change at all. */
+              <div className="app__control" style={{ opacity: control }} inert={control < 0.5}>
                 {!mobile && useLiveApp ? (
                   interactive ? (
                     <Button variant="ghost" onClick={onRelease}>
