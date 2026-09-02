@@ -155,11 +155,15 @@
   inset: 0;
   z-index: var(--z-wash);
   pointer-events: none;
+  /* Part 2.3: under 10% luminance range across a full viewport, and it
+     should be almost impossible to point at. The first pass read as a smudge
+     on the left of the composition, which means it was too strong and too
+     tight — widened and pulled most of the way back toward void. */
   background: radial-gradient(
-    120% 80% at 50% 40%,
-    #0a211b 0%,
-    color-mix(in srgb, #0a211b 45%, var(--void)) 38%,
-    var(--void) 78%
+    140% 100% at 50% 40%,
+    color-mix(in srgb, #0a211b 55%, var(--void)) 0%,
+    color-mix(in srgb, #0a211b 22%, var(--void)) 45%,
+    var(--void) 82%
   );
 }
 
@@ -173,4 +177,120 @@
   background-repeat: repeat;
   background-size: 128px 128px;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='128' height='128' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* --------------------------------------------------------------------------
+   DEVICE — Parts 2.3, 2.6, 7.5
+
+   The only boxed object on the page besides the pricing card, and the only
+   element carrying a shadow. Sized from the 390x844 screen ratio outward.
+   -------------------------------------------------------------------------- */
+
+.device {
+  --screen-w: 340px;
+  position: relative;
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: var(--s3);
+  width: 100%;
+}
+
+/* Light source 2 of 3: radial, jade at 8%, blurred, behind the frame only. */
+.device__glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 900px;
+  height: 900px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(127, 227, 192, 0.08) 0%, transparent 62%);
+  filter: blur(120px);
+  pointer-events: none;
+  z-index: var(--z-wash);
+}
+
+/* The hardware. Dead upright — no tilt, no perspective, no reflection, no
+   hand, no second device (Part 7.5). The bezel is drawn from the palette:
+   near-black metal, a hairline rim outside and another inside, so it reads as
+   an object without becoming a skeuomorphic mockup.
+
+   The outer aspect ratio is solved, not guessed. With a bezel of 3.1% of the
+   outer width on all four sides, an outer ratio of 1 : 2.0919 puts the screen
+   at exactly 390 x 844 — so the plate is never letterboxed or cropped by its
+   own frame. */
+.device__frame {
+  position: relative;
+  z-index: var(--z-raised);
+  /* Height-first, because the constraint is always the viewport: a sticky
+     stage is exactly 100vh and the frame has to sit inside it with room for
+     the Sample data label and the control beneath. */
+  height: min(700px, calc(100svh - 280px));
+  width: auto;
+  aspect-ratio: 1 / 2.0919;
+  padding: 3.1%;
+  border-radius: calc(var(--r-object) + 12px);
+  background: linear-gradient(
+    160deg,
+    color-mix(in srgb, var(--surface-2) 70%, var(--void)) 0%,
+    var(--void) 46%,
+    color-mix(in srgb, var(--surface-1) 80%, var(--void)) 100%
+  );
+  box-shadow:
+    var(--shadow-device),
+    inset 0 0 0 1px var(--hairline-lit);
+  outline: 1px solid var(--hairline);
+  outline-offset: 0;
+}
+
+/* Side buttons. Two hairline bars on the left, one on the right, at the
+   proportions they sit at on the real hardware. Enough to read as a device;
+   not enough to become an illustration. */
+.device__frame::before,
+.device__frame::after {
+  content: '';
+  position: absolute;
+  width: 2px;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--hairline-lit) 80%, var(--void));
+  pointer-events: none;
+}
+.device__frame::before {
+  left: -2px;
+  top: 19%;
+  height: 8%;
+  box-shadow: 0 calc(1px + 11%) 0 0 color-mix(in srgb, var(--hairline-lit) 80%, var(--void));
+}
+.device__frame::after {
+  right: -2px;
+  top: 24%;
+  height: 13%;
+}
+
+.device__screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--r-object);
+  overflow: hidden; /* nothing ever renders outside the frame */
+  background: var(--surface-1);
+}
+
+.device__screen img,
+.device__screen iframe {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border: 0;
+}
+
+.device__label,
+.device__footer {
+  position: relative;
+  z-index: var(--z-raised);
+}
+
+.device__label {
+  margin: 0;
 }

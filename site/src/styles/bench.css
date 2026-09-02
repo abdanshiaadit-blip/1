@@ -28,3 +28,17 @@
 .bench__stage { align-items: start; width: 100%; }
 .bench__linked { display: grid; align-content: center; min-height: 220px; }
 .bench__tail { padding-block: var(--s7); }
+
+/* The session-2 gate screen. */
+.lab {
+  position: relative;
+  height: 100svh;
+  display: grid;
+  align-content: center;
+  overflow: hidden;
+}
+.lab__grid { width: 100%; align-items: center; }
+.lab__type { display: grid; align-content: center; gap: var(--s3); }
+.lab__h { margin: 0; }
+.lab__p { color: var(--text-2); }
+.lab__device { display: grid; justify-items: center; }

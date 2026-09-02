@@ -28,6 +28,13 @@ const TOLERANCE = 1
 interface Box {
   cell: string
   selector: string
+  /** True when the element sits in a position: fixed layer. The brief
+   *  specifies a fixed header (7.16), a fixed mobile action bar (7.15) and a
+   *  fixed telemetry readout (7.1), all of which are designed to sit ABOVE the
+   *  document as it scrolls under them. They are still checked against their
+   *  own cell; they are not checked against the flowing content they overlay,
+   *  because overlaying it is their job. */
+  fixed: boolean
   x: number
   y: number
   w: number
@@ -70,6 +77,13 @@ async function walk(steps: number): Promise<Checkpoint[]> {
     return false
   }
 
+  const isFixed = (el: Element): boolean => {
+    for (let n: Element | null = el; n; n = n.parentElement) {
+      if (getComputedStyle(n).position === 'fixed') return true
+    }
+    return false
+  }
+
   const visible = (el: Element): boolean => {
     const cs = getComputedStyle(el)
     if (cs.display === 'none' || cs.visibility === 'hidden') return false
@@ -101,7 +115,12 @@ async function walk(steps: number): Promise<Checkpoint[]> {
       if (!isContent(el) || isDecorative(el) || !visible(el)) return
       const cell = el.closest('[data-cell]')?.getAttribute('data-cell') ?? '(no cell)'
       const r = el.getBoundingClientRect()
-      boxes.push({ cell, selector: label(el), x: r.x, y: r.y, w: r.width, h: r.height })
+      boxes.push({
+        cell,
+        selector: label(el),
+        fixed: isFixed(el),
+        x: r.x, y: r.y, w: r.width, h: r.height,
+      })
     })
 
     return {
@@ -190,6 +209,7 @@ for (const width of WIDTHS) {
           const A = snap.boxes[a]
           const B = snap.boxes[b]
           if (A.cell === B.cell) continue
+          if (A.fixed || B.fixed) continue
           if (!intersect(A, B)) continue
           failures.push(
             `${where}: OVERLAP between cells "${A.cell}" and "${B.cell}"\n` +

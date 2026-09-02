@@ -102,6 +102,12 @@ button {
   line-height: 1.08;
 }
 
+/* A manually placed display line. Block, not inline: at line-height 0.94-1.0
+   an inline box is taller than its line box and would overflow its cell. */
+.line {
+  display: block;
+}
+
 .t-heading {
   font-size: var(--heading);
   font-weight: var(--w-heading);

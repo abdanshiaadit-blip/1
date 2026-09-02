@@ -1,0 +1,602 @@
+/* ==========================================================================
+   Sections. BRIEF.md Part 7.
+
+   Every value comes from tokens.css. There is no Card component and no third
+   radius; structure is drawn with hairlines, alignment and space.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Shared shells
+   -------------------------------------------------------------------------- */
+
+.sec {
+  position: relative;
+  padding-block: var(--section-pad);
+  min-height: calc(var(--sec-vh-m) * 1vh);
+  /* The Part 6 budget is how much PAGE a flowing section occupies, not how
+     tall its content is. Centring the content inside the budget is what turns
+     that number into rhythm; anchoring it to the top just strands the copy
+     against a screen of nothing, which is what the first pass did. */
+  display: grid;
+  align-content: center;
+}
+@media (min-width: 768px) {
+  .sec {
+    min-height: calc(var(--sec-vh) * 1vh);
+  }
+}
+
+/* Part 4.6: fourteen identical horizon rules, one per boundary. Their
+   sameness is the connective tissue. Do not vary them. */
+.sec__horizon {
+  position: absolute;
+  top: calc(var(--section-pad) / 2);
+  left: var(--page-margin);
+  right: var(--page-margin);
+  z-index: var(--z-wash);
+  pointer-events: none;
+}
+
+.glyph {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  flex: none;
+}
+.glyph--check {
+  background: none;
+  border-left: 1px solid var(--jade);
+  border-bottom: 1px solid var(--jade);
+  width: 10px;
+  height: 6px;
+  transform: rotate(-45deg) translate(1px, -2px);
+}
+.glyph--open {
+  border: 1px solid var(--amber);
+  border-radius: 50%;
+  width: 9px;
+  height: 9px;
+}
+.chev {
+  width: 9px;
+  height: 9px;
+  border-right: 1px solid var(--text-2);
+  border-bottom: 1px solid var(--text-2);
+  transform: rotate(45deg);
+  transition: transform var(--dur-micro) var(--ease-instrument);
+  flex: none;
+}
+.chev.is-open {
+  transform: rotate(-135deg);
+}
+
+/* --------------------------------------------------------------------------
+   Buttons — Part 9. No lift, no scale, no glow, no shadow, no arrow.
+   -------------------------------------------------------------------------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding-inline: var(--s3);
+  border-radius: var(--r-control);
+  font-size: var(--body);
+  font-weight: var(--w-body);
+  text-decoration: none;
+  transition:
+    background-color var(--dur-micro) var(--ease-instrument),
+    border-color var(--dur-micro) var(--ease-instrument),
+    color var(--dur-micro) var(--ease-instrument);
+}
+.btn--full { width: 100%; }
+.btn--primary { background: var(--jade-deep); color: var(--text); }
+.btn--primary:hover { background: color-mix(in srgb, var(--jade-deep) 92%, var(--jade)); }
+.btn--ghost { border: 1px solid var(--hairline); color: var(--text); }
+.btn--ghost:hover { border-color: var(--hairline-lit); }
+
+/* --------------------------------------------------------------------------
+   Header — 7.16
+   -------------------------------------------------------------------------- */
+
+.hdr {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 64px;
+  z-index: var(--z-header);
+  background: color-mix(in srgb, var(--void) 88%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--dur-micro) var(--ease-instrument);
+}
+.hdr.is-ruled { border-bottom-color: var(--hairline); }
+.hdr__in {
+  height: 100%;
+  max-width: calc(var(--content-max) + var(--page-margin) * 2);
+  margin-inline: auto;
+  padding-inline: var(--page-margin);
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+}
+.hdr__mark {
+  font-size: 18px;
+  font-weight: var(--w-heading);
+  letter-spacing: 0.06em; /* the only place with tracking this wide */
+  color: var(--text);
+  text-decoration: none;
+}
+.hdr__tag { margin-right: auto; }
+@media (max-width: 899px) { .hdr__tag { display: none; } }
+@media (max-width: 899px) { .hdr__mark { margin-right: auto; } }
+.hdr__cta { min-height: 40px; font-size: var(--caption); }
+
+/* --------------------------------------------------------------------------
+   Telemetry HUD — 7.1 Beat 3. Hidden below 768px.
+   -------------------------------------------------------------------------- */
+
+.telemetry {
+  position: fixed;
+  left: var(--page-margin);
+  bottom: var(--s3);
+  z-index: var(--z-header);
+  pointer-events: none;
+}
+@media (max-width: 767px) { .telemetry { display: none; } }
+
+/* --------------------------------------------------------------------------
+   Mobile action bar — 7.15
+   -------------------------------------------------------------------------- */
+
+.mbar {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: var(--z-bar);
+  height: 64px;
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  padding-inline: var(--page-margin);
+  background: color-mix(in srgb, var(--void) 92%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid var(--hairline);
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+  transition:
+    opacity 300ms var(--ease-entrance),
+    transform 300ms var(--ease-entrance);
+}
+.mbar.is-on { opacity: 1; transform: none; pointer-events: auto; }
+.mbar__ghost { flex: 0 1 auto; }
+.mbar__cta { flex: 1 1 auto; }
+@media (min-width: 768px) { .mbar { display: none; } }
+
+/* --------------------------------------------------------------------------
+   7.1 Hero
+   -------------------------------------------------------------------------- */
+
+.hero {
+  position: relative;
+  min-height: 130vh;
+  padding-top: calc(64px + var(--s7));
+  padding-bottom: var(--s6);
+}
+@media (max-width: 767px) { .hero { min-height: 105svh; padding-top: calc(64px + var(--s5)); } }
+.hero__grid { align-items: start; }
+.hero__type { display: grid; gap: var(--s4); align-content: start; }
+.hero__baseline { max-width: 260px; }
+.hero__h { margin: 0; }
+.hero__line { display: block; }
+.hero__sub { color: var(--text-2); }
+.hero__sub--mobile { display: none; }
+@media (max-width: 767px) {
+  .hero__sub--desktop { display: none; }
+  .hero__sub--mobile { display: block; }
+}
+.hero__actions { display: flex; gap: var(--s2); flex-wrap: wrap; }
+@media (max-width: 767px) {
+  .hero__actions { flex-direction: column; }
+  .hero__actions .btn { width: 100%; }
+}
+.hero__micro { color: var(--text-3); }
+.hero__field { min-height: 420px; }
+@media (max-width: 1023px) { .hero__field { display: none; } }
+.calib { position: absolute; inset: 0; width: 100%; height: 100%; }
+.hero__ticks { position: absolute; right: 0; top: 20%; height: 60%; }
+.hero__cue {
+  position: absolute;
+  left: 50%;
+  bottom: var(--s5);
+  height: 40px;
+  width: 1px;
+  transform: translateX(-50%);
+}
+
+/* --------------------------------------------------------------------------
+   7.2 The silent build
+   -------------------------------------------------------------------------- */
+
+.drift { width: 100%; align-items: center; }
+.drift__text { display: grid; gap: var(--s3); align-content: center; }
+.drift__sub { color: var(--text-2); }
+.drift__stage { display: grid; align-content: center; gap: var(--s4); }
+.drift__chart { position: relative; }
+.drift__svg { width: 100%; height: auto; }
+.drift__year { font-size: 11px; fill: var(--text-3); letter-spacing: 0.08em; }
+.drift__fine {
+  position: absolute;
+  transform: translate(-50%, -180%);
+  max-width: 100%;
+}
+/* Anchored by its right edge near the axis end, so it cannot hang outside
+   the cell the way a centred label would. */
+.drift__fine--end {
+  transform: translate(-100%, -180%);
+  color: var(--text-2);
+  white-space: nowrap;
+  transition: clip-path var(--dur-print) var(--ease-entrance);
+}
+.drift__crossing {
+  position: absolute;
+  left: 62%;
+  top: 18%;
+  color: var(--text);
+  white-space: nowrap;
+  transition: clip-path var(--dur-print) var(--ease-entrance);
+}
+.drift__axis { position: absolute; left: 0; bottom: -18px; }
+.drift__sample { position: absolute; right: 0; bottom: -18px; }
+.drift__cascade { display: grid; gap: var(--s3); }
+.num { display: grid; gap: var(--s1); transition: opacity var(--dur-composition) var(--ease-move); }
+.num__v { margin: 0; color: var(--text); }
+.num__suffix { font-size: 0.34em; letter-spacing: 0; }
+.num__c { color: var(--text-2); }
+.drift__close { color: var(--text); }
+.drift__src { color: var(--text-3); }
+
+/* --------------------------------------------------------------------------
+   7.3 The ledger — a ledger, not four cards.
+   -------------------------------------------------------------------------- */
+
+.ledger { width: 100%; display: grid; gap: var(--s5); align-content: center; }
+.ledger__h { margin: 0; max-width: none; }
+.ledger__rows { position: relative; display: grid; }
+.ledger__territory {
+  position: absolute;
+  inset: 50% 0 0 0;
+  background: var(--surface-2);
+  border-top: 1px solid var(--jade);
+  transform-origin: bottom;
+  z-index: var(--z-wash);
+}
+.ledger__row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--s1);
+  padding-block: var(--s3);
+  align-items: center;
+}
+@media (min-width: 768px) {
+  .ledger__row { grid-template-columns: 4fr 3fr 5fr; gap: var(--s4); }
+}
+.ledger__label { transition: none; }
+.ledger__rule { width: 100%; }
+.ledger__verdict { display: flex; align-items: center; gap: var(--s2); flex-wrap: wrap; }
+.ledger__detail { color: var(--text-3); }
+.ledger__claimcell { margin-top: var(--s4); }
+.ledger__claim { margin: 0; }
+
+/* --------------------------------------------------------------------------
+   7.4 The loop
+   -------------------------------------------------------------------------- */
+
+.loop__grid { align-items: center; }
+.loop__type { display: grid; gap: var(--s4); }
+.loop__list { list-style: none; display: grid; gap: var(--s2); }
+.loop__item { display: flex; gap: var(--s2); align-items: baseline; }
+.loop__n { color: var(--text-3); min-width: 1.4em; }
+.loop__body { display: grid; gap: 2px; }
+.loop__name { color: var(--text-2); transition: color var(--dur-micro) var(--ease-instrument); }
+.loop__item.is-on .loop__name { color: var(--text); }
+.loop__cap { color: var(--text-3); }
+.loop__stage { display: grid; place-items: center; }
+.loop__svg { width: 100%; max-width: 360px; height: auto; }
+.loop__node { transition: r var(--dur-micro) var(--ease-instrument), fill var(--dur-micro) var(--ease-instrument); }
+.loop__pulse { animation: loop-pulse 600ms var(--ease-move) 1 forwards; }
+@keyframes loop-pulse {
+  from { stroke-dashoffset: 0; opacity: 1; }
+  to { stroke-dashoffset: -830; opacity: 0; }
+}
+
+/* --------------------------------------------------------------------------
+   7.5 The app
+   -------------------------------------------------------------------------- */
+
+.app { width: 100%; align-items: center; }
+.app__copy { display: grid; gap: var(--s3); align-content: center; }
+.app__count { color: var(--text-3); }
+.app__rail { display: flex; gap: var(--s1); }
+.app__mark { width: 22px; height: 2px; background: var(--hairline); }
+.app__mark.is-on { background: var(--jade); }
+.app__text { transition: opacity 320ms var(--ease-exit); }
+.app__text.is-out { opacity: 0; }
+.app__h { margin: 0; }
+.app__b { color: var(--text-2); }
+.app__live { color: var(--jade); }
+.app__you { color: var(--jade); }
+/* Part 3.3, the Reserved Space Doctrine: the frame enters by translating 28px
+   (travel-object), and a transform does not grow the box it moves inside. The
+   cell reserves that travel so the control beneath the phone stays within its
+   own cell for the whole entrance instead of hanging 28px below it. */
+.app__devicecell { display: grid; justify-items: center; padding-bottom: var(--travel-object); }
+.app__riser { position: relative; display: grid; justify-items: center; }
+.app__control { display: grid; gap: var(--s1); justify-items: center; transition: opacity var(--dur-composition) var(--ease-entrance); }
+.app__proto { color: var(--text-3); }
+.app__ring {
+  position: absolute;
+  inset: -6px;
+  border: 1px solid var(--jade);
+  border-radius: calc(var(--r-object) + 18px);
+  pointer-events: none;
+}
+.appstage { position: absolute; inset: 0; }
+.appstage__frame { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.appstage__poster {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-raised);
+  transition: opacity 240ms var(--ease-move);
+}
+.appstage__poster.is-hidden { opacity: 0; }
+/* Before control is taken, scroll passes straight through. */
+.appstage { pointer-events: none; }
+.appstage.is-live { pointer-events: auto; overscroll-behavior: contain; }
+
+/* Annotations — 7.5.1 */
+.anno { position: absolute; z-index: var(--z-raised); pointer-events: none; }
+.anno__dot {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  border: 1.5px solid var(--jade);
+  border-radius: 50%;
+  opacity: 0;
+  animation: anno-dot 160ms var(--ease-entrance) forwards;
+}
+.anno__leader {
+  position: absolute;
+  top: -0.5px;
+  height: 1px;
+  background: var(--hairline-lit);
+  transform: scaleX(0);
+  animation: anno-leader 340ms var(--ease-instrument) forwards;
+}
+.anno--right .anno__leader { left: 8px; width: 64px; transform-origin: left; }
+.anno--left .anno__leader { right: 8px; width: 64px; transform-origin: right; }
+.anno__label {
+  position: absolute;
+  top: -0.7em;
+  white-space: nowrap;
+  color: var(--text-2);
+  clip-path: inset(0 100% 0 0);
+  animation: anno-label 260ms var(--ease-entrance) forwards;
+}
+.anno--right .anno__label { left: 78px; }
+.anno--left .anno__label { right: 78px; }
+@keyframes anno-dot { to { opacity: 1; } }
+@keyframes anno-leader { to { transform: scaleX(1); } }
+@keyframes anno-label { to { clip-path: inset(0 0 0 0); } }
+
+/* --------------------------------------------------------------------------
+   7.6 The retest
+   -------------------------------------------------------------------------- */
+
+.retest { width: 100%; align-items: center; }
+.retest__text { display: grid; gap: var(--s3); align-content: center; }
+.retest__sub { color: var(--text-2); }
+.retest__closing { transition: opacity var(--dur-composition) var(--ease-entrance); }
+.retest__stage { display: grid; align-content: center; }
+.retest__col { display: grid; gap: var(--s2); }
+.retest__day0 { color: var(--text-3); }
+.retest__railwrap { position: relative; display: grid; grid-template-columns: 1px 1fr; gap: var(--s3); min-height: 320px; }
+.retest__rail { height: 100%; width: 1px; }
+.retest__weeks { list-style: none; display: grid; align-content: space-between; }
+.retest__week { display: flex; align-items: center; gap: var(--s2); color: var(--text-3); transition: opacity var(--dur-micro) var(--ease-entrance); }
+.retest__tick { width: 10px; height: 1px; background: var(--hairline); display: block; }
+.retest__tick--lit { width: 20px; background: var(--jade); }
+.retest__w12 { color: var(--text); }
+.retest__chase { display: grid; gap: var(--s1); margin-top: var(--s3); }
+.retest__chaseline { color: var(--text-2); transition: clip-path var(--dur-print) var(--ease-entrance); }
+
+/* --------------------------------------------------------------------------
+   7.7 The panel
+   -------------------------------------------------------------------------- */
+
+.panel__grid { align-items: start; }
+.panel__head { display: grid; gap: var(--s3); }
+.seg { position: relative; display: inline-flex; border: 1px solid var(--hairline); border-radius: var(--r-control); width: max-content; }
+.seg__b { padding: 10px var(--s3); color: var(--text-2); font-size: var(--caption); position: relative; z-index: 1; min-height: 44px; }
+.seg__b.is-on { color: var(--text); }
+.seg__ind { position: absolute; top: 0; bottom: 0; width: 50%; background: var(--surface-2); transition: transform 160ms var(--ease-instrument); }
+.seg__ind--her { transform: translateX(0); }
+.seg__ind--him { transform: translateX(100%); }
+/* Fixed to the taller state so switching never moves anything below it. */
+.panel__rows { display: grid; gap: var(--s3); min-height: 260px; align-content: start; }
+.panel__rowt { color: var(--text); }
+.panel__rowb { color: var(--text-3); }
+.panel__close { color: var(--text); }
+.panel__stage { display: grid; gap: var(--s5); align-content: start; }
+.panel__dots { position: relative; display: grid; grid-template-columns: repeat(12, 1fr); gap: 10px; }
+@media (max-width: 767px) { .panel__dots { grid-template-columns: repeat(8, 1fr); } }
+.dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--hairline-lit);
+  opacity: 1;
+  transition: opacity 700ms var(--ease-move), background-color 700ms var(--ease-move);
+}
+.dot.is-resolved { opacity: 0.12; }
+.dot--chosen.is-resolved { opacity: 1; background: var(--jade); }
+.dot:hover { opacity: 0.3; }
+.dot__chip { position: absolute; top: -22px; left: 0; color: var(--text-2); }
+.panel__three { list-style: none; display: grid; gap: var(--s3); opacity: 0; transition: opacity var(--dur-composition) var(--ease-entrance) 300ms; }
+.panel__three.is-on { opacity: 1; }
+.panel__prio { position: relative; display: flex; gap: var(--s2); align-items: baseline; padding-bottom: var(--s2); }
+.panel__prion { color: var(--jade); }
+.panel__priorule { position: absolute; left: 0; right: 0; bottom: 0; }
+
+/* --------------------------------------------------------------------------
+   7.8 Your own past
+   -------------------------------------------------------------------------- */
+
+.past { width: 100%; align-items: center; }
+.past__text { display: grid; gap: var(--s3); align-content: center; }
+.past__sub { color: var(--text-2); }
+.past__delta { color: var(--jade); transition: opacity var(--dur-composition) var(--ease-entrance); }
+.past__stage { display: grid; gap: var(--s4); align-content: center; position: relative; }
+.past__svg { width: 100%; height: auto; }
+.past__x { font-size: 11px; fill: var(--text-3); letter-spacing: 0.08em; }
+.past__v { font-size: 20px; fill: var(--text); }
+.past__v--now { fill: var(--jade); }
+.past__bar { display: grid; gap: var(--s2); transition: opacity var(--dur-composition) var(--ease-entrance); }
+.past__track { position: relative; height: 6px; background: var(--surface-2); }
+.past__last { position: absolute; top: -4px; width: 1px; height: 14px; background: var(--hairline-lit); }
+.past__now { position: absolute; top: -4px; width: 2px; height: 14px; background: var(--jade); transition: left var(--dur-composition) var(--ease-move); }
+.past__sample { color: var(--text-3); text-align: right; }
+
+/* --------------------------------------------------------------------------
+   7.9 What we don't sell
+   -------------------------------------------------------------------------- */
+
+.sell__grid { align-items: start; }
+.sell__head { display: grid; gap: var(--s4); }
+.sell__list { list-style: none; display: grid; gap: var(--s2); }
+.sell__item { position: relative; width: max-content; max-width: 100%; }
+.sell__text { color: var(--text); transition: color 340ms var(--ease-move); }
+.sell__item.is-struck .sell__text { color: var(--text-3); }
+.sell__strike { position: absolute; left: 0; right: 0; top: 50%; }
+.sell__body { display: grid; gap: var(--s3); }
+.sell__body .t-body { color: var(--text-2); }
+.sell__who { font-weight: var(--w-heading); color: var(--text); }
+
+/* --------------------------------------------------------------------------
+   7.10 What we can't tell you yet
+   -------------------------------------------------------------------------- */
+
+.know__grid { align-items: center; }
+.know__cell { display: grid; gap: var(--s3); }
+.know__rule { max-width: 120px; }
+.know__ticks { max-width: 120px; }
+.know__h { margin: 0; }
+.know__body { display: grid; gap: var(--s3); }
+.know__body .t-body-l { color: var(--text-2); }
+/* The single appearance of an italic on the whole site. Gambetta is the
+   specified face; it was not reachable from this build environment, so the
+   signature falls back to the system serif italic rather than to Switzer,
+   which would erase the distinction entirely. See DECISIONS.md D8. */
+.know__sign {
+  font-family: 'Gambetta', Georgia, 'Times New Roman', serif;
+  font-style: italic;
+  font-size: var(--body-l);
+  color: var(--text);
+  margin-top: var(--s3);
+}
+
+/* --------------------------------------------------------------------------
+   7.11 What a membership includes — the one card besides the phone.
+   -------------------------------------------------------------------------- */
+
+.inc__grid { align-items: center; }
+.inc__card {
+  position: relative;
+  background: var(--surface-1);
+  border: 1px solid transparent;
+  border-radius: var(--r-object);
+  padding: var(--s5);
+  display: grid;
+  gap: var(--s3);
+  transition: border-color 1400ms var(--ease-instrument);
+}
+.inc__card.is-drawn { border-color: var(--hairline); }
+@media (max-width: 767px) { .inc__card { padding: var(--s4); } }
+.inc__h { margin: 0; }
+.inc__list { list-style: none; display: grid; gap: var(--s2); }
+.inc__item { display: flex; gap: var(--s2); align-items: baseline; color: var(--text-2); }
+.inc__pricing { color: var(--text); }
+.inc__scope { color: var(--text-3); border-top: 1px solid var(--hairline); padding-top: var(--s3); }
+
+/* --------------------------------------------------------------------------
+   7.12 Questions
+   -------------------------------------------------------------------------- */
+
+.qs__grid { align-items: start; }
+.qs__list { display: grid; }
+.disc { position: relative; }
+.disc__rule { position: absolute; top: 0; left: 0; right: 0; }
+.disc__h { margin: 0; font-size: inherit; font-weight: inherit; }
+.disc__btn {
+  width: 100%;
+  display: flex;
+  gap: var(--s3);
+  align-items: center;
+  justify-content: space-between;
+  text-align: left;
+  padding-block: var(--s3);
+  min-height: 44px;
+}
+.disc__q { color: var(--text); }
+.disc__body { overflow: hidden; transition: height 320ms var(--ease-move); }
+.disc__inner { padding-bottom: var(--s3); }
+.disc__a { color: var(--text-2); }
+
+/* --------------------------------------------------------------------------
+   7.13 The close — one of only two centred compositions on the site.
+   -------------------------------------------------------------------------- */
+
+.close__wrap { display: grid; place-items: center; text-align: center; }
+.close__cell { display: grid; gap: var(--s4); justify-items: center; max-width: 620px; }
+.close__h { margin: 0; text-align: center; }
+.close__sub { color: var(--text-2); }
+.close__form { width: 100%; max-width: 420px; }
+.close__actions { display: flex; gap: var(--s2); }
+.close__micro, .close__proto { color: var(--text-3); }
+.close__tag { margin-top: var(--s5); color: var(--text); }
+
+.wl { display: grid; gap: var(--s2); justify-items: stretch; }
+.wl__label { text-align: left; color: var(--text-3); }
+.wl__field { position: relative; display: flex; align-items: center; gap: var(--s2); padding-bottom: var(--s2); }
+.wl__prefix { color: var(--text-2); }
+.wl__input {
+  flex: 1;
+  background: none;
+  border: 0;
+  color: var(--text);
+  min-height: 44px;
+  font-family: inherit;
+}
+.wl__input:focus { outline: none; }
+.wl__underline { position: absolute; left: 0; right: 0; bottom: 0; }
+.wl__field:focus-within .wl__underline .rule__ink { background: var(--jade); }
+.wl__ticks { max-width: 90px; }
+.wl__error { color: var(--amber); text-align: left; }
+.wl__thanks { margin: 0; }
+.wl__thanksub { color: var(--text-2); }
+.wl__share { color: var(--text-3); }
+.wl__copy { color: var(--text); text-decoration: underline; text-underline-offset: 4px; }
+
+/* --------------------------------------------------------------------------
+   7.14 Footer
+   -------------------------------------------------------------------------- */
+
+.foot__grid { align-items: end; }
+.foot__brand { display: grid; gap: var(--s1); }
+.foot__mark { font-size: 18px; font-weight: var(--w-heading); letter-spacing: 0.06em; }
+.foot__promise { color: var(--text-2); }
+.foot__legal { display: grid; gap: var(--s2); }
+.foot__scope, .foot__links, .foot__copy { color: var(--text-3); }
+.foot__links a { color: var(--text-2); text-decoration: underline; text-underline-offset: 4px; }
