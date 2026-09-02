@@ -39,16 +39,24 @@ export default function App() {
      plays it owns the rule and the hero resumes at the handover; when it is
      skipped or suppressed the hero runs its own boot in full. */
   const [intro, setIntro] = useState(shouldPlayIntro)
+  const [handed, setHanded] = useState(false)
 
   if (route === '/primitives') return <Bench><Primitives /></Bench>
   if (route === '/lab') return <Bench><Lab /></Bench>
 
   return (
     <>
-      {intro && <Intro onDone={() => setIntro(false)} />}
+      {intro && (
+        <Intro
+          onDone={() => {
+            setHanded(true)
+            setIntro(false)
+          }}
+        />
+      )}
       <Header />
       <main id="top">
-        <Hero booted={!intro} />
+        <Hero boot={intro ? 'waiting' : handed ? 'handed' : 'direct'} />
         <SilentBuild />
         <Ledger />
         <Loop />

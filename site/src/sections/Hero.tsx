@@ -20,7 +20,14 @@ import Rule from '../components/Rule'
 import Ticks from '../components/Ticks'
 import { PROTOTYPE_URL } from '../lib/constants'
 
-export default function Hero({ booted = true }: { booted?: boolean }) {
+/**
+ * `boot` is the shared state machine's view of this section (7.0.6):
+ *   'direct'   no intro — the hero draws its own baseline, in full
+ *   'waiting'  the intro is on screen and owns the only rule there is
+ *   'handed'   the intro has handed its rule over; the baseline is ALREADY
+ *              drawn and must not draw again
+ */
+export default function Hero({ boot = 'direct' }: { boot?: 'direct' | 'waiting' | 'handed' }) {
   /* display-l, not display-xl. The type cell is cols 1-7 = 708px at the
      canonical width, and the longest headline line measures 946px at
      display-xl against 655px at display-l. Part 2.5 says the manually placed
@@ -43,7 +50,7 @@ export default function Hero({ booted = true }: { booted?: boolean }) {
               origin="left"
               duration={680}
               className="hero__baseline"
-              progress={booted ? undefined : 0}
+              progress={boot === 'direct' ? undefined : boot === 'handed' ? 1 : 0}
             />
           </span>
 

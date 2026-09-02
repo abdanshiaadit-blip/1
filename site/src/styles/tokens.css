@@ -1,9 +1,14 @@
 /* ==========================================================================
    HUMAN — design tokens. BRIEF.md Parts 2, 3.5, 4.3.
 
-   Nothing outside this file defines a colour, a type size, a radius, a
-   z-index, a duration or an easing. If a component needs a value that is not
-   here, the value is wrong, not the file.
+   Nothing outside this file defines a colour, a z-index or an easing.
+
+   Durations and a handful of sizes are the exception, and deliberately so:
+   Part 7 specifies per-section timings the Part 4.3 token list does not carry
+   (the horizon rule's 900ms, the strike-through's 340ms, the intro's beats),
+   and Part 7.16 sets the header wordmark at 18px outside the type scale. Those
+   live at their point of use, where the brief's own numbers are legible next
+   to the thing they describe.
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
@@ -119,7 +124,12 @@
   --glass-lift: 0 10px 30px -18px rgba(0, 0, 0, 0.9);
 
   /* ---- Geometry — Part 2.6 ----------------------------------------------
-     Exactly two radii exist. Nothing else on the site has a radius at all. */
+     Part 2.6 permits exactly two radii and says nothing else on the site has a
+     radius at all. Three further values ship, each recorded rather than
+     silent: the device's screen and bezel radii (D10, client direction), and
+     `border-radius: 50%` on the three genuinely circular objects — the jade
+     glow, the "not solved" glyph and the annotation anchor. A circle is not a
+     corner treatment, but it is a radius, so it is named here. */
   --r-control: 2px;
   --r-object: 24px;
 

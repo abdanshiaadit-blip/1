@@ -80,3 +80,39 @@ requires three, and the three priority rows in 7.7 carried invented names.
 Part 0.4 forbids inventing product capability, and the brief supplies no copy
 for those rows — so they are unnamed now, and the gesture carries the argument,
 which is the count rather than the contents.
+
+---
+
+## Sessions 11–12 — the intro, the audit, and what the audit found
+
+**The weakest thing** is that the intro's handover is a travel rather than a
+true split. Part 7.0 Beat 5 says the surviving rule "splits and travels apart
+to become the header underline and the type-cell baseline" — two destinations.
+What ships is one rule travelling onto one destination, the hero's baseline,
+and the header's underline appears on its own at 40px of scroll. She will not
+notice, but it is one idea short of the one the brief described.
+
+**An art director would say** the intro is 1.8 seconds of near-empty screen for
+a visitor who arrived from a reel, and that the case for it rests entirely on
+the rule surviving into the hero. That handover now works, so the sequence
+earns its place — but it is the single most cuttable thing on the site, and if
+the funnel numbers ever argue with it, the funnel should win.
+
+**What changed as a result.** The first paint was WHITE, for one frame, before
+the stylesheet resolved — on a site whose opening beat is "Pure void. Nothing."
+The ground is now set inline in the document head. The compliance audit then
+found things looking could not: `--text-3` fails the brief's own 4.5:1 floor at
+3.78:1 on void and 3.18:1 on surface-2, so it moved to the minimum lightening
+of the same hue that clears it everywhere; the framed app was tabbable despite
+`tabindex="-1"`, because that removes the frame and not the document inside it;
+Escape did not work from where she would actually be after taking control, since
+focus was inside the frame and the listener was outside it; and `release()`
+focused an id that had never been rendered, dropping focus to `<body>` — the one
+thing Part 5.5 says it must never do.
+
+Two of my own fixes broke things the verifiers caught: clamping the range bar's
+travel to 28px dropped the tick's settled position so it rendered at zero, and
+the boot state machine still drew the hero's baseline a second time after the
+handover, which is precisely the two-rules failure 7.0.6 exists to prevent.
+Both are why the adversarial pass was worth running — a fix is a change, and a
+change deserves the same scepticism as the code it replaced.

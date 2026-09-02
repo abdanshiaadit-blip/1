@@ -515,7 +515,10 @@
 .past__bar { display: grid; gap: var(--s2) }
 .past__track { position: relative; height: 6px; background: var(--surface-2); }
 .past__last { position: absolute; top: -4px; width: 1px; height: 14px; background: var(--hairline-lit); }
-.past__now { position: absolute; top: -4px; width: 2px; height: 14px; background: var(--jade) }
+/* The settled position is layout; the 28px transform is the only thing that
+   moves (Part 3.3, Part 4.3). Animating `left` would animate layout, and 22%
+   of a ~600px track is 132px of travel where 28 is the ceiling. */
+.past__now { position: absolute; left: 40%; top: -4px; width: 2px; height: 14px; background: var(--jade); }
 .past__sample { color: var(--text-3); text-align: right; }
 
 /* --------------------------------------------------------------------------
