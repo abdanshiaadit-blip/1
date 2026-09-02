@@ -343,3 +343,127 @@ the file: the device's height budget had to grow, because a nav that floats no
 longer reserves its own space, and the waitlist underline and its calibration
 ticks were removed, because a rule beneath a capsule field reads as debris
 left over from an earlier design.
+
+## D14 · Liquid Glass, and what a black page does to it — CLIENT DIRECTION
+
+D9 put a glass recipe in the stylesheet and D13 built the Apple composition
+around it. The client's answer was that the site still did not have the effect:
+*"i wanted liquid glass effect in the elements and the interactive elements"*.
+
+They were right, for two reasons, and only one of them was a mistake.
+
+**1. The rim was dead code.** D9 defined the material as a class, `.lg`, whose
+`::after` painted the directional specular rim — the one ingredient that
+separates Liquid Glass from a translucent rectangle, and the thing D13's own
+notes claimed was "on every glass surface". Nothing in the codebase ever
+carried that class. Every surface hand-copied D9's fill, blur and shadow lines
+and silently dropped the rim. Live computed style confirmed it: `::after`
+returned `none` on every glass element on the page. What shipped was a
+translucent fill over a blur of nothing.
+
+The material is now applied by SELECTOR LIST rather than by a class, so a
+surface cannot be given the fill and miss the lighting. That also keeps the
+whole direction inside its own two files, which is what makes it revertible.
+
+**2. The page has nothing behind the glass.** This is physics, not a bug, and
+it governs everything else. Measured: behind most glass surfaces on this site
+the true backdrop is a SINGLE distinct RGB triple — `#05100D`, standard
+deviation exactly zero. Blur, saturate and refraction are all closed under a
+constant function. You cannot bend a flat field into anything but itself.
+
+So the material is built out of what a black page CAN carry: the edge.
+
+```
+BODY    a vertical tint, because glass has thickness and thickness is a gradient
+POOL    a specular sheen at --px/--py, which the runtime slides to the pointer
+RIM     ::after, a conic ring lit at 315deg — one light, upper-left, all the
+        way round, arriving back where it started
+BEVEL   ::before, 14px of that light bleeding inward, which is what stops the
+        rim reading as a stroke
+```
+
+**Interaction, since that is half of what the client was missing.** The
+specular follows the pointer (registered `@property`, so it interpolates and
+trails by 90ms instead of teleporting); a press compresses the surface to 96.5%
+while the light stays put, so it reads as a compliant material rather than a
+shrinking button; `:focus-visible` draws a jade ring through a slot reserved in
+the shadow stack. One delegated `pointermove` for the page, coalesced into one
+`rAF`, mouse only — Part 10 budgets no long tasks.
+
+**Refraction is applied to exactly one surface, and that is a finding.** Real
+edge refraction is built with a generated `feDisplacementMap` per measured
+element size (a bevel map with a flat plateau and a ramp only within 13px of
+each edge, so the middle stays optically clean). Rendering each candidate with
+and without the filter and diffing the pixels:
+
+```
+.seg__ind    26.4% of pixels move (desktop), 23.6% (mobile)
+.btn--ghost   0.28%
+.wl__field    0%
+.inc__card    0%
+.hdr__in      0%
+```
+
+The segmented indicator is the exception because it does not sit over the page
+— it slides over its own two labels. It is the only place on this site where
+glass passes across content, and therefore the only place it can behave like a
+lens instead of looking like one.
+
+Narrowing it that way is also what makes the material free. Ten refracting
+surfaces cost median frame time on a full-page scroll 16.7ms → 33.3ms — a
+straight halving of the frame rate. With refraction on one surface and the
+provably-useless filters removed, a full-page scroll measures identically with
+the material and with every `backdrop-filter` on the page disabled:
+
+```
+1440px   no material  p50 16.7  p90 50.0  p99 100.0  frames over 50ms: 22
+         with glass   p50 16.7  p90 50.0  p99  99.9  frames over 50ms: 20
+ 390px   no material  p50 16.7  p90 16.7  p99  33.3  frames over 50ms: 0
+         with glass   p50 16.7  p90 16.7  p99  33.3  frames over 50ms: 0
+```
+
+`.btn--primary` and a resting `.disc__btn` carry no `backdrop-filter` at all,
+by the same test: opaque jade and a transparent row have nothing behind them,
+and the filter provably changed zero pixels on both.
+
+**What the no-overlap instruction changed.** The client also asked that nothing
+overlap anything else or any text. Three consequences, and the first is the
+important one:
+
+- **The body is not a window.** Transmission carries tone, never content. The
+  floating bar sits at 88% of the page's own ink once scrolled (the brief's own
+  number) and the action bar at 92%. A 30px blur alone was not enough: at 64px
+  the display face survives it as legible smears, and a headline reading
+  *through* the bar while the bar's label reads *over* it is two texts fighting
+  in one place.
+- **The top bar leaves on the way down.** Reading runs downward, so the bar
+  goes with it and returns the moment you scroll up — or the moment it takes
+  focus, so a keyboard visitor never tabs into something off-screen.
+- **The mobile action bar was re-docked to the bottom edge.** D13 floated it
+  with the rest of the chrome and that was wrong: a bar hovering 16px off the
+  bottom leaves a strip of page visible underneath, so a sentence it crosses
+  appears above it, vanishes and reappears below — a slab dropped on the text.
+  Docked, copy simply runs off the bottom of the screen as copy always has. It
+  cannot use the top bar's trick: Part 7.15 makes it scroll-POSITION driven
+  precisely so it never flickers.
+
+**Accessibility.** Text contrast is measured on the real glyph areas of the
+rendered page, not against nominal tokens (`site/.shots/contrast.mjs`). Two
+values moved as a result: the header tagline steps from `--text-3` to
+`--text-2`, because the quietest ink on the site measures 3.82:1 on a lit
+surface, and the primary button's specular was cut to 0.18 and pushed above the
+cap height, because at full strength white type on the lit shoulder falls to
+about 2.3:1. All ten measured surfaces now clear their floor. Four fallbacks
+ship: reduced transparency (opaque, runtime off), more contrast (rims become
+plain edges), reduced motion (no tracking, no press), and forced colours (every
+control keeps a real border).
+
+**What stays bare, unchanged from D13:** the type, the rules, the charts, the
+ledger, the annotations and the device. Part 2.3's light model still holds —
+the phone is the only lit object, and glass refracts what is behind it rather
+than emitting.
+
+**To revert:** delete `site/src/styles/ios26.css`, `site/src/lib/glass.ts` and
+`site/src/components/Glass.tsx`, and their three import lines. The header's
+hide-on-scroll and the docked mobile bar are the only changes outside those
+files, both marked in place.

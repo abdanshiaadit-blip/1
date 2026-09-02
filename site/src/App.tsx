@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import Glass from './components/Glass'
 import Grain from './components/Grain'
 import Header from './components/Header'
 import Intro, { shouldPlayIntro } from './components/Intro'
@@ -74,6 +75,7 @@ export default function App() {
       <Telemetry />
       <MobileBar />
       <Grain />
+      <Glass />
     </>
   )
 }
@@ -83,6 +85,7 @@ function Bench({ children }: { children: React.ReactNode }) {
     <>
       <main>{children}</main>
       <Grain />
+      <Glass />
     </>
   )
 }

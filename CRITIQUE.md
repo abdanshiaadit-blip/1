@@ -149,3 +149,52 @@ because two concentric superellipses whose radii differ by the bezel width are
 not a constant distance apart — the concentricity D10 was built on only holds
 for circles. Both reverts are commented at the point of the exception so the
 next person does not re-derive them from a screenshot.
+
+---
+
+## Session 14 — the material, and three wrong measurements
+
+**The weakest thing** is that the most convincing piece of glass on the site is
+a 96×44 pill inside a toggle almost nobody will scroll to. The segmented
+indicator is the only surface with anything behind it, so it is the only one
+where the material behaves like a lens rather than being lit to look like one —
+and everywhere else the glass is, honestly, a very well-lit edge on a dark
+rectangle. That is the ceiling on a page whose ground is one flat colour with a
+standard deviation of zero. The client asked for a material that is defined by
+what it does to what is behind it, on a site that was designed to have nothing
+behind anything.
+
+**An art director would say** that the site now has two theories of light. Part
+2.3 allows three sources and the phone is the only lit object; the material
+adds a fourth — a light at 315° that exists solely so the chrome has an edge to
+catch — and once you see it you cannot unsee that the buttons are lit from a
+lamp the photograph does not contain. They would also point at the header,
+which now leaves when you scroll down: the fix works, but it is the second
+patch on the same wound, and the first was floating the bar in the first place.
+Chrome that has to hide to stop damaging the page is chrome the page did not
+need.
+
+**What changed as a result.** The root cause turned out to be embarrassing and
+simple: the rim — the one ingredient that makes glass read as glass — was
+defined on a class that no element in the codebase carried. It was dead code
+for two sessions while the notes claimed it was on every surface. The material
+is now applied by selector list, so a surface cannot take the fill and miss the
+lighting.
+
+Three of my own measurements were wrong before they were right, and each one
+looked convincing at the time. The first A/B of the refraction filter reported
+4.3% of the card's pixels changing — that was the section's entrance animation
+still printing between the two screenshots, so I added a stability control that
+shoots the same state twice before touching anything. The second toggled
+`--lg-lens: none`, which makes `backdrop-filter: none blur(16px)` malformed:
+the browser dropped the whole declaration and I measured the loss of the blur,
+not the loss of the lens. The third was a contrast probe reporting the worst
+pixel anywhere inside a control, which on a bevelled surface is always the rim
+and never the type; it now measures the actual glyph rects. Every number in
+D14 comes from the versions that survived. The lesson I keep having to relearn:
+a measurement that agrees with what you hoped is the one to re-run.
+
+And the overlap gate caught a real regression within minutes of my writing it
+in — `position: relative` on the shared material list clobbered the mobile
+bar's `position: fixed`, turning its pinned edges into offsets and giving the
+document a 16px horizontal scrollbar at 390px. Automation, not vigilance.
