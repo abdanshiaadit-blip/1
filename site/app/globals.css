@@ -1,0 +1,2545 @@
+@import 'tailwindcss';
+
+/* ============================================================
+   HUMAN — design system
+   Tokens are the only source of dimension, colour and timing.
+   Blueprint §6 (design system), §7 (motion), §8 (safety).
+   ============================================================ */
+
+@theme {
+  /* --- Colour: base (§6.1) --- */
+  --color-paper: #f3f5f2;
+  --color-paper-raised: #fafbf9;
+  --color-mist: #e3e9e4;
+  --color-forest: #1b3b30;
+  --color-forest-deep: #102821;
+  --color-ink: #12211c;
+  --color-ink-soft: #4a5a54;
+  --color-ink-faint: #61716a;
+  --color-paper-on-dark: #edf1ec;
+  --color-paper-on-dark-soft: #a9bab2;
+
+  /* --- Colour: accent --- */
+  --color-jade: #2f6b4f;
+  --color-jade-hover: #265b43;
+  --color-slate-blue: #1e3a52;
+
+  /* --- Colour: semantic, data only. Never brand, button or background. --- */
+  --color-signal-good: #2f6b4f;
+  --color-signal-watch: #a87a2b;
+  --color-signal-act: #9c3b2e;
+
+  /* --- Hairline on forest --- */
+  --color-rule-on-dark: rgba(237, 241, 236, 0.14);
+
+  /* --- Spacing (§6.3): 8px base, tokens only --- */
+  --spacing-s1: 4px;
+  --spacing-s2: 8px;
+  --spacing-s3: 12px;
+  --spacing-s4: 16px;
+  --spacing-s5: 24px;
+  --spacing-s6: 32px;
+  --spacing-s7: 40px;
+  --spacing-s8: 48px;
+  --spacing-s9: 64px;
+  --spacing-s10: 80px;
+  --spacing-s11: 96px;
+  --spacing-s12: 120px;
+  --spacing-s13: 160px;
+  --spacing-s14: 200px;
+  --spacing-s15: 260px;
+
+  /* --- Radius (§6.5): four values, assigned by meaning --- */
+  --radius-none: 0px;
+  --radius-sm: 4px;
+  --radius-md: 12px;
+  --radius-phone: 44px;
+
+  /* --- Shadows (§6.5): two only --- */
+  --shadow-lift: 0 1px 2px rgba(18, 33, 28, 0.04), 0 8px 24px rgba(18, 33, 28, 0.06);
+  --shadow-device: 0 2px 8px rgba(18, 33, 28, 0.08), 0 24px 64px rgba(18, 33, 28, 0.14);
+
+  /* --- Easing (§7.3) --- */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-in: cubic-bezier(0.55, 0, 1, 0.45);
+
+  /* --- Families --- */
+  --font-display: var(--font-newsreader), 'Newsreader', Georgia, 'Times New Roman', serif;
+  --font-body: var(--font-atkinson), 'Atkinson Hyperlegible', system-ui, -apple-system, sans-serif;
+}
+
+:root {
+  /* --- Durations (§7.2): nothing exceeds 800ms --- */
+  --d-instant: 80ms;
+  --d-quick: 180ms;
+  --d-base: 320ms;
+  --d-reveal: 560ms;
+  --d-scene: 800ms;
+
+  /* --- Z-index (§8.7): six values. No others exist. --- */
+  --z-base: 0;
+  --z-raised: 10;
+  --z-sticky: 20;
+  --z-nav: 100;
+  --z-overlay: 200;
+  --z-modal: 300;
+
+  /* --- Type scale (§6.2), desktop --- */
+  --t-display-size: 5.25rem;
+  --t-display-lh: 0.95;
+  --t-h1-size: 3.75rem;
+  --t-h2-size: 2.75rem;
+  --t-h3-size: 1.75rem;
+  --t-lead-size: 1.375rem;
+  --t-body-size: 1.0625rem;
+  --t-small-size: 0.9375rem;
+  --t-caption-size: 0.8125rem;
+  --t-stat-size: 7.5rem;
+
+  /* --- Layout (§6.4) --- */
+  --container-max: 1360px;
+  --gutter: 20px;
+  --grid-cols: 4;
+  --grid-gap: 16px;
+
+  /* --- Section rhythm (§6.3) --- */
+  --section-pad: var(--spacing-s11);
+
+  color-scheme: light;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --gutter: 40px;
+    --grid-cols: 8;
+    --grid-gap: 20px;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --gutter: 64px;
+    --grid-cols: 12;
+    --grid-gap: 24px;
+    --section-pad: var(--spacing-s14);
+  }
+}
+
+/* Mobile type scale — explicit overrides, never vw units (§6.2) */
+@media (max-width: 1023px) {
+  :root {
+    --t-display-size: 3rem;
+    --t-h1-size: 2.25rem;
+    --t-h2-size: 1.875rem;
+    --t-h3-size: 1.375rem;
+    --t-lead-size: 1.1875rem;
+    --t-body-size: 1.0625rem;
+    --t-stat-size: 4rem;
+  }
+}
+
+/* ============================================================
+   Base
+   ============================================================ */
+
+html {
+  /* §8.4 — a horizontal scrollbar is a build failure */
+  overflow-x: clip;
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  overflow-x: clip;
+  margin: 0;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: var(--t-body-size);
+  line-height: 1.65;
+  /* §6.2 — mandatory site-wide */
+  font-variant-numeric: lining-nums tabular-nums;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+figure,
+blockquote,
+ul,
+ol {
+  margin: 0;
+}
+
+ul,
+ol {
+  padding: 0;
+  list-style: none;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+}
+
+/* §14.7 — visible focus everywhere, never outline:none without a replacement */
+:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.on-dark :focus-visible,
+.is-dark :focus-visible {
+  outline-color: var(--color-paper-on-dark);
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-jade) 22%, transparent);
+}
+
+/* §13.3 — removes the 300ms tap delay */
+a,
+button,
+[role='tab'],
+input,
+select,
+textarea {
+  touch-action: manipulation;
+}
+
+/* ============================================================
+   Type utilities (§6.2)
+   Each bundles family, size, line-height, tracking and weight so
+   a heading can never be assembled out of loose values.
+   ============================================================ */
+
+@utility t-display {
+  font-family: var(--font-display);
+  font-size: var(--t-display-size);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  font-weight: 400;
+  font-variation-settings: 'opsz' 72;
+}
+
+@utility t-h1 {
+  font-family: var(--font-display);
+  font-size: var(--t-h1-size);
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  font-weight: 400;
+  font-variation-settings: 'opsz' 60;
+}
+
+@utility t-h2 {
+  font-family: var(--font-display);
+  font-size: var(--t-h2-size);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+  font-variation-settings: 'opsz' 44;
+}
+
+@utility t-h3 {
+  font-family: var(--font-display);
+  font-size: var(--t-h3-size);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  font-weight: 500;
+  font-variation-settings: 'opsz' 28;
+}
+
+@utility t-lead {
+  font-family: var(--font-body);
+  font-size: var(--t-lead-size);
+  line-height: 1.55;
+  letter-spacing: 0;
+  font-weight: 400;
+}
+
+@utility t-body {
+  font-family: var(--font-body);
+  font-size: var(--t-body-size);
+  line-height: 1.65;
+  letter-spacing: 0;
+  font-weight: 400;
+}
+
+@utility t-small {
+  font-family: var(--font-body);
+  font-size: var(--t-small-size);
+  line-height: 1.55;
+  letter-spacing: 0;
+  font-weight: 400;
+}
+
+@utility t-caption {
+  font-family: var(--font-body);
+  font-size: var(--t-caption-size);
+  line-height: 1.45;
+  letter-spacing: 0.01em;
+  font-weight: 400;
+}
+
+@utility t-stat {
+  font-family: var(--font-display);
+  font-size: var(--t-stat-size);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  font-weight: 400;
+  font-variant-numeric: lining-nums tabular-nums;
+  font-variation-settings: 'opsz' 72;
+}
+
+/* Measure caps (§6.2) — never full-bleed text */
+@utility measure-body {
+  max-width: 65ch;
+}
+@utility measure-lead {
+  max-width: 55ch;
+}
+@utility measure-display {
+  max-width: 20ch;
+}
+@utility measure-head {
+  max-width: 26ch;
+}
+
+/* Z-index utilities (§8.7) — the only six values in the codebase */
+@utility z-base {
+  z-index: var(--z-base);
+}
+@utility z-raised {
+  z-index: var(--z-raised);
+}
+@utility z-sticky {
+  z-index: var(--z-sticky);
+}
+@utility z-nav {
+  z-index: var(--z-nav);
+}
+@utility z-overlay {
+  z-index: var(--z-overlay);
+}
+@utility z-modal {
+  z-index: var(--z-modal);
+}
+
+/* ============================================================
+   Layout primitives (§6.4)
+   ============================================================ */
+
+.container-h {
+  width: 100%;
+  max-width: calc(var(--container-max) + var(--gutter) * 2);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.grid-h {
+  display: grid;
+  grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr));
+  column-gap: var(--grid-gap);
+}
+
+/* Placements. Below 1024px every placement is full width; the
+   12-column geometry only exists where there are 12 columns. */
+.place-full,
+.place-wide,
+.place-text,
+.place-text-right,
+.place-centre,
+.place-split-a,
+.place-split-b {
+  grid-column: 1 / -1;
+}
+
+@media (min-width: 1024px) {
+  .place-full {
+    grid-column: 1 / 13;
+  }
+  .place-wide {
+    grid-column: 2 / 12;
+  }
+  .place-text {
+    grid-column: 2 / 8;
+  }
+  .place-text-right {
+    grid-column: 6 / 12;
+  }
+  .place-centre {
+    grid-column: 4 / 10;
+  }
+  .place-split-a {
+    grid-column: 2 / 7;
+  }
+  .place-split-b {
+    grid-column: 7 / 12;
+  }
+}
+
+/* Section rhythm */
+.section-h {
+  position: relative;
+  padding-block: var(--section-pad);
+}
+
+.bg-paper-section {
+  background: var(--color-paper);
+}
+.bg-raised-section {
+  background: var(--color-paper-raised);
+}
+.bg-forest-section {
+  background: var(--color-forest);
+  color: var(--color-paper-on-dark);
+}
+
+/* ============================================================
+   Components (§6.6)
+   ============================================================ */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: var(--t-body-size);
+  font-weight: 700;
+  line-height: 1.2;
+  padding: 16px 32px;
+  text-decoration: none;
+  transition:
+    background-color var(--d-quick) var(--ease-out),
+    border-color var(--d-quick) var(--ease-out),
+    transform var(--d-quick) var(--ease-out);
+}
+
+.btn:active {
+  transform: translateY(0);
+  transition-duration: var(--d-instant);
+}
+
+.btn--primary {
+  background: var(--color-jade);
+  color: var(--color-paper-raised);
+}
+
+@media (hover: hover) {
+  .btn--primary:hover {
+    background: var(--color-jade-hover);
+    transform: translateY(-1px);
+  }
+}
+
+.btn--secondary {
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--color-ink) 20%, transparent);
+  color: var(--color-ink);
+}
+
+@media (hover: hover) {
+  .btn--secondary:hover {
+    border-color: color-mix(in srgb, var(--color-ink) 45%, transparent);
+    background: rgba(47, 107, 79, 0.05);
+  }
+}
+
+.btn--on-dark.btn--secondary {
+  border-color: var(--color-rule-on-dark);
+  color: var(--color-paper-on-dark);
+}
+
+.btn[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.link-inline {
+  color: var(--color-jade);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  transition: text-decoration-thickness 140ms var(--ease-out);
+}
+
+@media (hover: hover) {
+  .link-inline:hover {
+    text-decoration-thickness: 2px;
+  }
+}
+
+.on-dark .link-inline,
+.link-inline--on-dark {
+  color: var(--color-paper-on-dark);
+}
+
+.card-h {
+  background: var(--color-paper-raised);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lift);
+  padding: var(--spacing-s7);
+}
+
+/* Marker row — the atom of every results visual (§6.6) */
+.marker-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  column-gap: var(--spacing-s4);
+  padding: var(--spacing-s3) 0 var(--spacing-s3) var(--spacing-s3);
+  border-bottom: 1px solid var(--color-mist);
+  border-radius: var(--radius-none);
+  position: relative;
+  transition:
+    background-color var(--d-quick) var(--ease-out);
+}
+
+.marker-row__bar {
+  position: absolute;
+  left: 0;
+  top: var(--spacing-s3);
+  bottom: var(--spacing-s3);
+  width: 4px;
+  border-radius: var(--radius-none);
+  transition: width var(--d-quick) var(--ease-out);
+}
+
+@media (hover: hover) {
+  .marker-row:hover {
+    background: var(--color-paper-raised);
+  }
+  .marker-row:hover .marker-row__bar {
+    width: 6px;
+  }
+}
+
+.marker-row__name {
+  color: var(--color-ink);
+}
+
+.marker-row__value {
+  color: var(--color-ink-soft);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.tag-h {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-s2);
+  border: 1px solid var(--color-mist);
+  border-radius: var(--radius-sm);
+  padding: 4px 10px;
+  color: var(--color-ink-soft);
+}
+
+.source-note {
+  color: var(--color-ink-faint);
+}
+
+.on-dark .source-note {
+  color: var(--color-paper-on-dark-soft);
+}
+
+.scope-line {
+  border-top: 1px solid var(--color-mist);
+  padding-top: var(--spacing-s4);
+  color: var(--color-ink-faint);
+  max-width: 65ch;
+}
+
+.on-dark .scope-line {
+  border-top-color: var(--color-rule-on-dark);
+  color: var(--color-paper-on-dark-soft);
+}
+
+/* Screen-reader only, still focusable when it needs to be */
+.sr-only-h {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  left: var(--spacing-s4);
+  top: var(--spacing-s4);
+  transform: translateY(-200%);
+  background: var(--color-paper-raised);
+  color: var(--color-ink);
+  padding: var(--spacing-s3) var(--spacing-s5);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-lift);
+  z-index: var(--z-modal);
+  transition: transform var(--d-quick) var(--ease-out);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+/* ============================================================
+   Phone (§9.3)
+   ============================================================ */
+
+.phone {
+  margin: 0;
+  width: 100%;
+  max-width: 390px;
+}
+
+.phone__bezel {
+  aspect-ratio: 390 / 844;
+  border: 1px solid color-mix(in srgb, var(--color-ink) 12%, transparent);
+  border-radius: var(--radius-phone);
+  box-shadow: var(--shadow-device);
+  background: var(--color-paper-raised);
+  padding: 8px;
+}
+
+.on-dark .phone__bezel {
+  border-color: var(--color-rule-on-dark);
+  background: var(--color-forest-deep);
+}
+
+.phone__viewport {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: calc(var(--radius-phone) - 8px);
+  background: var(--color-mist);
+}
+
+.phone__screen {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  /* §8.3 — `cover` is banned on app screens */
+  object-fit: contain;
+  object-position: center top;
+}
+
+.phone__caption {
+  margin-top: var(--spacing-s4);
+  color: var(--color-ink-faint);
+  text-align: center;
+}
+
+.on-dark .phone__caption {
+  color: var(--color-paper-on-dark-soft);
+}
+
+/* ============================================================
+   Scene scaffolding (§8.5, §8.6, §14.3)
+   Pinning is CSS sticky inside a parent of declared height.
+   ScrollTrigger reads progress; it never manipulates layout.
+   ============================================================ */
+
+.scene-track {
+  position: relative;
+}
+
+.scene-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  align-items: center;
+  z-index: var(--z-sticky);
+  overflow: clip;
+}
+
+@media (min-width: 1024px) and (min-height: 760px) and (prefers-reduced-motion: no-preference) {
+  .scene-track {
+    height: calc(var(--scene-count) * 100vh);
+    height: calc(var(--scene-count) * 100dvh);
+  }
+}
+
+/* Below 1024px wide, below 760px tall, or under reduced motion, a pinned
+   section is a normal block in document flow (§7.8, §8.7). */
+@media (max-width: 1023px), (max-height: 759px), (prefers-reduced-motion: reduce) {
+  .scene-track {
+    height: auto;
+  }
+  .scene-sticky {
+    position: static;
+    height: auto;
+    display: block;
+    overflow: visible;
+  }
+}
+
+/* ============================================================
+   Reveal (§7.4) — Law 1: the resting state is the final state.
+   GSAP animates *backwards* from here. If JS never runs, this
+   is what the visitor sees, correctly laid out.
+   ============================================================ */
+
+.reveal {
+  opacity: 1;
+  transform: none;
+}
+
+/* Hairlines that draw. Resting state is drawn. */
+.rule-draw {
+  transform-origin: left center;
+}
+
+.rule-draw--vertical {
+  transform-origin: center top;
+}
+
+/* ============================================================
+   Body toggle (§11.4)
+   Without JS the control is meaningless: it is hidden and both
+   content sets render in full under visible sub-headings. The
+   `js` class is set on <html> before first paint, so the
+   toggled presentation never flashes.
+   ============================================================ */
+
+.body-toggle-wrap {
+  display: none;
+}
+
+.js .body-toggle-wrap {
+  display: block;
+}
+
+.body-toggle {
+  position: relative;
+  display: inline-grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  border-bottom: 1px solid var(--color-mist);
+}
+
+.on-dark .body-toggle {
+  border-bottom-color: var(--color-rule-on-dark);
+}
+
+.body-toggle__label {
+  /* §13.3 — minimum 44px tap target */
+  min-height: 44px;
+  padding: var(--spacing-s3) var(--spacing-s5);
+  color: var(--color-ink-faint);
+  /* Both labels stay at one weight so the control can never resize.
+     Active state is carried by colour and the underline, plus
+     aria-selected for anyone not reading either. */
+  font-weight: 400;
+  text-align: center;
+  transition: color var(--d-quick) var(--ease-out);
+}
+
+.body-toggle__label + .body-toggle__label {
+  border-left: 1px solid var(--color-mist);
+}
+
+.on-dark .body-toggle__label + .body-toggle__label {
+  border-left-color: var(--color-rule-on-dark);
+}
+
+.body-toggle__label[aria-selected='true'] {
+  color: var(--color-ink);
+}
+
+.on-dark .body-toggle__label {
+  color: var(--color-paper-on-dark-soft);
+}
+
+.on-dark .body-toggle__label[aria-selected='true'] {
+  color: var(--color-paper-on-dark);
+}
+
+.body-toggle__underline {
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 50%;
+  height: 2px;
+  background: var(--color-ink);
+  transition: transform 280ms var(--ease-inout);
+}
+
+.on-dark .body-toggle__underline {
+  background: var(--color-paper-on-dark);
+}
+
+.body-toggle[data-active='men'] .body-toggle__underline {
+  transform: translateX(100%);
+}
+
+/* Both states occupy one grid cell, so the container is always as tall as
+   the taller state and the page height cannot change when it flips. */
+.body-panels {
+  display: grid;
+  gap: var(--spacing-s10);
+}
+
+.js .body-panels {
+  gap: 0;
+}
+
+.js .body-panel {
+  grid-area: 1 / 1;
+}
+
+.body-panel__nojs-heading {
+  margin-bottom: var(--spacing-s5);
+}
+
+.js .body-panel__nojs-heading {
+  display: none;
+}
+
+.js .body-panel[data-state='inactive'] {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 160ms var(--ease-inout),
+    visibility 0s linear 160ms;
+}
+
+.js .body-panel[data-state='active'] {
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity 240ms var(--ease-inout) 140ms,
+    visibility 0s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .body-toggle__underline,
+  .js .body-panel[data-state='inactive'],
+  .js .body-panel[data-state='active'] {
+    transition: none;
+  }
+}
+
+/* Rail phone: every screen stacked in the viewport from first paint (§9.4).
+   The first rests visible, which is also the correct no-JS state. */
+.phone__screen--layer {
+  will-change: auto;
+}
+
+.stat-block__figure {
+  color: inherit;
+}
+
+.stat-block__label {
+  margin-top: var(--spacing-s5);
+  color: var(--color-ink-soft);
+  max-width: 26ch;
+}
+
+.on-dark .stat-block__label {
+  color: var(--color-paper-on-dark-soft);
+}
+
+.stat-block__source {
+  margin-top: var(--spacing-s3);
+}
+
+/* ============================================================
+   Waitlist form and modal (§11.3, §16.2)
+   ============================================================ */
+
+.wl-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-s5);
+  margin-top: var(--spacing-s7);
+  max-width: 480px;
+}
+
+.wl-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-s2);
+}
+
+.wl-field--honeypot {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.wl-label {
+  color: var(--color-ink-soft);
+}
+
+.wl-optional {
+  color: var(--color-ink-faint);
+}
+
+.wl-input {
+  width: 100%;
+  min-height: 44px;
+  padding: var(--spacing-s3) var(--spacing-s4);
+  border: 1px solid var(--color-mist);
+  border-radius: var(--radius-sm);
+  background: var(--color-paper-raised);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  transition: border-color var(--d-quick) var(--ease-out);
+}
+
+textarea.wl-input {
+  min-height: 88px;
+  resize: vertical;
+}
+
+.wl-input:hover {
+  border-color: color-mix(in srgb, var(--color-ink) 30%, transparent);
+}
+
+.wl-input[aria-invalid='true'] {
+  border-color: var(--color-signal-act);
+}
+
+.wl-error {
+  color: var(--color-signal-act);
+}
+
+.wl-consent {
+  color: var(--color-ink-faint);
+}
+
+.wl-submit {
+  align-self: flex-start;
+}
+
+.wl-foot {
+  color: var(--color-ink-faint);
+}
+
+.wl-success {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-s5);
+}
+
+/* The modal sits in the top layer, so its stacking is settled by the
+   platform; the token is declared for the non-top-layer fallback. */
+.wl-modal {
+  z-index: var(--z-modal);
+  border: none;
+  padding: 0;
+  background: transparent;
+  max-width: 100vw;
+  max-height: 100dvh;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  display: none;
+  place-items: center;
+  color: var(--color-ink);
+}
+
+.wl-modal[open] {
+  display: grid;
+}
+
+.wl-modal::backdrop {
+  background: rgba(16, 40, 33, 0.4);
+  animation: wl-backdrop-in 200ms var(--ease-out);
+}
+
+.wl-modal__panel {
+  position: relative;
+  width: min(480px, calc(100vw - var(--spacing-s7)));
+  margin: var(--spacing-s6) auto;
+  background: var(--color-paper-raised);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lift);
+  padding: var(--spacing-s8);
+  animation: wl-panel-in var(--d-base) var(--ease-out);
+}
+
+.wl-modal__lede {
+  margin-top: var(--spacing-s5);
+  color: var(--color-ink-soft);
+}
+
+.wl-modal__close {
+  position: absolute;
+  top: var(--spacing-s5);
+  right: var(--spacing-s5);
+  min-height: 44px;
+  min-width: 44px;
+  color: var(--color-ink-faint);
+  transition: color var(--d-quick) var(--ease-out);
+}
+
+@media (hover: hover) {
+  .wl-modal__close:hover {
+    color: var(--color-ink);
+  }
+}
+
+@keyframes wl-backdrop-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes wl-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wl-modal::backdrop,
+  .wl-modal__panel {
+    animation: none;
+  }
+}
+
+/* ============================================================
+   Navigation (§11.1, §11.2)
+   The nav floats over the hero; the page reserves no top padding
+   for it, which is why the hero's text sits at 34% rather than
+   centred. Height animates here — the one permitted exception to
+   Law 3, because the nav is fixed and outside document flow.
+   ============================================================ */
+
+.nav {
+  position: fixed;
+  inset-inline: 0;
+  top: 0;
+  z-index: var(--z-nav);
+  height: 60px;
+  background: transparent;
+  border-bottom: 1px solid transparent;
+  color: var(--color-ink);
+  transition:
+    background-color var(--d-base) var(--ease-inout),
+    border-color var(--d-base) var(--ease-inout),
+    height var(--d-base) var(--ease-inout),
+    color 240ms var(--ease-inout),
+    transform 240ms var(--ease-in);
+}
+
+@media (min-width: 1024px) {
+  .nav {
+    height: 80px;
+  }
+  .nav[data-scrolled='true'] {
+    height: 64px;
+  }
+}
+
+.nav[data-scrolled='true'] {
+  background: rgba(243, 245, 242, 0.82);
+  backdrop-filter: blur(16px);
+  border-bottom-color: var(--color-mist);
+}
+
+.nav[data-over-dark='true'] {
+  color: var(--color-paper-on-dark);
+}
+
+.nav[data-over-dark='true'][data-scrolled='true'] {
+  background: rgba(16, 40, 33, 0.82);
+  border-bottom-color: var(--color-rule-on-dark);
+}
+
+.nav[data-hidden='true'] {
+  transform: translateY(-100%);
+}
+
+.nav[data-hidden='false'] {
+  transform: translateY(0);
+  transition-timing-function: var(--ease-out);
+}
+
+.nav__inner {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  gap: var(--spacing-s5);
+}
+
+.nav__wordmark {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 1.125rem;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  color: inherit;
+}
+
+.nav__links {
+  display: none;
+  gap: var(--spacing-s7);
+  margin-left: var(--spacing-s10);
+}
+
+.nav__link {
+  position: relative;
+  text-decoration: none;
+  color: inherit;
+  padding-block: var(--spacing-s3);
+}
+
+.nav__link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 2px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--d-quick) var(--ease-out);
+}
+
+@media (hover: hover) {
+  .nav__link:hover::after {
+    transform: scaleX(1);
+  }
+}
+
+/* Persistent underline on the link whose section holds the viewport centre */
+.nav[data-active='/how-it-works'] .nav__link[data-href='/how-it-works']::after,
+.nav[data-active='/what-we-test'] .nav__link[data-href='/what-we-test']::after,
+.nav[data-active='/why-preventive'] .nav__link[data-href='/why-preventive']::after,
+.nav[data-active='/about'] .nav__link[data-href='/about']::after,
+.nav__link[aria-current='page']::after {
+  transform: scaleX(1);
+  opacity: 0.5;
+}
+
+.nav__cta {
+  display: none;
+  margin-left: auto;
+}
+
+.nav__button {
+  padding: var(--spacing-s3) var(--spacing-s5);
+  min-height: 40px;
+  font-size: var(--t-small-size);
+}
+
+.nav__menu-button {
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  align-items: flex-end;
+}
+
+.nav__menu-bar {
+  display: block;
+  width: 22px;
+  height: 1px;
+  background: currentColor;
+}
+
+@media (min-width: 1024px) {
+  .nav__links,
+  .nav__cta {
+    display: flex;
+  }
+  .nav__menu-button {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav,
+  .nav__link::after {
+    transition-duration: var(--d-instant);
+  }
+}
+
+/* --- Mobile menu (§11.2) --- */
+
+.menu {
+  border: none;
+  padding: 0;
+  margin: 0;
+  width: 100vw;
+  max-width: 100vw;
+  height: 100dvh;
+  max-height: 100dvh;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  z-index: var(--z-overlay);
+}
+
+.menu[open] {
+  animation: menu-in 240ms var(--ease-out);
+}
+
+.menu::backdrop {
+  background: var(--color-paper);
+}
+
+.menu__inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: var(--spacing-s4) var(--gutter) var(--spacing-s6);
+}
+
+.menu__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+}
+
+.menu__close {
+  min-height: 44px;
+  min-width: 44px;
+  color: var(--color-ink-faint);
+}
+
+.menu__links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-s6);
+  margin-top: var(--spacing-s10);
+}
+
+.menu__link {
+  text-decoration: none;
+  color: var(--color-ink);
+  animation: menu-link-in 240ms var(--ease-out) backwards;
+}
+
+.menu__link[aria-current='page'] {
+  text-decoration: underline;
+  text-underline-offset: 6px;
+  text-decoration-thickness: 1px;
+}
+
+.menu__cta {
+  margin-top: auto;
+  width: 100%;
+}
+
+@keyframes menu-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes menu-link-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu[open],
+  .menu__link {
+    animation: none;
+  }
+}
+
+/* --- Scroll progress (§11.5) --- */
+
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--color-jade);
+  transform: scaleX(0);
+  transform-origin: left center;
+  z-index: var(--z-nav);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-progress {
+    display: none;
+  }
+}
+
+/* --- Footer (§12) --- */
+
+.footer {
+  background: var(--color-forest-deep);
+  color: var(--color-paper-on-dark);
+  padding-top: var(--spacing-s11);
+  padding-bottom: var(--spacing-s9);
+}
+
+.footer__top {
+  row-gap: var(--spacing-s9);
+}
+
+.footer__brand {
+  grid-column: 1 / -1;
+}
+
+.footer__column {
+  grid-column: span 2;
+}
+
+@media (min-width: 1024px) {
+  .footer__brand {
+    grid-column: 2 / 6;
+  }
+  .footer__column {
+    grid-column: span 2;
+  }
+}
+
+.footer__wordmark {
+  display: block;
+  font-size: 1.25rem;
+}
+
+.footer__tagline {
+  margin-top: var(--spacing-s3);
+  color: var(--color-paper-on-dark-soft);
+}
+
+.footer__heading {
+  color: var(--color-paper-on-dark-soft);
+  font-weight: 400;
+}
+
+.footer__list {
+  margin-top: var(--spacing-s4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-s3);
+}
+
+.footer__link {
+  text-decoration: none;
+  color: var(--color-paper-on-dark);
+  text-underline-offset: 3px;
+  transition: text-decoration-color var(--d-quick) var(--ease-out);
+}
+
+@media (hover: hover) {
+  .footer__link:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+  }
+}
+
+.footer__scope {
+  margin-top: var(--spacing-s11);
+  padding-top: var(--spacing-s6);
+  border-top: 1px solid var(--color-rule-on-dark);
+  color: var(--color-paper-on-dark-soft);
+  max-width: 80ch;
+}
+
+.footer__legal {
+  margin-top: var(--spacing-s6);
+  color: var(--color-paper-on-dark-soft);
+}
+
+/* ============================================================
+   Charts (§10)
+   Editorial illustrations of a single idea, not dashboards.
+   Hand-built SVG with a viewBox and no fixed pixel dimensions.
+   ============================================================ */
+
+/* C1 — the reversible window */
+.c1 {
+  margin: 0;
+}
+
+.c1__rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-s5);
+}
+
+.c1__row {
+  display: grid;
+  grid-template-columns: 1fr max-content;
+  align-items: center;
+  column-gap: var(--spacing-s5);
+}
+
+.c1__track {
+  display: block;
+  width: 100%;
+  height: 40px;
+  border-radius: var(--radius-none);
+  text-align: left;
+}
+
+.c1__bar {
+  display: block;
+  height: 40px;
+  transform-origin: left center;
+}
+
+.c1__label {
+  color: var(--color-paper-on-dark-soft);
+  font-variant-numeric: lining-nums tabular-nums;
+  min-width: 11ch;
+}
+
+.c1__figure {
+  color: var(--color-paper-on-dark);
+}
+
+/* Fixed-height slot: revealing a detail can never move the chart (Law 4) */
+.c1__detail-slot {
+  display: grid;
+  margin-top: var(--spacing-s5);
+  min-height: 3.2em;
+}
+
+.c1__detail {
+  grid-area: 1 / 1;
+  color: var(--color-paper-on-dark-soft);
+  opacity: 0;
+  transition: opacity 140ms var(--ease-out);
+}
+
+.c1__detail[data-visible='true'] {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .c1__detail {
+    transition: none;
+  }
+}
+
+/* C2 — the blind spot */
+.c2 {
+  margin: 0;
+}
+
+.c2__svg {
+  width: 100%;
+  max-width: 360px;
+  height: auto;
+}
+
+.c2__caption {
+  margin-top: var(--spacing-s6);
+  color: var(--color-paper-on-dark-soft);
+  max-width: 40ch;
+}
+
+/* C3 — the marker over time */
+.c3 {
+  margin: 0;
+}
+
+.c3__svg {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 10;
+}
+
+@media (min-width: 1024px) {
+  .c3__svg {
+    aspect-ratio: 16 / 7;
+  }
+}
+
+.c3__axis-label,
+.c3__band-label,
+.c3__point-label {
+  font-family: var(--font-body);
+  font-size: 15px;
+  letter-spacing: 0.01em;
+  fill: var(--color-paper-on-dark-soft);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.c3__point-value {
+  font-family: var(--font-body);
+  font-size: 18px;
+  fill: var(--color-paper-on-dark);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+/* C4 — two years of you */
+.c4 {
+  margin: 0;
+}
+
+.c4__svg {
+  width: 100%;
+  height: auto;
+}
+
+.c4__axis-label {
+  font-family: var(--font-body);
+  font-size: 13px;
+  letter-spacing: 0.01em;
+  fill: var(--color-paper-on-dark-soft);
+}
+
+/* ============================================================
+   01-hero (§12)
+   The nav floats over this section and the page reserves no top
+   padding for it, which is why the text sits at 34% rather than
+   centred. The phone is placed so its top shows above the fold
+   and the rest is revealed by scrolling — it is never clipped
+   mid-frame and never overlaps anything.
+   ============================================================ */
+
+.hero {
+  --hero-phone-w: 280px;
+  /* 22% of the phone's height on mobile, 38% on desktop.
+     Height is width × 844 / 390. */
+  --hero-phone-visible: calc(var(--hero-phone-w) * 2.1641 * 0.22);
+  padding-block: 0;
+}
+
+@media (min-width: 1024px) {
+  .hero {
+    --hero-phone-w: 390px;
+    --hero-phone-visible: calc(var(--hero-phone-w) * 2.1641 * 0.38);
+  }
+}
+
+.hero__inner {
+  display: grid;
+  /* Row one holds the composition above the fold. It grows if the text
+     needs more room on a short viewport, so text and phone can never
+     share coordinates (Law 8). */
+  grid-template-rows: minmax(calc(100dvh - var(--hero-phone-visible)), auto) auto;
+  justify-items: center;
+}
+
+.hero__text {
+  width: 100%;
+  max-width: 900px;
+  /* Optically centred within the space above the phone rather than within
+     the viewport, and biased downward by half the padding so its centre
+     lands near 34% (28% on mobile) — the composition §01 asks for. Row one
+     grows if the text needs more room, so the two can never collide. */
+  align-self: center;
+  padding-top: var(--spacing-s12);
+  padding-bottom: var(--spacing-s9);
+  text-align: center;
+}
+
+@media (min-width: 1024px) {
+  .hero__text {
+    padding-top: var(--spacing-s11);
+    padding-bottom: var(--spacing-s9);
+  }
+}
+
+.hero__headline {
+  max-width: 20ch;
+  margin-inline: auto;
+}
+
+.hero__lede {
+  margin-top: var(--spacing-s6);
+  margin-inline: auto;
+  color: var(--color-ink-soft);
+}
+
+.hero__cta {
+  margin-top: var(--spacing-s7);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-s4);
+}
+
+.hero__cta-note {
+  color: var(--color-ink-faint);
+}
+
+.hero__note {
+  margin-top: var(--spacing-s5);
+  color: var(--color-ink-faint);
+  font-style: italic;
+}
+
+.hero__phone-window {
+  width: var(--hero-phone-w);
+}
+
+.hero__phone {
+  width: var(--hero-phone-w);
+  max-width: var(--hero-phone-w);
+}
+
+@media (min-width: 1024px) {
+  .hero__cta {
+    flex-direction: row;
+    justify-content: center;
+    gap: var(--spacing-s5);
+  }
+}
+
+@media (max-width: 1023px) {
+  .hero__cta .btn {
+    width: 100%;
+  }
+}
+
+/* ============================================================
+   02-quiet (§12)
+   ============================================================ */
+
+.quiet__para {
+  margin-top: var(--spacing-s5);
+  color: var(--color-ink-soft);
+}
+
+.quiet__prose > :first-child {
+  margin-top: 0;
+}
+
+.quiet__prose .quiet__para:first-of-type {
+  margin-top: var(--spacing-s7);
+}
+
+.quiet__list {
+  grid-column: 1 / -1;
+  margin-top: var(--spacing-s10);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-s6);
+}
+
+@media (min-width: 1024px) {
+  .quiet__list {
+    /* Columns 8–11, vertically aligned with the paragraph that names them */
+    grid-column: 8 / 12;
+    margin-top: 0;
+    padding-top: var(--spacing-s13);
+  }
+}
+
+.quiet__item {
+  display: block;
+}
+
+.quiet__rule {
+  display: block;
+  height: 1px;
+  background: var(--color-mist);
+  margin-bottom: var(--spacing-s4);
+}
+
+.quiet__label {
+  display: block;
+  color: var(--color-ink);
+}
+
+/* ============================================================
+   03-scale (§12)
+   ============================================================ */
+
+.scale__stats {
+  display: grid;
+  gap: var(--spacing-s10);
+  margin-top: var(--spacing-s11);
+}
+
+@media (min-width: 1024px) {
+  .scale__stats {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-s9);
+  }
+}
+
+.scale__stat-label {
+  margin-top: var(--spacing-s5);
+  color: var(--color-paper-on-dark-soft);
+  max-width: 26ch;
+}
+
+.scale__chart {
+  margin-top: var(--spacing-s11);
+}
+
+.scale__para {
+  margin-top: var(--spacing-s7);
+  color: var(--color-paper-on-dark-soft);
+}
+
+.scale__source {
+  margin-top: var(--spacing-s6);
+  color: var(--color-paper-on-dark-soft);
+}
+
+.scale__scene-b {
+  margin-top: var(--spacing-s13);
+  row-gap: var(--spacing-s10);
+}
+
+.scale__blind-figure {
+  margin-top: var(--spacing-s7);
+}
+
+.scale__grid-holder {
+  display: flex;
+  align-items: flex-start;
+}
+
+@media (min-width: 1024px) {
+  .scale__grid-holder {
+    justify-content: flex-end;
+  }
+}
+
+/* ============================================================
+   04-ledger (§12) — the spine
+   ============================================================ */
+
+.ledger {
+  padding-block: 0;
+}
+
+.ledger .scene-sticky {
+  padding-block: var(--section-pad);
+}
+
+@media (min-width: 1024px) and (min-height: 760px) and (prefers-reduced-motion: no-preference) {
+  .ledger .scene-sticky {
+    padding-block: 0;
+  }
+}
+
+.ledger__container {
+  width: 100%;
+}
+
+.ledger__rows {
+  margin-top: var(--spacing-s10);
+  border-top: 1px solid var(--color-mist);
+}
+
+.ledger__row {
+  display: grid;
+  grid-template-columns: 1fr;
+  row-gap: var(--spacing-s2);
+  align-items: baseline;
+  padding-block: var(--spacing-s5);
+  border-bottom: 1px solid var(--color-mist);
+}
+
+@media (min-width: 1024px) {
+  .ledger__row {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    column-gap: var(--spacing-s9);
+    min-height: 96px;
+    align-content: center;
+  }
+}
+
+/* Solved rows recede; unsolved rows come forward. This is the resting
+   state, and the visual argument the section makes.
+
+   §8.2 permits receding text down to 0.55, but this recession is
+   permanent rather than transient, and 0.55 of --ink on --paper computes
+   to 3.7:1 — below AA for the 17px status text. 0.64 computes to 4.6:1,
+   is visually indistinguishable, and keeps the row compliant. Law 9. */
+.ledger__row[data-ledger-row='solved'] {
+  opacity: 0.64;
+}
+
+.ledger__row[data-ledger-row='solved'] .ledger__status {
+  color: var(--color-ink);
+}
+
+@media (min-width: 1024px) {
+  .ledger__row[data-ledger-row='open'] {
+    transform: translateX(-12px);
+  }
+}
+
+.ledger__name {
+  color: var(--color-ink);
+  font-weight: 400;
+}
+
+/* Two identically-boxed copies of the same text, stacked, so weight can
+   crossfade without ever animating `font-weight` (Law 3). */
+.ledger__row[data-ledger-row='open'] .ledger__name {
+  position: relative;
+  display: block;
+}
+
+.ledger__name-copy {
+  display: block;
+}
+
+.ledger__name-copy[data-ledger-name='light'] {
+  position: absolute;
+  inset: 0;
+  font-weight: 400;
+  opacity: 0;
+}
+
+.ledger__name-copy[data-ledger-name='heavy'] {
+  font-weight: 500;
+}
+
+.ledger__status {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-s3);
+  color: var(--color-ink-soft);
+}
+
+.ledger__dot {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-signal-good);
+  transform: translateY(-2px);
+}
+
+.ledger__close {
+  margin-top: var(--spacing-s10);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-s5);
+}
+
+.ledger__close p {
+  color: var(--color-ink-soft);
+}
+
+/* ============================================================
+   05-loop (§12)
+   ============================================================ */
+
+.loop {
+  padding-block: 0;
+}
+
+.loop .scene-sticky {
+  padding-block: var(--section-pad);
+}
+
+@media (min-width: 1024px) and (min-height: 760px) and (prefers-reduced-motion: no-preference) {
+  .loop .scene-sticky {
+    padding-block: 0;
+  }
+}
+
+.loop__container {
+  width: 100%;
+}
+
+.loop__rail {
+  margin-top: var(--spacing-s11);
+}
+
+.loop__line-svg,
+.loop__return-svg {
+  display: none;
+  width: 100%;
+}
+
+.loop__steps {
+  display: grid;
+  gap: var(--spacing-s8);
+}
+
+.loop__step {
+  position: relative;
+  padding-left: var(--spacing-s6);
+}
+
+/* Mobile: the connector runs vertically down the left of the stack. */
+.loop__stem {
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: calc(var(--spacing-s8) * -1);
+  width: 1px;
+  background: var(--color-rule-on-dark);
+  transform-origin: center top;
+}
+
+.loop__step:last-child .loop__stem {
+  bottom: 0;
+}
+
+.loop__number {
+  display: block;
+  color: var(--color-paper-on-dark-soft);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.loop__verb {
+  margin-top: var(--spacing-s2);
+  color: var(--color-paper-on-dark);
+}
+
+.loop__body {
+  margin-top: var(--spacing-s3);
+  color: var(--color-paper-on-dark-soft);
+  max-width: 34ch;
+}
+
+.loop__body-inner {
+  display: block;
+  transition: opacity var(--d-quick) var(--ease-out);
+}
+
+.loop__again {
+  margin-top: var(--spacing-s6);
+  padding-left: var(--spacing-s6);
+  color: var(--color-paper-on-dark-soft);
+}
+
+.loop__close {
+  margin-top: var(--spacing-s11);
+  color: var(--color-paper-on-dark-soft);
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .loop__steps {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: var(--spacing-s6);
+  }
+}
+
+@media (min-width: 1024px) {
+  .loop__line-svg {
+    display: block;
+    height: auto;
+  }
+  .loop__return-svg {
+    display: block;
+    height: auto;
+    margin-top: var(--spacing-s6);
+  }
+  .loop__steps {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    column-gap: var(--spacing-s5);
+    margin-top: var(--spacing-s5);
+  }
+  .loop__step {
+    padding-left: 0;
+    text-align: left;
+  }
+  .loop__stem,
+  .loop__again {
+    display: none;
+  }
+  /* Spec asks for 70% → 100% on hover. Fading --paper-on-dark-soft would
+     land at ~3.4:1; fading --paper-on-dark to 70% computes to the same
+     colour as --paper-on-dark-soft, 6.0:1, and reaches 10.7:1 on hover. */
+  .loop__body {
+    color: var(--color-paper-on-dark);
+  }
+  .loop__body-inner {
+    opacity: 0.7;
+  }
+}
+
+@media (min-width: 1024px) and (hover: hover) {
+  .loop__step:hover .loop__body-inner {
+    opacity: 1;
+  }
+}
+
+/* ============================================================
+   06-panel (§12)
+   ============================================================ */
+
+.panel__head {
+  row-gap: var(--spacing-s10);
+}
+
+.panel__para {
+  margin-top: var(--spacing-s5);
+  color: var(--color-ink-soft);
+}
+
+.panel__toggle {
+  margin-top: var(--spacing-s7);
+}
+
+.panel__list-heading {
+  color: var(--color-ink-faint);
+  font-weight: 400;
+  padding-bottom: var(--spacing-s3);
+  border-bottom: 1px solid var(--color-mist);
+}
+
+.panel__list-heading--added {
+  border-bottom: none;
+  border-top: 1px solid var(--color-mist);
+  padding-top: var(--spacing-s5);
+  padding-bottom: var(--spacing-s3);
+}
+
+.panel__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-s2);
+  margin-top: var(--spacing-s5);
+}
+
+.panel__markers {
+  margin-top: var(--spacing-s2);
+}
+
+.panel__state {
+  row-gap: var(--spacing-s9);
+  margin-top: var(--spacing-s10);
+}
+
+.panel__block + .panel__block {
+  margin-top: var(--spacing-s8);
+}
+
+.panel__note {
+  margin-top: var(--spacing-s7);
+  color: var(--color-ink-faint);
+}
+
+/* ============================================================
+   07-results, 08-priorities, 09-daily — the app showcase rail (§9.4)
+   Never `overflow: hidden` on the sticky parent: it breaks
+   `position: sticky` in some browsers.
+   ============================================================ */
+
+.rail {
+  background: var(--color-paper);
+  padding-block: var(--section-pad);
+}
+
+.rail__column > section + section {
+  margin-top: var(--spacing-s13);
+}
+
+.rail__scene {
+  padding-block: var(--spacing-s9);
+}
+
+.rail__lead {
+  font-weight: 700;
+  color: var(--color-ink);
+}
+
+.rail__body {
+  margin-top: var(--spacing-s3);
+  color: var(--color-ink-soft);
+}
+
+/* The app's own voice, presented as such rather than decorated with
+   styled quotation marks. */
+.rail__quote {
+  margin-top: var(--spacing-s4);
+  color: var(--color-ink);
+  max-width: 26ch;
+}
+
+.rail__after {
+  margin-top: var(--spacing-s7);
+  color: var(--color-ink-soft);
+}
+
+.rail__scope {
+  margin-top: var(--spacing-s10);
+}
+
+.rail__mobile-phone {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--spacing-s8);
+}
+
+.rail__mobile-phone .phone {
+  width: 280px;
+  max-width: 280px;
+}
+
+.rail__sticky-col {
+  display: none;
+}
+
+.rail__caption {
+  margin-top: var(--spacing-s5);
+  color: var(--color-ink-faint);
+  text-align: center;
+  min-height: 2.9em;
+  max-width: 34ch;
+  margin-inline: auto;
+}
+
+@media (min-width: 1024px) and (min-height: 760px) {
+  .rail__scene {
+    min-height: 70dvh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .rail__mobile-phone {
+    display: none;
+  }
+
+  .rail__sticky-col {
+    display: block;
+  }
+
+  .rail__sticky {
+    position: sticky;
+    top: 0;
+    height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: var(--z-sticky);
+  }
+
+  /* The frame is sized by the shorter of its column and the viewport, so
+     it is never taller than the sticky box. §8.3 sets 280px as the floor
+     below which a screen is illegible; the 760px viewport-height
+     condition above is what keeps this expression clear of it. */
+  .rail__figure {
+    margin: 0;
+    width: 100%;
+    max-width: min(390px, calc((100dvh - 120px) / 2.1641));
+  }
+}
+
+@media (min-width: 1024px) and (min-height: 760px) and (max-width: 1279px) {
+  .rail__figure {
+    max-width: min(300px, calc((100dvh - 120px) / 2.1641));
+  }
+}
+
+/* ============================================================
+   10-week12 (§12) — the peak. Centred, one of three on the site.
+   ============================================================ */
+
+.w12 {
+  padding-block: 0;
+}
+
+.w12 .scene-sticky {
+  padding-block: var(--section-pad);
+}
+
+@media (min-width: 1024px) and (min-height: 760px) and (prefers-reduced-motion: no-preference) {
+  .w12 .scene-sticky {
+    padding-block: var(--spacing-s9);
+  }
+}
+
+.w12__container {
+  width: 100%;
+}
+
+.w12__content {
+  text-align: center;
+}
+
+.w12__heading {
+  margin-inline: auto;
+}
+
+.w12__para {
+  margin-top: var(--spacing-s5);
+  margin-inline: auto;
+  color: var(--color-paper-on-dark-soft);
+}
+
+.w12__chart {
+  margin-top: var(--spacing-s10);
+}
+
+/* The headline's slot is the same height whether or not the headline has
+   arrived, so the chart above it never moves. */
+.w12__headline-slot {
+  margin-top: var(--spacing-s7);
+  min-height: calc(var(--t-h2-size) * 1.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.w12__para--after {
+  margin-top: var(--spacing-s6);
+}
+
+.w12__coda {
+  margin-top: var(--spacing-s11);
+  max-width: 480px;
+  margin-inline: auto;
+}
+
+.w12__close {
+  margin-top: var(--spacing-s10);
+}
+
+.w12__lead-line {
+  font-weight: 700;
+  color: var(--color-paper-on-dark);
+}
+
+.w12__cta {
+  margin-top: var(--spacing-s7);
+}
+
+.w12__scope {
+  margin-top: var(--spacing-s11);
+  text-align: left;
+}
+
+/* The coda and the closing block follow the pin, in normal flow. */
+.w12__tail {
+  padding-top: var(--spacing-s12);
+  padding-bottom: var(--section-pad);
+}
+
+@media (min-width: 1024px) and (min-height: 760px) and (prefers-reduced-motion: no-preference) {
+  .w12__chart {
+    margin-top: var(--spacing-s8);
+    /* Height-capped so the scene fits a 760px viewport without clipping
+       a single line of text (§18.1). Width drives height via the SVG's
+       own aspect ratio, so the chart never distorts. */
+    max-width: min(100%, calc(30dvh * 16 / 7));
+    margin-inline: auto;
+  }
+}
+
+/* ============================================================
+   11-refusals (§12)
+   ============================================================ */
+
+.refusals {
+  margin-top: var(--spacing-s10);
+  display: grid;
+  gap: var(--spacing-s8);
+}
+
+.refusals__column {
+  position: relative;
+  padding-top: var(--spacing-s8);
+}
+
+.refusals__rule {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--color-mist);
+  transform-origin: left center;
+}
+
+.refusals__body {
+  margin-top: var(--spacing-s4);
+  color: var(--color-ink-soft);
+}
+
+@media (min-width: 1024px) {
+  .refusals {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: var(--spacing-s8);
+  }
+  .refusals__column {
+    padding-top: 0;
+    padding-left: var(--spacing-s8);
+  }
+  .refusals__column:first-child {
+    padding-left: 0;
+  }
+  .refusals__rule {
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: auto;
+    width: 1px;
+    height: auto;
+    transform-origin: center top;
+  }
+  .refusals__column:first-child .refusals__rule {
+    display: none;
+  }
+}
+
+/* ============================================================
+   12-conditions (§12)
+   ============================================================ */
+
+.conditions__head {
+  grid-column: 1 / -1;
+}
+
+.conditions__body {
+  grid-column: 1 / -1;
+  margin-top: var(--spacing-s9);
+}
+
+@media (min-width: 1024px) {
+  .conditions__head {
+    grid-column: 2 / 6;
+    align-self: start;
+    /* Plain CSS sticky, released at the section's end. Never pinned. */
+    position: sticky;
+    top: 120px;
+  }
+  .conditions__body {
+    grid-column: 6 / 12;
+    margin-top: 0;
+  }
+}
+
+.conditions__intro {
+  margin-top: var(--spacing-s5);
+  color: var(--color-ink-soft);
+}
+
+.conditions__toggle {
+  margin-top: var(--spacing-s7);
+}
+
+.conditions__item {
+  padding-block: var(--spacing-s7);
+  border-top: 1px solid var(--color-mist);
+}
+
+.conditions__item:first-child {
+  padding-top: 0;
+  border-top: none;
+}
+
+.conditions__text {
+  margin-top: var(--spacing-s4);
+  color: var(--color-ink-soft);
+}
+
+/* ============================================================
+   13-india (§12)
+   ============================================================ */
+
+.india {
+  margin-top: var(--spacing-s10);
+  display: grid;
+  gap: var(--spacing-s9);
+}
+
+@media (min-width: 768px) {
+  .india {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--spacing-s9);
+  }
+}
+
+.india__block {
+  padding-top: var(--spacing-s5);
+  border-top: 1px solid var(--color-mist);
+}
+
+.india__text {
+  margin-top: var(--spacing-s4);
+  color: var(--color-ink-soft);
+  max-width: 46ch;
+}
+
+/* ============================================================
+   14-people (§12)
+   ============================================================ */
+
+.people__block {
+  margin-top: var(--spacing-s9);
+}
+
+.people__text {
+  margin-top: var(--spacing-s4);
+  color: var(--color-ink-soft);
+}
+
+.people__rule {
+  display: block;
+  height: 1px;
+  background: var(--color-mist);
+  margin-top: var(--spacing-s11);
+  transform-origin: left center;
+}
+
+.people__note {
+  margin-top: var(--spacing-s8);
+}
+
+.people__quote {
+  margin-top: var(--spacing-s5);
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--color-ink-soft);
+  max-width: 55ch;
+}
+
+/* ============================================================
+   15-waitlist (§12)
+   ============================================================ */
+
+.final {
+  min-height: 80dvh;
+  display: flex;
+  align-items: center;
+}
+
+.final .container-h {
+  width: 100%;
+}
+
+.final__content {
+  text-align: center;
+}
+
+.final__heading {
+  margin-inline: auto;
+  max-width: 20ch;
+}
+
+.final__para {
+  margin-top: var(--spacing-s6);
+  margin-inline: auto;
+  color: var(--color-paper-on-dark-soft);
+}
+
+.final__cta {
+  margin-top: var(--spacing-s8);
+}
+
+.final__note {
+  margin-top: var(--spacing-s5);
+  color: var(--color-paper-on-dark-soft);
+}
+
+@media (max-width: 1023px) {
+  .final__cta .btn {
+    width: 100%;
+  }
+}
+
+/* ============================================================
+   Page shells
+   ============================================================ */
+
+.page-header {
+  padding-top: calc(var(--section-pad) * 0.7);
+  padding-bottom: var(--spacing-s9);
+  background: var(--color-paper);
+}
+
+@media (min-width: 1024px) {
+  .page-header {
+    padding-top: var(--spacing-s15);
+  }
+}
+
+.page-header__lede {
+  margin-top: var(--spacing-s6);
+  color: var(--color-ink-soft);
+}
+
+.page-plain {
+  padding-top: calc(var(--section-pad) * 0.7);
+  padding-bottom: var(--section-pad);
+  background: var(--color-paper);
+}
+
+@media (min-width: 1024px) {
+  .page-plain {
+    padding-top: var(--spacing-s15);
+  }
+}
+
+.page-prose {
+  margin-top: var(--spacing-s6);
+  color: var(--color-ink-soft);
+}
+
+.legal h2 {
+  margin-top: var(--spacing-s10);
+}
+
+.legal h3 {
+  margin-top: var(--spacing-s7);
+}
+
+.legal p,
+.legal li {
+  margin-top: var(--spacing-s4);
+  color: var(--color-ink-soft);
+  max-width: 65ch;
+}
+
+.legal ul {
+  list-style: disc;
+  padding-left: var(--spacing-s5);
+  margin-top: var(--spacing-s4);
+}
+
+.legal__updated {
+  margin-top: var(--spacing-s5);
+  color: var(--color-ink-faint);
+}
