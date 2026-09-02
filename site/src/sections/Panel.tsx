@@ -56,6 +56,9 @@ export default function Panel() {
           {/* Two segments, fixed-height content below, so switching cannot
               move anything beneath it. */}
           <div className="seg" role="tablist" aria-label="Panel by body">
+            {/* Before the labels in DOM order, so it paints behind them
+                without needing a z-index outside the Part 3.5 scale. */}
+            <span className={`seg__ind seg__ind--${who}`} aria-hidden="true" />
             {(['her', 'him'] as const).map((k) => (
               <button
                 key={k}
@@ -68,7 +71,6 @@ export default function Panel() {
                 {k === 'her' ? 'For her' : 'For him'}
               </button>
             ))}
-            <span className={`seg__ind seg__ind--${who}`} aria-hidden="true" />
           </div>
 
           <div className="panel__rows">

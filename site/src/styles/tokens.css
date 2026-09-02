@@ -69,6 +69,12 @@
   --amber: #e0a458; /* worth attention. never red — HUMAN does not frighten */
   --ice: #a8d8e8; /* data ink only. max 30% opacity. never for text */
 
+  /* The two values Part 2.3's light model names that are not in the 2.2
+     palette table. They are colours, so they live here rather than as
+     literals in a rule somewhere. */
+  --wash: #0a211b; /* light source 3: the section wash */
+  --glow-jade: rgba(127, 227, 192, 0.08); /* light source 2: behind the phone */
+
   /* ---- Type scale — Part 2.5 --------------------------------------------
      clamp() between the mobile endpoint at 390px and the desktop endpoint at
      1440px. Both endpoints are binding, so each clamp is solved for exactly

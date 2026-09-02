@@ -298,7 +298,7 @@
 .loop__list { list-style: none; display: grid; gap: var(--s2); }
 .loop__item { display: flex; gap: var(--s2); align-items: baseline; }
 .loop__n { color: var(--text-3); min-width: 1.4em; }
-.loop__body { display: grid; gap: 2px; }
+.loop__body { display: grid; }
 .loop__name { color: var(--text-2); transition: color var(--dur-micro) var(--ease-instrument); }
 .loop__item.is-on .loop__name { color: var(--text); }
 .loop__cap { color: var(--text-3); }
@@ -384,7 +384,7 @@
   position: absolute;
   width: 12px;
   height: 12px;
-  margin: -6px 0 0 -6px;
+  transform: translate(-50%, -50%);
   border: 1.5px solid var(--jade);
   border-radius: 50%;
   opacity: 0;
@@ -457,7 +457,7 @@
 .panel__grid { align-items: start; }
 .panel__head { display: grid; gap: var(--s3); }
 .seg { position: relative; display: inline-flex; border: 1px solid var(--hairline); border-radius: var(--r-control); width: max-content; }
-.seg__b { padding: 10px var(--s3); color: var(--text-2); font-size: var(--caption); position: relative; z-index: 1; min-height: 44px; }
+.seg__b { padding: var(--s1) var(--s3); color: var(--text-2); font-size: var(--caption); position: relative; min-height: 44px; }
 .seg__b.is-on { color: var(--text); }
 .seg__ind { position: absolute; top: 0; bottom: 0; width: 50%; background: var(--surface-2); transition: transform 160ms var(--ease-instrument); }
 .seg__ind--her { transform: translateX(0); }
@@ -468,7 +468,7 @@
 .panel__rowb { color: var(--text-3); }
 .panel__close { color: var(--text); }
 .panel__stage { display: grid; gap: var(--s5); align-content: start; }
-.panel__dots { position: relative; display: grid; grid-template-columns: repeat(12, 1fr); gap: 10px; }
+.panel__dots { position: relative; display: grid; grid-template-columns: repeat(12, 1fr); gap: var(--s1); }
 @media (max-width: 767px) { .panel__dots { grid-template-columns: repeat(8, 1fr); } }
 .dot {
   width: 4px;
@@ -735,12 +735,12 @@
     var(--glass-edge) 100%
   );
   -webkit-mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
+    linear-gradient(var(--text) 0 0) content-box,
+    linear-gradient(var(--text) 0 0);
   -webkit-mask-composite: xor;
   mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
+    linear-gradient(var(--text) 0 0) content-box,
+    linear-gradient(var(--text) 0 0);
   mask-composite: exclude;
   padding: 1px;
 }

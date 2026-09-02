@@ -161,8 +161,8 @@
      tight — widened and pulled most of the way back toward void. */
   background: radial-gradient(
     140% 100% at 50% 40%,
-    color-mix(in srgb, #0a211b 55%, var(--void)) 0%,
-    color-mix(in srgb, #0a211b 22%, var(--void)) 45%,
+    color-mix(in srgb, var(--wash) 55%, var(--void)) 0%,
+    color-mix(in srgb, var(--wash) 22%, var(--void)) 45%,
     var(--void) 82%
   );
 }
@@ -215,7 +215,7 @@
   height: 900px;
   transform: translate(-50%, -50%);
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(127, 227, 192, 0.08) 0%, transparent 62%);
+  background: radial-gradient(circle, var(--glow-jade) 0%, transparent 62%);
   filter: blur(120px);
   pointer-events: none;
   z-index: var(--z-wash);
@@ -264,7 +264,7 @@
   content: '';
   position: absolute;
   width: 2px;
-  border-radius: 2px;
+  border-radius: var(--r-control);
   background: color-mix(in srgb, var(--hairline-lit) 80%, var(--void));
   pointer-events: none;
 }
