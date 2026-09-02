@@ -1,0 +1,8 @@
+{
+  "timeline":   [{ "label": "Every test, kept",    "x": 0.300, "y": 0.442, "verified": "ok" }],
+  "score":      [{ "label": "One number",          "x": 0.440, "y": 0.381, "verified": "ok" }],
+  "priorities": [{ "label": "Fix this one first",  "x": 0.220, "y": 0.363, "verified": "ok" }],
+  "plan":       [{ "label": "One tap to confirm",  "x": 0.133, "y": 0.269, "verified": "ok" }],
+  "week12":     [{ "label": "Your first result",   "x": 0.376, "y": 0.906, "verified": "ok" },
+                 { "label": "Twelve weeks later",  "x": 0.771, "y": 0.894, "verified": "ok" }]
+}
