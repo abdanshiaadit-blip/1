@@ -1,0 +1,134 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   HUMAN — design tokens.
+   Every value here is quoted from the Master Website Specification v1.0,
+   sections 3.3 (palette), 3.4 (type), 3.5 (layout), 5.1 (motion), 6.4 (z-index).
+   Nothing in this file may be invented. Nothing outside this file may invent.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  /* ── Palette · spec 3.3 ─────────────────────────────────────────────────── */
+  --paper: #f1f5f3;
+  --paper-raised: #ffffff;
+  --ink: #0b1a15;
+  --ink-2: #48564f;
+  --ink-3: #79857e;
+  --hairline: #dce4e0;
+  --forest: #0e3b2e;
+  --forest-2: #1a5c48;
+  --signal: #2e8a6b;
+  --amber: #b07a22;
+  --deep: #12314c;
+  --mist: #e4ede9;
+
+  /* On a forest panel, hairlines lighten. spec 3.3 "Dark moments". */
+  --hairline-on-forest: #2a5a4a;
+
+  /* The one permitted gradient. spec 3.3. Ground for the app stage only. */
+  --gradient-app-stage: linear-gradient(180deg, var(--paper) 0%, var(--mist) 100%);
+
+  /* ── Type · spec 3.4 ─────────────────────────────────────────────────────
+     Endpoints are binding: mobile value at 375px, desktop value at 1440px,
+     fluid between, clamped at both ends.                                     */
+  --font-sans: 'Switzer', 'HUMAN Rupee', 'Switzer Fallback', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-signature: 'Gambetta', 'Switzer', 'Switzer Fallback', Georgia, serif;
+
+  --fs-display-xl: clamp(44px, 22.873px + 5.6338vw, 104px);
+  --fs-display-l: clamp(34px, 20.62px + 3.5681vw, 72px);
+  --fs-display-m: clamp(28px, 20.958px + 1.8779vw, 48px);
+  --fs-heading: clamp(22px, 19.887px + 0.5634vw, 28px);
+  --fs-body-l: clamp(18px, 16.592px + 0.3756vw, 22px);
+  --fs-body: clamp(16px, 15.648px + 0.0939vw, 17px);
+  --fs-caption: clamp(13px, 12.648px + 0.0939vw, 14px);
+  --fs-micro: 12px;
+  --fs-numeral-xl: clamp(76px, 46.423px + 7.8873vw, 160px);
+  --fs-numeral-l: clamp(40px, 31.549px + 2.2535vw, 64px);
+
+  --tr-display-xl: -0.035em;
+  --tr-display-l: -0.03em;
+  --tr-display-m: -0.025em;
+  --tr-heading: -0.015em;
+  --tr-body-l: -0.005em;
+  --tr-body: 0;
+  --tr-caption: 0;
+  --tr-micro: 0.02em;
+  --tr-numeral-xl: -0.04em;
+  --tr-numeral-l: -0.03em;
+  --tr-wordmark: 0.06em;
+
+  --lh-display-xl: 0.94;
+  --lh-display-l: 1;
+  --lh-display-m: 1.08;
+  --lh-heading: 1.2;
+  --lh-body-l: 1.5;
+  --lh-body: 1.6;
+  --lh-caption: 1.45;
+  --lh-micro: 1.3;
+  --lh-numeral-xl: 0.9;
+  --lh-numeral-l: 1;
+
+  /* Measure caps · spec 3.4 "Line length capped at 62ch / 34ch". */
+  --measure-body: 62ch;
+  --measure-display: 34ch;
+
+  /* ── Space · spec 3.5. 8px base. These eight values, and no others. ─────── */
+  --s1: 8px;
+  --s2: 16px;
+  --s3: 24px;
+  --s4: 40px;
+  --s5: 64px;
+  --s6: 104px;
+  --s7: 168px;
+  --s8: 264px;
+
+  /* Section padding is 168 desktop / 88 mobile. spec 3.5. */
+  --section-pad: 88px;
+
+  /* ── Layout · spec 3.5 ──────────────────────────────────────────────────── */
+  --page-margin: 20px;
+  --max-content: 1280px;
+  --grid-gutter: 72px;
+  --header-h: 64px;
+  --bar-h: 64px;
+
+  /* ── Radius · spec 3.5. Exactly two values. ─────────────────────────────── */
+  --r-control: 4px;
+  --r-card: 20px;
+
+  /* ── Shadow · spec 3.5. Exactly one token, fewer than six users. ────────── */
+  --shadow: 0 24px 60px -20px rgba(11, 26, 21, 0.18);
+
+  /* ── Motion · spec 5.1 ──────────────────────────────────────────────────── */
+  --ease-entrance: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-move: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  --dur-micro: 160ms;
+  --dur-element: 520ms;
+  --dur-composition: 820ms;
+  --dur-draw: 1400ms;
+  --stagger: 70ms;
+  --travel-text: 18px;
+  --travel-object: 28px;
+  --scale-in: 0.985;
+
+  /* ── z-index · spec 6.4. Six values. No seventh exists. ─────────────────── */
+  --z-base: 0;
+  --z-stage: 10;
+  --z-raised: 20;
+  --z-header: 100;
+  --z-bar: 110;
+  --z-overlay: 200;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --page-margin: 48px;
+    --section-pad: 128px;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --page-margin: 88px;
+    --section-pad: 168px;
+  }
+}

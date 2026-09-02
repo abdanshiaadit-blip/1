@@ -1,0 +1,53 @@
+/* Page-level composition rules that belong to no single section. */
+
+#root {
+  isolation: isolate;
+}
+
+main {
+  /* spec 6.2: no ancestor of a sticky element may have overflow: hidden,
+     overflow: clip, or a transform. This element deliberately has none. */
+  display: block;
+}
+
+/* Anchors land below the fixed header. spec 3.7. */
+[id] {
+  scroll-margin-top: var(--header-h);
+}
+
+/* The mobile action bar sits over the page; the last section reserves its
+   height so nothing is ever hidden behind it. spec 8.15. */
+@media (max-width: 767px) {
+  main {
+    padding-bottom: var(--bar-h);
+  }
+}
+
+/* A flowing (non-sticky) section. spec 8: 168px desktop / 88px mobile. */
+.flow-section {
+  position: relative;
+  padding-block: var(--section-pad);
+}
+
+/* spec 8: "Between every sticky stage and the next section there is a mandatory
+   40vh of ordinary flowing page. The visitor must feel the page land between
+   set pieces." */
+.landing-gap {
+  height: 40svh;
+}
+
+/* A hairline rule, the site's only divider. Never 2px. Never a shadow. */
+.rule {
+  height: 1px;
+  background: var(--hairline);
+  border: 0;
+}
+
+/* Lenis sizes the document itself; it wraps nothing and transforms nothing, which
+   is what keeps it legal above a sticky stage (spec 6.2). Its own stylesheet also
+   ships an `overflow: clip` rule for a stopped state we never enter, so it is not
+   imported — these two declarations are all the library actually needs. */
+html.lenis,
+html.lenis body {
+  height: auto;
+}

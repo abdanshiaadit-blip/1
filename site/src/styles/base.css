@@ -1,0 +1,325 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   HUMAN — base layer: fonts, reset, the permitted type styles, layout widths,
+   the two entrance primitives, and the reduced-motion poster state (spec 5.5).
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* ── Fonts ────────────────────────────────────────────────────────────────────
+   Switzer (Indian Type Foundry) 400/500/600, self-hosted, Latin subset.
+   The Latin subset carries no rupee sign, so U+20B9 is served from a
+   single-glyph variable subset of Inter (SIL OFL 1.1, see public/fonts/LICENSE).
+   Gambetta Italic 400 is declared but not shipped — see FONTS.md.             */
+@font-face {
+  font-family: 'Switzer';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/switzer-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Switzer';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/switzer-500.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Switzer';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/switzer-600.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'HUMAN Rupee';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  unicode-range: U+20B9;
+  src: url('/fonts/rupee-inter-var.woff2') format('woff2-variations');
+}
+@font-face {
+  font-family: 'Gambetta';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/gambetta-italic.woff2') format('woff2');
+}
+/* Metric-matched fallback so no headline reflows on font load. spec 6.1.
+   Switzer: upem 1000, hhea asc 980 / desc -250, x-height 533. */
+@font-face {
+  font-family: 'Switzer Fallback';
+  src: local('Arial'), local('Helvetica'), local('Liberation Sans');
+  size-adjust: 92%;
+  ascent-override: 106.5%;
+  descent-override: 27.2%;
+  line-gap-override: 0%;
+}
+
+/* ── Reset ──────────────────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: auto;
+}
+
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+figure,
+blockquote,
+dl,
+dd,
+ul,
+ol,
+li {
+  margin: 0;
+  padding: 0;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  font-weight: 400;
+  /* spec 3.4: all figures anywhere on the site are tabular lining, always. */
+  font-variant-numeric: tabular-nums lining-nums;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* spec 6.7: exactly one element on the page may clip — the sticky stage.
+     There is deliberately no overflow on <body>: if something overflows
+     horizontally the container is wrong, and clipping it here would both hide
+     the bug and put a clipping ancestor above every sticky stage (spec 6.2). */
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input {
+  font: inherit;
+  font-variant-numeric: inherit;
+  color: inherit;
+  margin: 0;
+}
+
+button {
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+/* spec 12: every interactive element has a visible focus ring. Never none. */
+:focus-visible {
+  outline: 2px solid var(--forest);
+  outline-offset: 2px;
+  border-radius: var(--r-control);
+}
+
+.on-forest :focus-visible {
+  outline-color: var(--signal);
+}
+
+/* ── The permitted type styles · spec 3.4. There are no others. ─────────────── */
+.t-display-xl,
+.t-display-l,
+.t-display-m,
+.t-heading,
+.t-numeral-xl,
+.t-numeral-l {
+  font-weight: 500;
+  text-wrap: balance;
+}
+
+.t-display-xl {
+  font-size: var(--fs-display-xl);
+  letter-spacing: var(--tr-display-xl);
+  line-height: var(--lh-display-xl);
+}
+.t-display-l {
+  font-size: var(--fs-display-l);
+  letter-spacing: var(--tr-display-l);
+  line-height: var(--lh-display-l);
+}
+.t-display-m {
+  font-size: var(--fs-display-m);
+  letter-spacing: var(--tr-display-m);
+  line-height: var(--lh-display-m);
+}
+.t-heading {
+  font-size: var(--fs-heading);
+  letter-spacing: var(--tr-heading);
+  line-height: var(--lh-heading);
+}
+.t-body-l {
+  font-size: var(--fs-body-l);
+  letter-spacing: var(--tr-body-l);
+  line-height: var(--lh-body-l);
+  font-weight: 400;
+}
+.t-body {
+  font-size: var(--fs-body);
+  letter-spacing: var(--tr-body);
+  line-height: var(--lh-body);
+  font-weight: 400;
+}
+.t-caption {
+  font-size: var(--fs-caption);
+  letter-spacing: var(--tr-caption);
+  line-height: var(--lh-caption);
+  font-weight: 400;
+}
+.t-micro {
+  font-size: var(--fs-micro);
+  letter-spacing: var(--tr-micro);
+  line-height: var(--lh-micro);
+  font-weight: 500;
+}
+.t-numeral-xl {
+  font-size: var(--fs-numeral-xl);
+  letter-spacing: var(--tr-numeral-xl);
+  line-height: var(--lh-numeral-xl);
+}
+.t-numeral-l {
+  font-size: var(--fs-numeral-l);
+  letter-spacing: var(--tr-numeral-l);
+  line-height: var(--lh-numeral-l);
+}
+
+/* Display headlines break where the spec breaks them. spec 3.4:
+   "Every display line break is manually placed." */
+.t-display-xl,
+.t-display-l,
+.t-display-m {
+  max-width: var(--measure-display);
+}
+
+.c-ink {
+  color: var(--ink);
+}
+.c-ink-2 {
+  color: var(--ink-2);
+}
+.c-ink-3 {
+  color: var(--ink-3);
+}
+.c-signal {
+  color: var(--signal);
+}
+.c-amber {
+  color: var(--amber);
+}
+.c-paper {
+  color: var(--paper);
+}
+
+/* ── Layout widths · spec 3.5 ───────────────────────────────────────────────── */
+.page {
+  width: 100%;
+  max-width: calc(var(--max-content) + var(--page-margin) * 2);
+  margin-inline: auto;
+  padding-inline: var(--page-margin);
+}
+
+.narrow {
+  max-width: 600px;
+}
+
+.wide {
+  max-width: 1060px;
+}
+
+.section {
+  position: relative;
+  padding-block: var(--section-pad);
+}
+
+.measure {
+  max-width: var(--measure-body);
+}
+
+/* ── Entrances · spec 5.1. Two travels exist: 18px for text, 28px for objects.
+   Scroll-triggered, once, never replayed. spec 5.3.                           */
+.reveal {
+  opacity: 0;
+  transform: translate3d(0, var(--travel-text), 0);
+  transition:
+    opacity var(--dur-element) var(--ease-entrance),
+    transform var(--dur-element) var(--ease-entrance);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+.reveal--object {
+  transform: translate3d(0, var(--travel-object), 0) scale(var(--scale-in));
+  transition-duration: var(--dur-composition);
+}
+
+.reveal.is-in {
+  opacity: 1;
+  transform: none;
+  will-change: auto;
+}
+
+/* ── Accessibility helpers ──────────────────────────────────────────────────── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  top: var(--s1);
+  left: var(--s1);
+  z-index: var(--z-overlay);
+  padding: var(--s2) var(--s3);
+  background: var(--paper-raised);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-control);
+  transform: translateY(calc(-100% - var(--s4)));
+}
+
+.skip-link:focus {
+  transform: none;
+}
+
+/* ── Reduced motion · spec 5.5. Not a degraded page. The poster version. ────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}

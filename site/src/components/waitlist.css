@@ -1,0 +1,129 @@
+/* spec 6.1: the block occupies its final layout box from the first paint, so
+   confirming in place cannot shift the page. */
+.waitlist {
+  width: 100%;
+  max-width: 460px;
+  min-height: 148px;
+  text-align: left;
+}
+
+.waitlist__form,
+.waitlist__confirm {
+  animation: waitlist-in 320ms var(--ease-entrance) both;
+}
+
+@keyframes waitlist-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.waitlist__label {
+  display: block;
+  margin-bottom: var(--s1);
+  color: var(--ink-3);
+}
+
+.waitlist__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--s1);
+}
+
+.waitlist__field {
+  display: flex;
+  align-items: center;
+  gap: var(--s1);
+  min-height: 48px;
+  padding-inline: var(--s2);
+  background: var(--paper-raised);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-control);
+  transition: border-color var(--dur-micro) var(--ease-move);
+}
+
+.waitlist__field:focus-within {
+  border-color: var(--forest);
+}
+
+.waitlist__field[data-error='true'] {
+  border-color: var(--amber);
+}
+
+.waitlist__prefix {
+  color: var(--ink-3);
+}
+
+.waitlist__input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: none;
+  outline: none;
+  color: var(--ink);
+}
+
+.waitlist__input::placeholder {
+  color: var(--ink-3);
+  opacity: 1;
+}
+
+/* Reserved, always. The message appears in a box that already exists. */
+.waitlist__error {
+  min-height: var(--s3);
+  margin-top: var(--s1);
+  color: var(--amber);
+}
+
+.waitlist__confirm-heading {
+  font-weight: 500;
+}
+
+.waitlist__confirm-body {
+  margin-top: var(--s1);
+  color: var(--ink-2);
+  max-width: 46ch;
+}
+
+.waitlist__share {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s2);
+  margin-top: var(--s3);
+  color: var(--ink-3);
+  opacity: 0;
+  transition: opacity var(--dur-element) var(--ease-entrance);
+}
+
+.waitlist__share[data-visible='true'] {
+  opacity: 1;
+}
+
+.waitlist__share-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s1);
+  min-height: 44px;
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+
+/* On the forest close panel the field sits on the dark ground. */
+.on-forest .waitlist__field {
+  background: transparent;
+  border-color: var(--hairline);
+}
+
+.on-forest .waitlist__field:focus-within {
+  border-color: var(--signal);
+}
+
+.on-forest .waitlist__input {
+  color: var(--paper);
+}

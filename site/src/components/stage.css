@@ -1,0 +1,123 @@
+/* The sticky contract · spec 6.2, and the quiet lane · spec 6.3. */
+
+.stage-section {
+  position: relative;
+  height: var(--budget-m);
+  /* The stage carries the ground colour; the section carries it too, so that a
+     mobile viewport taller than 100svh never reveals a seam beneath the stage. */
+}
+
+.stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden; /* spec 6.7: the sticky stage is the one element permitted this. */
+  display: flex;
+  align-items: center;
+  background: inherit;
+}
+
+.stage-lanes {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: var(--s4);
+  width: 100%;
+  align-content: center;
+}
+
+/* spec 6.3: text and moving graphics never occupy the same space. The lanes are
+   grid cells with a hard boundary — nothing is absolutely positioned across it. */
+.lane {
+  min-width: 0;
+}
+
+.lane--quiet {
+  /* Fixed height so copy of different lengths cannot resize the block and shift
+     the active lane. spec 8.5 Mobile. Sections raise it where their copy needs. */
+  min-height: var(--quiet-h, auto);
+}
+
+.lane--active {
+  min-width: 0;
+  position: relative;
+}
+
+@media (min-width: 1024px) {
+  .stage-lanes {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--grid-gutter);
+    row-gap: 0;
+    align-items: center;
+  }
+
+  /* 5 columns of text, one column of dead space, 6 columns of active lane. */
+  .lane--quiet {
+    grid-column: 1 / 6;
+  }
+
+  .lane--active {
+    grid-column: 7 / 13;
+  }
+}
+
+@media (min-width: 768px) {
+  .stage-section {
+    height: var(--budget);
+  }
+}
+
+/* Stages that collapse to a static composition below 768px. spec 8.2, 8.6. */
+@media (max-width: 767px) {
+  .stage-section[data-sticky-mobile='false'] {
+    height: auto;
+  }
+
+  .stage-section[data-sticky-mobile='false'] .stage {
+    position: relative;
+    height: auto;
+    overflow: visible;
+    display: block;
+    padding-block: var(--section-pad);
+  }
+}
+
+/* spec 5.5: under reduced motion every scroll-linked stage renders at its final
+   state, statically, at full height reduced to a single viewport. */
+[data-motion='reduced'] .stage-section {
+  height: auto;
+}
+
+[data-motion='reduced'] .stage {
+  position: relative;
+  height: auto;
+  min-height: 100svh;
+  overflow: visible;
+  padding-block: var(--section-pad);
+}
+
+/* ── Grounds · spec 3.3 ─────────────────────────────────────────────────────── */
+
+.ground-paper {
+  background: var(--paper);
+}
+
+.ground-forest {
+  background: var(--forest);
+}
+
+/* The one permitted gradient, and its only use. spec 3.3, 8.5. */
+.ground-app {
+  background: var(--gradient-app-stage);
+}
+
+/* On a forest panel text is paper and hairlines lighten. spec 3.3.
+   The two secondary inks are mixed from the same two palette colours rather
+   than introduced as new ones. */
+.on-forest {
+  --ink: var(--paper);
+  --ink-2: color-mix(in srgb, var(--paper) 74%, var(--forest));
+  --ink-3: color-mix(in srgb, var(--paper) 58%, var(--forest));
+  --hairline: var(--hairline-on-forest);
+  --mist: color-mix(in srgb, var(--paper) 16%, var(--forest));
+  color: var(--paper);
+}

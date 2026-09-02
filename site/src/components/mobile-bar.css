@@ -1,0 +1,42 @@
+.mobile-bar {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: var(--z-bar);
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s2);
+  height: var(--bar-h);
+  padding-inline: var(--page-margin);
+  background: color-mix(in srgb, var(--paper) 92%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid var(--hairline);
+  box-shadow: var(--shadow);
+  opacity: 0;
+  transform: translate3d(0, 12px, 0);
+  transition:
+    opacity 300ms var(--ease-entrance),
+    transform 300ms var(--ease-entrance);
+  pointer-events: none;
+}
+
+.mobile-bar[data-visible='true'] {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+.mobile-bar__price {
+  color: var(--ink-2);
+}
+
+.mobile-bar__cta {
+  min-height: 44px;
+}
+
+@media (max-width: 767px) {
+  .mobile-bar {
+    display: flex;
+  }
+}

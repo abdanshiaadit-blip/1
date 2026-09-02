@@ -8,6 +8,15 @@ An investor-facing prototype of HUMAN, built as a premium native-feeling iPhone 
 
 ---
 
+## Two things live in this repository
+
+| | |
+|---|---|
+| **`/`** (this project) | The **app prototype** — an investor-facing, native-feeling iPhone application. |
+| **`/site`** | The **marketing website** — a separate, standalone build of humanhealth.in against the Master Website Specification v1.0. It shares no code and no visual language with the prototype. See [`site/README.md`](site/README.md). |
+
+---
+
 ## Run it
 
 ```bash

@@ -1,0 +1,298 @@
+/* ── Buttons · spec 10 ─────────────────────────────────────────────────────── */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding-inline: var(--s3);
+  border-radius: var(--r-control);
+  font-size: var(--fs-body);
+  font-weight: 500;
+  letter-spacing: 0;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color var(--dur-micro) var(--ease-move),
+    color var(--dur-micro) var(--ease-move),
+    border-color var(--dur-micro) var(--ease-move);
+}
+
+/* spec 10: fill darkens 6%. No lift, no scale, no shadow. */
+.btn--primary {
+  background: var(--forest);
+  color: var(--paper);
+  border: 1px solid var(--forest);
+}
+
+.btn--primary:hover {
+  background: color-mix(in srgb, var(--forest) 94%, #000);
+  border-color: color-mix(in srgb, var(--forest) 94%, #000);
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--hairline);
+}
+
+.btn--ghost:hover {
+  border-color: var(--ink-3);
+}
+
+/* On a forest ground the primary action inverts so it is still the one
+   saturated thing in the frame. */
+.on-forest .btn--primary {
+  background: var(--paper);
+  color: var(--forest);
+  border-color: var(--paper);
+}
+
+.on-forest .btn--primary:hover {
+  background: color-mix(in srgb, var(--paper) 92%, var(--forest));
+  border-color: color-mix(in srgb, var(--paper) 92%, var(--forest));
+}
+
+/* ── TextLink · spec 10. No arrow, ever. ───────────────────────────────────── */
+
+.text-link {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  text-decoration-color: var(--ink-3);
+  transition: text-decoration-thickness var(--dur-micro) var(--ease-move),
+    text-decoration-color var(--dur-micro) var(--ease-move);
+  /* 44px tap target without changing the type's optical position. spec 6.6. */
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+.text-link:hover {
+  text-decoration-thickness: 2px;
+  text-decoration-color: var(--ink);
+}
+
+/* ── Glyphs · spec 3.6. Nothing above 20px. ────────────────────────────────── */
+
+.glyph {
+  width: 20px;
+  height: 20px;
+  flex: none;
+}
+
+.glyph--chevron {
+  transition: transform var(--dur-micro) var(--ease-move);
+}
+
+.glyph--chevron[data-open='true'] {
+  transform: rotate(180deg);
+}
+
+/* ── Chart shell · spec 9.1 ────────────────────────────────────────────────── */
+
+.figure {
+  position: relative;
+  margin: 0;
+}
+
+.figure__body {
+  width: 100%;
+}
+
+.figure__note {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  color: var(--ink-3);
+}
+
+/* ── NumeralBlock · spec 8.2 ───────────────────────────────────────────────── */
+
+.numeral-block {
+  transition: opacity var(--dur-composition) var(--ease-move);
+}
+
+.numeral-block[data-dimmed='true'] {
+  opacity: 0.2;
+}
+
+.numeral-block__value {
+  margin-bottom: var(--s1);
+}
+
+.numeral-block__unit {
+  font-size: 0.42em;
+  letter-spacing: var(--tr-display-m);
+}
+
+.numeral-block__caption {
+  color: var(--ink-2);
+  max-width: 34ch;
+}
+
+/* ── Range bar · spec 9.3 ──────────────────────────────────────────────────── */
+
+.range-bar {
+  width: 100%;
+}
+
+.range-bar__track {
+  position: relative;
+  height: 8px;
+  border-radius: var(--r-control);
+  background: var(--mist);
+}
+
+.range-bar__band {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: var(--mist);
+  opacity: 0.4;
+  border-radius: var(--r-control);
+}
+
+.range-bar__tick {
+  position: absolute;
+  top: -6px;
+  bottom: -6px;
+  width: 1px;
+  transition: left var(--dur-element) var(--ease-entrance);
+}
+
+.range-bar__tick--previous {
+  background: var(--ink-3);
+}
+
+.range-bar__tick--current {
+  width: 2px;
+  background: var(--forest);
+}
+
+.range-bar__labels {
+  position: relative;
+  height: var(--s3);
+  margin-top: var(--s2);
+  color: var(--ink-3);
+}
+
+.range-bar__labels span {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.range-bar__labels span:last-child {
+  color: var(--ink);
+}
+
+/* ── Phone frame · spec 8.5 ────────────────────────────────────────────────── */
+
+.phone {
+  position: relative;
+  z-index: var(--z-raised);
+  width: 100%;
+  max-width: 320px;
+  margin-inline: auto;
+  aspect-ratio: 390 / 844;
+  border: 1px solid color-mix(in srgb, var(--ink) 20%, transparent);
+  border-radius: var(--r-card);
+  background: var(--paper-raised);
+  box-shadow: var(--shadow);
+  /* The frame is the only clip on its own contents: nothing renders outside it. */
+  overflow: hidden;
+}
+
+.phone__screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: calc(var(--r-card) - 1px);
+  background: var(--paper);
+}
+
+/* ── Disclosure · spec 8.11, 8.12 ──────────────────────────────────────────── */
+
+.disclosure {
+  border-top: 1px solid var(--hairline);
+}
+
+.disclosure__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3);
+  width: 100%;
+  min-height: 44px;
+  padding-block: var(--s3);
+  text-align: left;
+  color: var(--ink);
+}
+
+.disclosure__panel {
+  overflow: hidden;
+  transition: max-height 280ms var(--ease-move);
+}
+
+.disclosure__inner {
+  padding-bottom: var(--s3);
+  color: var(--ink-2);
+  max-width: var(--measure-body);
+}
+
+/* ── Toggle · spec 8.7 ─────────────────────────────────────────────────────── */
+
+.toggle {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+  max-width: 320px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-control);
+  background: var(--paper-raised);
+}
+
+.toggle__indicator {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 50%;
+  border-radius: calc(var(--r-control) - 1px);
+  background: var(--mist);
+  transition: transform 160ms var(--ease-move);
+}
+
+.toggle__indicator[data-at='1'] {
+  transform: translateX(100%);
+}
+
+.toggle__segment {
+  position: relative;
+  min-height: 44px;
+  padding-inline: var(--s2);
+  color: var(--ink-3);
+  font-size: var(--fs-body);
+  transition: color var(--dur-micro) var(--ease-move);
+}
+
+.toggle__segment[aria-pressed='true'] {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+/* ── Wordmark · spec 3.7 ───────────────────────────────────────────────────── */
+
+.wordmark {
+  display: inline-block;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: var(--tr-wordmark);
+  line-height: 1;
+  color: var(--ink);
+}

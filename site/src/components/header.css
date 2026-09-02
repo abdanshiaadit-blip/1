@@ -1,0 +1,57 @@
+.header {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: var(--z-header);
+  height: var(--header-h);
+  background: color-mix(in srgb, var(--paper) 88%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid transparent;
+  /* spec 3.7: 240ms crossfade of background-color and colour only. Nothing moves. */
+  transition: border-color 240ms var(--ease-move);
+}
+
+.header[data-scrolled='true'] {
+  border-bottom-color: var(--hairline);
+}
+
+.header__inner {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  height: 100%;
+}
+
+.header__mark {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  text-decoration: none;
+}
+
+.header__tagline {
+  color: var(--ink-3);
+  margin-right: auto;
+}
+
+.header__cta {
+  margin-left: auto;
+  min-height: 40px;
+}
+
+/* spec 3.7: the tagline is hidden below 900px. */
+@media (max-width: 899px) {
+  .header__tagline {
+    display: none;
+  }
+
+  .header__mark {
+    margin-right: auto;
+  }
+}
+
+@media (min-width: 900px) {
+  .header__mark {
+    margin-right: var(--s4);
+  }
+}
