@@ -1,0 +1,362 @@
+/* ==========================================================================
+   iOS 26 — Liquid Glass, continuous corners, and the Apple compositional
+   language. CLIENT DIRECTION. See DECISIONS.md D9 and D13.
+
+   This is a deliberate departure from the brief, not an oversight. Part 2
+   defines the reference as "a scientific instrument, not science fiction" and
+   Part 13 bans glassmorphism, frosted panels and more than two radius values
+   outright. Apple's language is the opposite of the brief's on almost every
+   axis: centred where the brief is left-aligned, material where the brief is
+   hairline, generous where the brief is spare.
+
+   Everything specific to that direction lives in this one file so it can be
+   removed in a single deletion. Nothing else imports it.
+
+   ---------------------------------------------------------------------------
+   The three things that actually make it read as Apple, in order of weight:
+
+   1. CONTINUOUS CORNERS. Not a rounded rectangle — a superellipse. It is the
+      single most identifiable thing about Apple's geometry, and the reason a
+      plain border-radius always looks approximately-Apple and never Apple.
+      Chrome 139+ ships `corner-shape`, so this is the real curve rather than
+      an SVG trace of one.
+
+   2. THE MATERIAL. Liquid Glass is not a blur. It samples what is behind it,
+      blurs AND saturates it, then lights its own edge: a bright specular rim
+      where the light falls and a dark one where it does not, so the edge reads
+      as a bevel catching a room. The lighting is directional and consistent —
+      one light, upper-left, on every glass surface on the page.
+
+   3. CONCENTRICITY. Nested radii are computed so the gap between an outer
+      curve and an inner one stays constant all the way round. Apple gets this
+      right everywhere and it is why their nested shapes look machined.
+   ========================================================================== */
+
+:root {
+  /* ---- Continuous corners -------------------------------------------------
+     A superellipse exponent near 4 is the iOS curve. Higher is squarer with a
+     tighter turn; lower tends toward a circle. */
+  --corner: superellipse(4);
+  --r-control-ios: 14px;
+  --r-object-ios: 28px;
+  --r-inset: 10px;
+
+  /* ---- Liquid Glass ------------------------------------------------------
+     One light, upper-left. `--lg-spec` is where it lands, `--lg-shade` is the
+     edge turning away from it. The pair is what makes a flat translucent
+     rectangle read as a bevelled solid. */
+  --lg-fill: rgba(232, 240, 236, 0.055);
+  --lg-fill-hi: rgba(232, 240, 236, 0.1);
+  --lg-spec: rgba(232, 240, 236, 0.26);
+  --lg-shade: rgba(5, 16, 13, 0.55);
+  --lg-blur: blur(24px) saturate(190%) brightness(1.08);
+  --lg-blur-heavy: blur(40px) saturate(200%) brightness(1.05);
+  --lg-lift: 0 12px 32px -16px rgba(0, 0, 0, 0.85);
+}
+
+/* --------------------------------------------------------------------------
+   The material.
+
+   Two pseudo-elements do the lighting because one cannot: `::after` paints the
+   directional rim as a 1px ring (a gradient masked to the border box), and the
+   element's own inset shadows give the surface its interior depth. Painting
+   the rim as a plain `border` would light all four edges equally, which is
+   exactly what makes most "glassmorphism" look like a flat card with a stroke.
+   -------------------------------------------------------------------------- */
+
+.lg {
+  position: relative;
+  background: var(--lg-fill);
+  backdrop-filter: var(--lg-blur);
+  -webkit-backdrop-filter: var(--lg-blur);
+  corner-shape: var(--corner);
+  box-shadow:
+    var(--lg-lift),
+    inset 0 1px 1px -1px var(--lg-spec),
+    inset 0 -1px 1px -1px var(--lg-shade);
+}
+
+.lg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  corner-shape: inherit;
+  pointer-events: none;
+  /* 135deg: the light is upper-left, so the rim is brightest at the top-left
+     shoulder and darkest at the bottom-right. */
+  background: linear-gradient(135deg, var(--lg-spec) 0%, transparent 42%, transparent 60%, var(--lg-shade) 100%);
+  padding: 1px;
+  -webkit-mask:
+    linear-gradient(var(--text) 0 0) content-box,
+    linear-gradient(var(--text) 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(var(--text) 0 0) content-box,
+    linear-gradient(var(--text) 0 0);
+  mask-composite: exclude;
+}
+
+/* --------------------------------------------------------------------------
+   Controls — capsules, which is the iOS 26 control shape.
+   -------------------------------------------------------------------------- */
+
+.btn {
+  /* A true capsule: circular ends, no superellipse. The squircle belongs on
+     cards, panels and the device — put it on a pill and the ends go squarer,
+     which is precisely the wrong shape. */
+  border-radius: 999px;
+  padding-inline: var(--s4);
+  font-weight: var(--w-heading);
+  letter-spacing: -0.01em;
+}
+
+.btn--ghost {
+  background: var(--lg-fill);
+  border: 0;
+  backdrop-filter: var(--lg-blur);
+  -webkit-backdrop-filter: var(--lg-blur);
+  box-shadow:
+    var(--lg-lift),
+    inset 0 1px 1px -1px var(--lg-spec),
+    inset 0 -1px 1px -1px var(--lg-shade);
+}
+.btn--ghost:hover {
+  background: var(--lg-fill-hi);
+  border: 0;
+}
+
+/* The primary keeps its jade-deep identity and takes the same lighting, so the
+   two controls read as one family in one material rather than two systems. */
+.btn--primary {
+  background: linear-gradient(
+    to bottom,
+    color-mix(in oklab, var(--jade-deep) 82%, var(--jade)),
+    var(--jade-deep)
+  );
+  box-shadow:
+    var(--lg-lift),
+    inset 0 1px 1px -1px rgba(232, 240, 236, 0.4),
+    inset 0 -1px 1px -1px var(--lg-shade);
+}
+.btn--primary:hover {
+  background: linear-gradient(
+    to bottom,
+    color-mix(in oklab, var(--jade-deep) 68%, var(--jade)),
+    color-mix(in oklab, var(--jade-deep) 92%, var(--jade))
+  );
+}
+
+/* --------------------------------------------------------------------------
+   The floating navigation.
+
+   iOS 26 lifted bars off the edges and made them float; Apple's own site does
+   the same. A bar welded to the top of the viewport is the pre-26 shape.
+   -------------------------------------------------------------------------- */
+
+.hdr {
+  position: fixed;
+  inset: var(--s2) 0 auto 0;
+  height: auto;
+  background: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 0;
+  display: grid;
+  justify-items: center;
+  pointer-events: none;
+}
+.hdr__in {
+  pointer-events: auto;
+  width: auto;
+  max-width: calc(100vw - var(--s4));
+  height: 56px;
+  padding-inline: var(--s3) var(--s1);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--void) 62%, transparent);
+  backdrop-filter: var(--lg-blur-heavy);
+  -webkit-backdrop-filter: var(--lg-blur-heavy);
+  box-shadow:
+    var(--lg-lift),
+    inset 0 1px 1px -1px var(--lg-spec),
+    inset 0 -1px 1px -1px var(--lg-shade);
+  gap: var(--s3);
+}
+.hdr.is-ruled .hdr__in {
+  background: color-mix(in srgb, var(--void) 76%, transparent);
+}
+.hdr__cta {
+  min-height: 44px;
+  padding-inline: var(--s3);
+}
+
+/* The mobile action bar floats too, and on the same material. */
+.mbar {
+  inset: auto var(--s2) var(--s2) var(--s2);
+  height: 64px;
+  border-radius: 999px;
+  border: 0;
+  padding-inline: var(--s1);
+  background: color-mix(in srgb, var(--void) 68%, transparent);
+  backdrop-filter: var(--lg-blur-heavy);
+  -webkit-backdrop-filter: var(--lg-blur-heavy);
+  box-shadow:
+    var(--lg-lift),
+    inset 0 1px 1px -1px var(--lg-spec),
+    inset 0 -1px 1px -1px var(--lg-shade);
+}
+
+/* --------------------------------------------------------------------------
+   Surfaces
+   -------------------------------------------------------------------------- */
+
+.seg {
+  border: 0;
+  padding: 3px;
+  border-radius: 999px;
+  background: var(--lg-fill);
+  backdrop-filter: var(--lg-blur);
+  -webkit-backdrop-filter: var(--lg-blur);
+  box-shadow:
+    inset 0 1px 1px -1px var(--lg-spec),
+    inset 0 -1px 1px -1px var(--lg-shade);
+}
+.seg__b {
+  border-radius: 999px;
+  padding: var(--s1) var(--s3);
+}
+.seg__ind {
+  top: 3px;
+  bottom: 3px;
+  width: calc(50% - 3px);
+  border-radius: 999px;
+  background: var(--lg-fill-hi);
+  box-shadow:
+    inset 0 1px 1px -1px var(--lg-spec),
+    inset 0 -1px 1px -1px var(--lg-shade);
+}
+.seg__ind--him { transform: translateX(calc(100% + 6px)); }
+
+.inc__card {
+  border-radius: var(--s5);
+  corner-shape: var(--corner);
+  background: color-mix(in srgb, var(--surface-1) 55%, transparent);
+  backdrop-filter: var(--lg-blur);
+  -webkit-backdrop-filter: var(--lg-blur);
+  box-shadow:
+    var(--lg-lift),
+    inset 0 1px 1px -1px var(--lg-spec),
+    inset 0 -1px 1px -1px var(--lg-shade);
+}
+/* The drawn stroke follows the same curve as the card it traces. */
+.inc__border rect { rx: var(--s5); ry: var(--s5); }
+
+.wl__field {
+  border-radius: 999px;
+  padding: var(--s1) var(--s3);
+  background: var(--lg-fill);
+  backdrop-filter: var(--lg-blur);
+  -webkit-backdrop-filter: var(--lg-blur);
+  box-shadow:
+    inset 0 1px 1px -1px var(--lg-spec),
+    inset 0 -1px 1px -1px var(--lg-shade);
+}
+
+.disc__btn {
+  border-radius: var(--r-control-ios);
+  corner-shape: var(--corner);
+  padding-inline: var(--s3);
+  margin-block: 2px;
+}
+.disc__btn:hover { background: var(--lg-fill); }
+
+/* --------------------------------------------------------------------------
+   The device keeps CIRCULAR corners. Deliberately, and against the rest of
+   this file.
+
+   A superellipse was tried here and reverted. Two concentric superellipses
+   whose radii differ by the bezel width are not a constant distance apart:
+   the gap widens through the corner, so the bezel visibly thickens at each
+   corner and the phone reads squarer than the hardware it is drawing. With
+   circular corners and outer = inner + bezel, the perpendicular distance is
+   the same everywhere, which is what makes the bezel uniform and the corners
+   read as an iPhone's.
+
+   So: the squircle is for cards, panels and controls. The device is round.
+   -------------------------------------------------------------------------- */
+
+.device__frame,
+.device__screen {
+  corner-shape: round;
+}
+
+/* --------------------------------------------------------------------------
+   Composition — Apple sets the argument in the middle of the screen and lets
+   it breathe. The brief sets it hard left. This is the part of the direction
+   that changes how the page reads, not just how it is finished.
+   -------------------------------------------------------------------------- */
+
+@media (min-width: 1024px) {
+  .hero__grid { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+  .hero__type { grid-column: 1 / -1; justify-items: center; max-width: min(100%, 900px); }
+  .hero__h { max-width: none; }
+  .hero__type .hero__sub { max-width: 46ch; }
+  .hero__actions { justify-content: center; }
+  /* Kept, and centred. Hiding it would break the intro's handover outright:
+     Intro measures this element to know where to send its surviving rule, and
+     a display:none target reports a zero box, so the rule would simply vanish
+     instead of becoming the hero's baseline. */
+  .hero__baselinewrap { width: 260px; margin-inline: auto; }
+  .hero__field { display: none; }
+
+  .ledger__h,
+  .drift__text h2,
+  .know__h { text-align: left; }
+}
+
+.hero__h {
+  letter-spacing: -0.04em;
+}
+
+/* Apple's display type is tighter and heavier than the brief's. Still never
+   600+, because only the 400 and 500 cuts of Switzer ship. */
+.t-display-xl,
+.t-display-l,
+.t-display-m {
+  letter-spacing: -0.038em;
+  text-wrap: balance;
+}
+
+/* --------------------------------------------------------------------------
+   Corrections the floating navigation forces
+   -------------------------------------------------------------------------- */
+
+/* The nav no longer occupies layout — it floats over it — so the device has to
+   leave room for it itself, or the phone's top edge slides under the glass. */
+.device { --fh: min(660px, calc(100svh - 340px)); }
+@media (max-width: 767px) {
+  .device { --fh: min(600px, calc(100svh - 420px)); }
+}
+
+/* The field is a capsule now, and the capsule carries the affordance. A rule
+   under it reads as a stray line left over from an earlier design, and the
+   three calibration ticks read as debris. Focus brightens the rim instead —
+   still the only place a form element uses the accent. */
+.wl__underline,
+.wl__ticks {
+  display: none;
+}
+.wl__field:focus-within {
+  background: var(--lg-fill-hi);
+  box-shadow:
+    inset 0 0 0 1px var(--jade),
+    inset 0 1px 1px -1px var(--lg-spec);
+}
+
+/* The progress rail's marks take the control shape too. */
+.app__mark { border-radius: 999px; }
+
+/* Charts and the ledger stay hairline and left-aligned: the material belongs
+   on controls and surfaces, not on the instruments. Part 2.3's light model
+   still holds — the phone is the only lit object, and glass refracts what is
+   behind it rather than emitting. */

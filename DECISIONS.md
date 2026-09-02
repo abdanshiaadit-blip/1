@@ -213,9 +213,10 @@ charts or the ledger. Part 2.3's light model still holds — the phone remains
 the only lit object, and glass refracts what is already behind it rather than
 emitting, so it does not become a fourth light source.
 
-**To revert:** delete the "iOS 26 Liquid Glass" block at the end of
-`site/src/styles/sections.css` and the glass tokens in `tokens.css`. Nothing
-else depends on them.
+**To revert:** delete `site/src/styles/ios26.css` and its one import line
+in `main.tsx`. The block originally lived at the end of `sections.css`; it was
+lifted out when D13 widened the direction, so that one deletion now takes the
+whole of it. Nothing else depends on it.
 
 ## D10 · The device draws a real iPhone bezel — CLIENT DIRECTION
 
@@ -283,3 +284,62 @@ Changed to **`#748C83`** — the minimum lightening of the same hue that clears
 The accessibility floor wins over the swatch. It is a healthcare site, `text-3`
 carries the sources and the sample-data labels, and Part 10 asked for the
 number to be checked rather than trusted.
+
+## D13 · The Apple compositional language — CLIENT DIRECTION, against the brief
+
+The client asked for "exact iOS 26 effects, and like Apple made the website".
+D9 was the material; this is the composition. It is the larger departure of the
+two, because it changes how the page **reads**, not only how it is finished.
+
+Everything specific to it lives in `site/src/styles/ios26.css` — one file, one
+import line in `main.tsx`, revertible in a single deletion. The glass block
+written for D9 was lifted out of `sections.css` into it, so the whole of the
+client direction is now in one place rather than two.
+
+**What was built**
+
+1. **Continuous corners.** `corner-shape: superellipse(4)` on every card, panel
+   and surface. This is the single most identifiable thing about Apple's
+   geometry and the reason a plain `border-radius` always looks
+   approximately-Apple and never Apple. Chrome 139+ ships `corner-shape`, so
+   this is the real curve, not an SVG trace of one; browsers without it fall
+   back to the circular radius already declared and lose nothing else.
+2. **Directional lighting on the material.** D9's rim was a top-edge gradient.
+   It is now one light source at 135°, consistently, on every glass surface —
+   bright specular where the light falls, shadowed where it does not, so an
+   edge reads as a bevel catching a room rather than as a border.
+3. **True capsules on controls.** Buttons, the segmented toggle, the waitlist
+   field and the floating nav are `999px`, not superellipses. Tried as
+   superellipses first and reverted: a squircle applied to a pill squares off
+   the very ends that make it a pill.
+4. **A floating capsule navigation**, over the page rather than in it.
+5. **A centred hero at ≥1024px.** Apple sets the argument in the middle of the
+   screen and lets it breathe.
+6. **Tighter display tracking** (`-0.038em`) and `text-wrap: balance`.
+
+**Against the brief, explicitly.** Part 2.4: "Alignment: left by default,
+everywhere, including headlines. Only two centred compositions exist on the
+whole site." The hero is now a third. Part 2.6: "Border radius: exactly two
+values… Nothing else on the site has a radius at all." Part 13 bans more than
+two radius values under "the build has failed regardless of how good the rest
+is." The instruction was explicit and repeated; it is built, and the conflict
+is recorded rather than silently resolved either way.
+
+**The device is the exception, and stays circular.** A superellipse was tried
+on the phone and reverted. Two concentric superellipses whose radii differ by
+the bezel width are **not** a constant distance apart: the gap widens through
+the corner, so the bezel visibly thickens at each corner and the phone reads
+squarer than the hardware it draws. With circular corners and
+`outer = inner + bezel`, the perpendicular distance is identical everywhere —
+which is exactly the concentricity D10 was built on. So the squircle is for
+cards, panels and controls; **the device is round.**
+
+**What was deliberately NOT done.** No glass, no centring and no radius on the
+type, the rules, the charts, the ledger or the annotations. Part 2.3's light
+model still holds: the phone remains the only lit object, and glass refracts
+what is already behind it rather than emitting, so it never becomes a fourth
+light source. Two knock-on corrections were needed and are marked as such in
+the file: the device's height budget had to grow, because a nav that floats no
+longer reserves its own space, and the waitlist underline and its calibration
+ticks were removed, because a rule beneath a capsule field reads as debris
+left over from an earlier design.

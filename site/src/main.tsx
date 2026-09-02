@@ -4,6 +4,7 @@ import './styles/tokens.css'
 import './styles/base.css'
 import './styles/primitives.css'
 import './styles/sections.css'
+import './styles/ios26.css'
 import './styles/bench.css'
 import App from './App'
 

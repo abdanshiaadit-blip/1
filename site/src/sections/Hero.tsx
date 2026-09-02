@@ -36,9 +36,9 @@ export default function Hero({ boot = 'direct' }: { boot?: 'direct' | 'waiting' 
      brief specifies stops existing. */
   return (
     <section data-section="hero" className="hero">
-      <div className="sec__horizon">
-        <Rule origin="left" duration={900} tone="hairline" threshold={0.85} />
-      </div>
+      {/* No horizon rule here: Part 4.6 marks the boundary BETWEEN sections,
+          and nothing precedes the hero. Drawn anyway it reads as a stray bar
+          under the floating navigation. */}
       <div className="page grid12 hero__grid">
         <FrameCell name="hero-type" cols={[1, 7]} className="hero__type">
           {/* The rule the intro left behind. While the intro is on screen it

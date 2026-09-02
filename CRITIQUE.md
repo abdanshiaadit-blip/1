@@ -116,3 +116,36 @@ the boot state machine still drew the hero's baseline a second time after the
 handover, which is precisely the two-rules failure 7.0.6 exists to prevent.
 Both are why the adversarial pass was worth running — a fix is a change, and a
 change deserves the same scepticism as the code it replaced.
+
+---
+
+## Session 13 — the iPhone bezel and the Apple direction
+
+**The weakest thing** is that the site is now arguing with itself. The brief's
+case is that an instrument earns trust by refusing decoration: hairlines, two
+radii, everything flush left, "a scientific instrument, not science fiction".
+Apple's case is that a surface earns trust by being beautifully made:
+material, centred, generous. Both are coherent; the page now runs one over the
+other, and where they meet — a glass capsule button sitting under a hairline
+chart on a left-aligned ledger — it reads as two designers who did not speak.
+The clearest single symptom is the hero, centred at ≥1024px while the ledger,
+the drift and the panel beneath it stay hard left.
+
+**An art director would say** that "make it look like Apple" and "make it look
+like an instrument" cannot both be the brief, and would ask which one the site
+is. They would also say the phone is the tell: it is the one object on the page
+that had to be exempted from the direction — twice, from the superellipse and
+from the material — because the direction was making it look less like the
+thing it depicts, not more. When the art direction has to be switched off over
+the hero image, that is worth a conversation, not a CSS exception.
+
+**What changed as a result.** Everything specific to the direction was lifted
+out of `sections.css` into a single `ios26.css` — one file, one import — so
+that conversation can be settled with a deletion rather than an archaeology
+exercise. Two things I built were wrong and were reverted after seeing them
+rendered: a superellipse on the capsules squared off the ends that make a pill
+a pill, and a superellipse on the device widened the bezel through each corner,
+because two concentric superellipses whose radii differ by the bezel width are
+not a constant distance apart — the concentricity D10 was built on only holds
+for circles. Both reverts are commented at the point of the exception so the
+next person does not re-derive them from a screenshot.
