@@ -114,3 +114,62 @@ is newer than this repo, that would explain the difference and I cannot see it.
 Part 1.3 does list "HUMAN Score — One number, plus a biological age" as an approved
 capability, so adding one to the app is legitimate. It is an app change, so it is not mine
 to make unasked.
+
+---
+
+## D6 · Switzer weight 450 is served by the 500 cut
+
+Part 2.5 asks for weights 400, 450 and 500. Fontshare publishes a variable
+Switzer, but Fontshare is unreachable from this build environment (the network
+policy refuses outbound hosts), so the site ships the static latin 400 and 500
+faces from npm instead.
+
+There is therefore no true 450 cut. Left alone, `font-weight: 450` resolves to
+the 400 face under the CSS font-matching rules, which would flatten body,
+heading and display to a single weight and delete the hierarchy Part 2.5 is
+describing. So the 500 face is declared with `font-weight: 450 500` and serves
+both.
+
+**Consequences.** Headings and display are optically the 500 cut, one step
+heavier than a true 450. Nothing is at 600 or above, so the Part 2.5 and Part
+13 prohibitions hold. If the variable Switzer becomes reachable, dropping it in
+and deleting the range restores a true 450 without touching any component.
+
+## D7 · The responsive system interpolates between the brief's two fixed points
+
+Part 2.7 gives desktop (12 columns, 72px gutters, 1280px content, 88px margins)
+and mobile (one column, 20px margins) and nothing in between, while Part 3.7
+requires verification at 768, 1024, 1280, 1440, 1920 and 2560 with no
+horizontal scroll at any of them.
+
+Those two cannot both hold as written. Twelve columns with 72px gutters need
+792px of gutter before a single column of content; at a 768px viewport with
+88px margins there are 592px available. `tests/overlap.spec.ts` caught exactly
+this on its first run.
+
+So: the 12-column grid starts at **1024px**, not 768px. Below that the layout is
+a single column. `--page-margin` holds at 20px through mobile, then interpolates
+40px → 88px between 768 and 1280. `--gutter` interpolates 32px → 72px between
+1024 and 1456. Columns are `minmax(0, 1fr)` rather than `1fr`, so no cell's
+min-content can ever push the grid wider than the viewport.
+
+**The brief's own geometry is exact where it describes it:** at a 1456px viewport
+the content is 1280px wide and the gutters are 72px, which is what makes the
+device cell ~604px as Part 7.5.1 states.
+
+**Consequence to watch:** at 1024px the device cell computes to roughly 408px.
+The phone is 340px, so the annotation gutters (Part 7.5.1) are about 34px a
+side rather than the ~130px the brief describes. The annotation layer will need
+a narrow-desktop answer in Session 4 — most likely the mobile treatment (a
+reserved lane beneath the frame) held until the gutters are wide enough.
+
+## Open · telemetry is 11px on mobile, and Part 3.7 says nothing below 12px
+
+Part 2.5's type table sets telemetry at 12px desktop / 11px mobile and says
+"both endpoints are binding". Part 2.2 says `text-3` has a 12px minimum, and
+Part 3.7's responsive checklist says "no text below 12px" at every width.
+
+Implemented as the type table specifies — `clamp(11px, …, 12px)` — because it
+is the more specific instruction. Flagging it rather than silently choosing:
+if the accessibility floor is the one that matters, the fix is a one-line token
+change to `clamp(12px, …, 12px)`.

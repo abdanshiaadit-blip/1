@@ -1,0 +1,176 @@
+/* ==========================================================================
+   Primitive styles. BRIEF.md Parts 2.4, 2.3, 3.2, 3.4, 3.5, 4.2.
+
+   Every value here comes from tokens.css. No literal colour, duration,
+   easing, radius or z-index appears in this file.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   G1 · RULE
+   The box exists at full size from first paint; only the ink inside it
+   scales. That is what makes a drawing rule cost zero layout.
+   -------------------------------------------------------------------------- */
+
+.rule {
+  position: relative;
+  flex: none;
+}
+.rule--h {
+  width: 100%;
+}
+.rule--v {
+  height: 100%;
+}
+
+.rule__ink {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--hairline-lit);
+  /* No transition here: the component sets it per instance, because a
+     scroll-linked rule must carry none at all. */
+}
+
+.rule--hairline .rule__ink {
+  background: var(--hairline);
+  opacity: 0.4; /* the horizon rules, Part 4.6 — quiet, and never varied */
+}
+
+/* --------------------------------------------------------------------------
+   G2 · PRINT
+   -------------------------------------------------------------------------- */
+
+.print {
+  /* The wrapper is layout-neutral so Print can wrap a heading, a paragraph or
+     a list without changing how any of them lay out. */
+  display: block;
+}
+
+.print__u {
+  display: block;
+  /* clip-path only. The content never moves. */
+  will-change: clip-path;
+}
+
+/* --------------------------------------------------------------------------
+   G3 · TICK
+   Spaced by flex, never placed absolutely, so a tick field cannot land on a
+   neighbour or escape its cell.
+   -------------------------------------------------------------------------- */
+
+.ticks {
+  display: flex;
+  pointer-events: none;
+}
+.ticks--horizontal {
+  width: 100%;
+  flex-direction: row;
+  align-items: flex-start;
+}
+.ticks--vertical {
+  height: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+}
+/* Spread across the rule (the intro's five marks under five letters). With an
+   explicit gap the marks keep their own interval instead, which is what a
+   graduation on a measurement needs. */
+.ticks--spread {
+  justify-content: space-between;
+}
+
+.ticks__t {
+  display: block;
+  background: var(--text-3);
+  flex: none;
+}
+.ticks--horizontal .ticks__t {
+  width: 1px;
+}
+.ticks--vertical .ticks__t {
+  height: 1px;
+}
+
+/* --------------------------------------------------------------------------
+   FRAME CELL — Part 3.2
+   Every content element lives inside one. The declared overflow is the whole
+   point: an animation that would leave its cell is clipped, not permitted to
+   escape.
+   -------------------------------------------------------------------------- */
+
+.cell {
+  position: relative;
+  overflow: hidden;
+  min-width: 0; /* so a grid child can actually shrink instead of overflowing */
+}
+
+@media (min-width: 1024px) {
+  .cell {
+    grid-column: var(--cell-from, auto) / span var(--cell-span, 12);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   STICKY STAGE — Part 3.4
+   The section's height is the scroll budget. The pin is exactly one viewport
+   tall — never taller, never min-height.
+   -------------------------------------------------------------------------- */
+
+.stage {
+  position: relative;
+  height: calc(var(--stage-vh-m) * 1vh);
+}
+
+@media (min-width: 768px) {
+  .stage {
+    height: calc(var(--stage-vh) * 1vh);
+  }
+}
+
+.stage__pin {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  z-index: var(--z-stage);
+  display: grid;
+  align-content: center;
+}
+
+/* Part 3.4: minimum 40vh of ordinary flowing page between the end of one
+   sticky stage and the start of the next. The visitor must feel the page land
+   between set pieces. Do not remove this to save length. */
+.stage + .stage {
+  margin-top: 40vh;
+}
+
+/* --------------------------------------------------------------------------
+   DECORATIVE LAYERS — Part 2.3, 2.4, 3.1
+   Non-interactive, aria-hidden, pointer-events: none. They may sit behind
+   content freely; that is their only job.
+   -------------------------------------------------------------------------- */
+
+.wash {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-wash);
+  pointer-events: none;
+  background: radial-gradient(
+    120% 80% at 50% 40%,
+    #0a211b 0%,
+    color-mix(in srgb, #0a211b 45%, var(--void)) 38%,
+    var(--void) 78%
+  );
+}
+
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-grain);
+  pointer-events: none;
+  opacity: 0.025;
+  mix-blend-mode: overlay;
+  background-repeat: repeat;
+  background-size: 128px 128px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='128' height='128' filter='url(%23n)'/%3E%3C/svg%3E");
+}

@@ -1,0 +1,175 @@
+/* ==========================================================================
+   HUMAN — design tokens. BRIEF.md Parts 2, 3.5, 4.3.
+
+   Nothing outside this file defines a colour, a type size, a radius, a
+   z-index, a duration or an easing. If a component needs a value that is not
+   here, the value is wrong, not the file.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Typeface — Part 2.5
+
+   Switzer, self-hosted, latin subset. Fontshare publishes a variable Switzer;
+   this build ships the static 400 and 500 faces because the variable file was
+   not reachable from the build environment. Consequence: there is no true 450
+   cut, so the 450 the type scale asks for is served by the 500 file via a
+   font-weight RANGE on that face. See DECISIONS.md D6.
+
+   The fallback face is metric-matched against Arial, measured rather than
+   guessed: Switzer's advance widths came out at 99.74% of Arial's over a
+   prose sample, ascent 98.26%, descent 25.07%. That is what holds CLS at 0.00
+   through the font swap — a headline set in the fallback occupies the same
+   box as the same headline set in Switzer.
+   -------------------------------------------------------------------------- */
+
+@font-face {
+  font-family: 'Switzer';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/switzer-latin-400.woff2') format('woff2');
+}
+
+/* 450 and 500 both resolve here. The range is what makes `font-weight: 450`
+   land on this face instead of silently rounding down to the 400 cut, which
+   would flatten the whole scale to one weight. */
+@font-face {
+  font-family: 'Switzer';
+  font-style: normal;
+  font-weight: 450 500;
+  font-display: swap;
+  src: url('/fonts/switzer-latin-500.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Switzer Fallback';
+  src: local('Arial'), local('Liberation Sans'), local('Helvetica Neue');
+  size-adjust: 99.74%;
+  ascent-override: 98.26%;
+  descent-override: 25.07%;
+  line-gap-override: 0%;
+}
+
+:root {
+  --font: 'Switzer', 'Switzer Fallback', 'Helvetica Neue', Arial, sans-serif;
+
+  /* ---- Palette — Part 2.2 ------------------------------------------------
+     Nothing outside this list appears anywhere. No purple, no red, no neon,
+     no second green. */
+  --void: #05100d; /* the page. never #000, never #0b0b0b */
+  --surface-1: #0a1a15; /* raised surfaces, the pricing card */
+  --surface-2: #0f241e; /* the only second elevation step. there is no third */
+  --hairline: #1c332b; /* 90% of the site's structure is drawn with this */
+  --hairline-lit: #2b4a3f; /* active rules, drawing rules, focus */
+  --text: #e8f0ec; /* never pure white — it reads cheap on near-black */
+  --text-2: #93a69e; /* min 15px */
+  --text-3: #5f726b; /* min 12px, never a full sentence */
+  --jade: #7fe3c0; /* fewer than 12 elements site-wide. scarcity is the point */
+  --jade-deep: #125f4b; /* chart fills, in-range bands, primary button */
+  --amber: #e0a458; /* worth attention. never red — HUMAN does not frighten */
+  --ice: #a8d8e8; /* data ink only. max 30% opacity. never for text */
+
+  /* ---- Type scale — Part 2.5 --------------------------------------------
+     clamp() between the mobile endpoint at 390px and the desktop endpoint at
+     1440px. Both endpoints are binding, so each clamp is solved for exactly
+     those two widths rather than eyeballed. */
+  --display-xl: clamp(44px, 21.714px + 5.714vw, 104px);
+  --display-l: clamp(34px, 19.886px + 3.619vw, 72px);
+  --display-m: clamp(28px, 20.571px + 1.905vw, 48px);
+  --heading: clamp(22px, 19.771px + 0.571vw, 28px);
+  --body-l: clamp(18px, 16.514px + 0.381vw, 22px);
+  --body: clamp(16px, 15.629px + 0.095vw, 17px);
+  --caption: clamp(13px, 12.629px + 0.095vw, 14px);
+  --telemetry: clamp(11px, 10.629px + 0.095vw, 12px);
+  --numeral-xl: clamp(76px, 44.8px + 8vw, 160px);
+  --numeral-l: clamp(40px, 31.086px + 2.286vw, 64px);
+
+  /* Light text on dark optically bolds, so every weight drops one step from
+     what it would be on white. Never 600 or 700, anywhere. */
+  --w-body: 400;
+  --w-heading: 450;
+  --w-display: 450;
+
+  /* ---- Geometry — Part 2.6 ----------------------------------------------
+     Exactly two radii exist. Nothing else on the site has a radius at all. */
+  --r-control: 2px;
+  --r-object: 24px;
+
+  /* The one shadow token, used on one element: the phone frame. */
+  --shadow-device: 0 40px 120px -30px rgba(0, 0, 0, 0.9);
+
+  /* ---- Space — Part 2.7 -------------------------------------------------
+     These eight values only. Nothing in between. Vertical rhythm is 8px. */
+  --s1: 8px;
+  --s2: 16px;
+  --s3: 24px;
+  --s4: 40px;
+  --s5: 64px;
+  --s6: 104px;
+  --s7: 168px;
+  --s8: 264px;
+
+  /* Part 2.7 gives two fixed points — mobile at 20px margins in one column,
+     desktop at 88px margins over 12 columns with 72px gutters and 1280px of
+     content. Those are endpoints, not a system: 12 columns with 72px gutters
+     need 792px of gutter alone, which is more than a 768px viewport has, so
+     holding the desktop values below the desktop forces horizontal scroll.
+     tests/overlap.spec.ts catches that at 768px, which is how these came to
+     be interpolated rather than switched.
+
+     The desktop geometry is exact where the brief describes it: at a 1456px
+     viewport the content is 1280px and the gutters are 72px, which is what
+     makes the device cell ~604px wide as Part 7.5.1 states. */
+  --page-margin: 20px; /* mobile, no exceptions */
+  --content-max: 1280px;
+  --gutter: 24px;
+  --section-pad: 88px; /* mobile */
+
+  /* ---- Measure — Part 2.5 ----------------------------------------------- */
+  --measure-body: 62ch;
+  --measure-display: 34ch;
+
+  /* ---- Motion — Part 4.3 ------------------------------------------------
+     Four easings. Any easing outside these four breaks the language. */
+  --ease-entrance: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-move: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  --ease-instrument: cubic-bezier(0.7, 0, 0.2, 1);
+
+  --dur-micro: 160ms; /* hover, focus, fills, G3 ticks */
+  --dur-print: 260ms; /* one G2 unit */
+  --dur-rule: 680ms; /* one G1 rule */
+  --dur-composition: 820ms; /* a group resolving */
+  --dur-draw: 1400ms; /* a full-width or charted rule */
+  --dur-boot: 1800ms; /* the intro, once */
+  --stagger: 55ms; /* between print units, max 5 */
+
+  --travel-object: 28px; /* the only distance an object moves on entrance */
+  --scale-in: 0.985; /* the only entrance scale permitted */
+
+  /* ---- z-index — Part 3.5 -----------------------------------------------
+     Seven values. No other z-index exists anywhere in the codebase. */
+  --z-wash: -1;
+  --z-base: 0;
+  --z-stage: 10;
+  --z-raised: 20;
+  --z-header: 100;
+  --z-bar: 110;
+  --z-intro: 250;
+  --z-grain: 300;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --page-margin: clamp(40px, -32px + 9.375vw, 88px); /* 40 at 768, 88 at 1280 */
+    --section-pad: clamp(88px, -32px + 15.625vw, 168px); /* 88 at 768, 168 at 1280 */
+  }
+}
+
+/* The 12-column grid starts here. Below 1024 the columns would be narrower
+   than their own gutters, which is not a grid, it is a stack with stripes. */
+@media (min-width: 1024px) {
+  :root {
+    --gutter: clamp(32px, -62.8px + 9.26vw, 72px); /* 32 at 1024, 72 at 1456 */
+  }
+}

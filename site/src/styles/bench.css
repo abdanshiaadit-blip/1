@@ -1,0 +1,30 @@
+/* The primitives bench. Not site chrome — a workbench, styled with the same
+   tokens so a primitive that looks wrong here will look wrong in a section. */
+
+.bench {
+  position: relative;
+  padding-block: var(--section-pad);
+  border-top: 1px solid var(--hairline);
+}
+.bench:first-child { border-top: 0; }
+
+.bench__rows {
+  margin-top: var(--s5);
+  display: grid;
+  gap: var(--s5);
+}
+
+.bench__row { display: grid; gap: var(--s2); }
+.bench__demo { display: grid; gap: var(--s2); }
+
+/* Deliberately twice its cell's width, to prove the cell clips it. */
+.bench__escape {
+  width: 200%;
+  height: 40px;
+  background: var(--surface-2);
+  border-top: 1px solid var(--hairline-lit);
+}
+
+.bench__stage { align-items: start; width: 100%; }
+.bench__linked { display: grid; align-content: center; min-height: 220px; }
+.bench__tail { padding-block: var(--s7); }
