@@ -1,5 +1,7 @@
+import { useState } from 'react'
 import Grain from './components/Grain'
 import Header from './components/Header'
+import Intro, { shouldPlayIntro } from './components/Intro'
 import MobileBar from './components/MobileBar'
 import Telemetry from './components/Telemetry'
 import AppSection from './sections/AppSection'
@@ -32,14 +34,21 @@ import Primitives from './routes/Primitives'
  */
 export default function App() {
   const route = typeof window === 'undefined' ? '/' : window.location.pathname
+  /* Decided once on mount, so nothing can re-trigger it. 7.0.6: this and the
+     hero boot are ONE state machine with two entry points — when the intro
+     plays it owns the rule and the hero resumes at the handover; when it is
+     skipped or suppressed the hero runs its own boot in full. */
+  const [intro, setIntro] = useState(shouldPlayIntro)
+
   if (route === '/primitives') return <Bench><Primitives /></Bench>
   if (route === '/lab') return <Bench><Lab /></Bench>
 
   return (
     <>
+      {intro && <Intro onDone={() => setIntro(false)} />}
       <Header />
       <main id="top">
-        <Hero />
+        <Hero booted={!intro} />
         <SilentBuild />
         <Ledger />
         <Loop />

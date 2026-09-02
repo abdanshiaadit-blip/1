@@ -40,17 +40,33 @@ export default function Annotation({ label, x, y, delay = 0, mobile = false }: P
     >
       {/* The sequence is fixed and never overlaps a screen change: the dot
           appears, then the leader draws, then the label prints. 760ms total. */}
+      {/* Part 4.10: under reduced motion the settled state is painted
+          directly. The CSS animations start from the hidden state, so leaving
+          them in place with a zero delay is not the poster version — with
+          animations suppressed the parts would simply never appear. */}
       <span
         className="anno__dot m-anim"
-        style={{ animationDelay: reduced ? '0ms' : `${delay}ms` }}
+        style={
+          reduced
+            ? { opacity: 1, animation: 'none' }
+            : { animationDelay: `${delay}ms` }
+        }
       />
       <span
         className="anno__leader m-anim"
-        style={{ animationDelay: reduced ? '0ms' : `${delay + 160}ms` }}
+        style={
+          reduced
+            ? { transform: 'none', animation: 'none' }
+            : { animationDelay: `${delay + 160}ms` }
+        }
       />
       <span
         className="anno__label t-telemetry m-anim"
-        style={{ animationDelay: reduced ? '0ms' : `${delay + 500}ms` }}
+        style={
+          reduced
+            ? { clipPath: 'inset(0 0 0 0)', animation: 'none' }
+            : { animationDelay: `${delay + 500}ms` }
+        }
       >
         {label}
       </span>

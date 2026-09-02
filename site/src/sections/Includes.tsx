@@ -14,7 +14,7 @@
 import FrameCell from '../components/FrameCell'
 import Print from '../components/Print'
 import Section from '../components/Section'
-import { useTriggered } from '../lib/motion'
+import { usePrefersReducedMotion, useTriggered } from '../lib/motion'
 
 const INCLUDES = [
   'Three blood draws at your home, at a time you pick',
@@ -28,13 +28,38 @@ const INCLUDES = [
 
 export default function Includes() {
   const [ref, on] = useTriggered<HTMLDivElement>()
+  const reduced = usePrefersReducedMotion()
 
   return (
     <Section id="includes" vh={115} vhMobile={95}>
       <div className="page grid12 inc__grid" ref={ref}>
         <FrameCell name="inc-card" cols={[3, 10]} className="inc__cell">
-          {/* G1: the card's border draws as one continuous rule, 1400ms. */}
-          <div className={`inc__card ${on ? 'is-drawn' : ''}`}>
+          {/* G1: the card's border draws as ONE CONTINUOUS RULE, 1400ms.
+              A border-color transition would be a rule fading in, which Part
+              4.11 names as breaking the language — so it is a real stroke,
+              dashed into existence from the top-left and travelling the whole
+              perimeter once. */}
+          <div className="inc__card">
+            <svg className="inc__border" aria-hidden="true" preserveAspectRatio="none">
+              <rect
+                className="inc__borderline m-anim"
+                x="0.5"
+                y="0.5"
+                rx="23.5"
+                ry="23.5"
+                width="calc(100% - 1px)"
+                height="calc(100% - 1px)"
+                fill="none"
+                stroke="var(--hairline)"
+                strokeWidth="1"
+                pathLength={1}
+                style={{
+                  strokeDasharray: 1,
+                  strokeDashoffset: reduced || on ? 0 : 1,
+                  transition: reduced ? 'none' : 'stroke-dashoffset 1400ms var(--ease-instrument)',
+                }}
+              />
+            </svg>
             <h2 className="t-display-m inc__h">
               <Print delay={1400}>What a membership includes.</Print>
             </h2>

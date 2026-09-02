@@ -40,8 +40,13 @@ export default function Ledger() {
         // Beat 1 (0–30%): rows 1 and 2 resolve, 200ms apart.
         // Beat 2 (30–55%): rows 3 and 4 stay open, then step in weight.
         // Beat 3 (55–100%): the territory fills and the claim prints.
+        /* Sequential, never parallel: two rules drawing at once reads as a
+           loading screen (Part 4.4). Each band is 0.12 wide and 0.14 apart, so
+           one rule finishes before the next starts. */
         const rowProgress = (i: number) =>
-          i < 2 ? band(p, 0.02 + i * 0.09, 0.16 + i * 0.09) : band(p, 0.30 + (i - 2) * 0.09, 0.44 + (i - 2) * 0.09)
+          i < 2
+            ? band(p, 0.02 + i * 0.14, 0.14 + i * 0.14)
+            : band(p, 0.3 + (i - 2) * 0.14, 0.42 + (i - 2) * 0.14)
         const emphasis = band(p, 0.44, 0.55)
         const fill = band(p, 0.55, 0.78)
         const claim = band(p, 0.78, 0.95)

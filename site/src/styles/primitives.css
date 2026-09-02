@@ -48,8 +48,11 @@
 
 .print__u {
   display: block;
-  /* clip-path only. The content never moves. */
-  will-change: clip-path;
+  /* clip-path only. The content never moves.
+     will-change is NOT set here: Print appears roughly two dozen times across
+     fourteen sections, and a permanent hint on every unit is two dozen
+     compositor layers held for the life of the page. Part 10 asks for it only
+     while a stage is in view, so the component sets it for the wipe. */
 }
 
 /* --------------------------------------------------------------------------

@@ -44,7 +44,7 @@ export default function Section({
       {wash && <SectionWash />}
       {horizon && (
         <div className="sec__horizon">
-          <Rule origin="left" duration={900} tone="hairline" />
+          <Rule origin="left" duration={900} tone="hairline" threshold={0.85} />
         </div>
       )}
       {children}

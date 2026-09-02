@@ -22,6 +22,7 @@
 
 import { useEffect, type ReactNode } from 'react'
 import { useStageProgress } from '../lib/motion'
+import Rule from './Rule'
 
 interface Props {
   /** Scroll budget in viewport heights. 400vh for the app section, 180 for
@@ -67,6 +68,14 @@ export default function StickyStage({ vh, vhMobile, name, children, className = 
       // viewport rendering its final state, statically.
       style={{ '--stage-vh': reduced ? 100 : vh, '--stage-vh-m': reduced ? 100 : (vhMobile ?? vh) } as React.CSSProperties}
     >
+      {/* Part 4.6: the same full-width rule that marks every other section
+          boundary. Fourteen of them across the page, identical — their
+          sameness is what makes the site read as one continuous document.
+          Outside the pin, so it scrolls with the boundary rather than riding
+          along with the stage. */}
+      <div className="sec__horizon">
+        <Rule origin="left" duration={900} tone="hairline" threshold={0.85} />
+      </div>
       <div className="stage__pin">{children(progress, inView)}</div>
     </section>
   )

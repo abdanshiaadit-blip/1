@@ -128,7 +128,7 @@ export default function Loop() {
                 key={i}
                 cx={pt.x}
                 cy={pt.y}
-                r={hover === i ? 4.5 : 3}
+                r={3}
                 fill={hover === i ? 'var(--jade)' : 'var(--hairline-lit)'}
                 className="loop__node m-anim"
               />

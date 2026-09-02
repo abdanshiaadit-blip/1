@@ -20,7 +20,7 @@ import Rule from '../components/Rule'
 import Ticks from '../components/Ticks'
 import { PROTOTYPE_URL } from '../lib/constants'
 
-export default function Hero() {
+export default function Hero({ booted = true }: { booted?: boolean }) {
   /* display-l, not display-xl. The type cell is cols 1-7 = 708px at the
      canonical width, and the longest headline line measures 946px at
      display-xl against 655px at display-l. Part 2.5 says the manually placed
@@ -29,11 +29,23 @@ export default function Hero() {
      brief specifies stops existing. */
   return (
     <section data-section="hero" className="hero">
+      <div className="sec__horizon">
+        <Rule origin="left" duration={900} tone="hairline" threshold={0.85} />
+      </div>
       <div className="page grid12 hero__grid">
         <FrameCell name="hero-type" cols={[1, 7]} className="hero__type">
-          {/* The rule the intro left behind, handed to the hero as its
-              baseline (Part 7.0.6). Until the intro exists it simply draws. */}
-          <Rule origin="left" duration={680} className="hero__baseline" />
+          {/* The rule the intro left behind. While the intro is on screen it
+              owns the only rule there is; the hero's baseline appears already
+              drawn at the handover rather than drawing a second one, which is
+              the two-rules-on-screen failure 7.0.6 exists to prevent. */}
+          <span data-hero-baseline className="hero__baselinewrap">
+            <Rule
+              origin="left"
+              duration={680}
+              className="hero__baseline"
+              progress={booted ? undefined : 0}
+            />
+          </span>
 
           <h1 className="t-display-l hero__h">
             <Print stagger>

@@ -1,9 +1,18 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" style="background:#05100D">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#05100D" />
+    <!-- Inline, before any stylesheet resolves. Beat 0 of the intro is "Pure
+         void. Nothing." — a white first paint while the CSS is still in flight
+         is the opposite of that, and it is the first thing anyone sees. -->
+    <style>
+      html,
+      body {
+        background: #05100d;
+      }
+    </style>
     <title>HUMAN — Know earlier. Act sooner.</title>
     <meta
       name="description"
@@ -19,7 +28,7 @@
     <link rel="preload" href="/fonts/switzer-latin-400.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/switzer-latin-500.woff2" as="font" type="font/woff2" crossorigin />
   </head>
-  <body>
+  <body style="background:#05100D">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

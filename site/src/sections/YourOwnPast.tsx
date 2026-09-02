@@ -108,9 +108,13 @@ export default function YourOwnPast() {
               <div className="past__bar" style={{ opacity: bar }}>
                 <div className="past__track">
                   <span className="past__last" style={{ left: '62%' }} aria-hidden="true" />
+                  {/* Part 3.3: transform only. Animating `left` animates
+                      layout, and on a ~600px track 22% is 132px — far past the
+                      28px Part 4.3 allows anything to travel. The tick sits at
+                      its settled position and travels the token distance. */}
                   <span
                     className="past__now"
-                    style={{ left: `${62 - 22 * bar}%` }}
+                    style={{ transform: `translateX(${(1 - bar) * 28}px)` }}
                     aria-hidden="true"
                   />
                 </div>

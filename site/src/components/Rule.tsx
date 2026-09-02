@@ -31,6 +31,9 @@ interface Props {
    *  ones: plain `hairline` at 40%. */
   tone?: 'lit' | 'hairline'
   thickness?: number
+  /** Where a triggered rule fires, as a fraction of viewport height. Part 4.8
+   *  sets the general line at 78%; Part 4.6 fires the horizon rule at 85%. */
+  threshold?: number
   className?: string
 }
 
@@ -41,11 +44,12 @@ export default function Rule({
   delay = 0,
   tone = 'lit',
   thickness = 1,
+  threshold = 0.78,
   className = '',
 }: Props) {
   const linked = progress !== undefined
   const reduced = usePrefersReducedMotion()
-  const [ref, triggered] = useTriggered<HTMLDivElement>()
+  const [ref, triggered] = useTriggered<HTMLDivElement>(threshold)
 
   // A drawn rule reads as one gesture with what prints onto it, so the two
   // must not fight over the same compositor layer mid-draw. will-change is

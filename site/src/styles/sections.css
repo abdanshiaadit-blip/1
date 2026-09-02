@@ -187,7 +187,7 @@
 @media (max-width: 767px) { .hero { min-height: 105svh; padding-top: calc(64px + var(--s5)); } }
 .hero__grid { align-items: start; }
 .hero__type { display: grid; gap: var(--s4); align-content: start; }
-.hero__baseline { max-width: 260px; }
+
 .hero__h { margin: 0; }
 .hero__line { display: block; }
 .hero__sub { color: var(--text-2); }
@@ -230,6 +230,9 @@
   position: absolute;
   transform: translate(-50%, -180%);
   max-width: 100%;
+  /* On the base rule, not only on the right-anchored variant — three of the
+     four labels were snapping open with no wipe at all. */
+  transition: clip-path var(--dur-print) var(--ease-entrance);
 }
 /* Anchored by its right edge near the axis end, so it cannot hang outside
    the cell the way a centred label would. */
@@ -247,10 +250,11 @@
   white-space: nowrap;
   transition: clip-path var(--dur-print) var(--ease-entrance);
 }
+.retest__chaseline { transition: clip-path var(--dur-print) var(--ease-entrance); }
 .drift__axis { position: absolute; left: 0; bottom: -18px; }
 .drift__sample { position: absolute; right: 0; bottom: -18px; }
 .drift__cascade { display: grid; gap: var(--s3); }
-.num { display: grid; gap: var(--s1); transition: opacity var(--dur-composition) var(--ease-move); }
+.num { display: grid; gap: var(--s1) }
 .num__v { margin: 0; color: var(--text); }
 .num__suffix { font-size: 0.34em; letter-spacing: 0; }
 .num__c { color: var(--text-2); }
@@ -304,7 +308,8 @@
 .loop__cap { color: var(--text-3); }
 .loop__stage { display: grid; place-items: center; }
 .loop__svg { width: 100%; max-width: 360px; height: auto; }
-.loop__node { transition: r var(--dur-micro) var(--ease-instrument), fill var(--dur-micro) var(--ease-instrument); }
+/* Part 7.4: brightness only. No movement, and a radius change is movement. */
+.loop__node { transition: fill var(--dur-micro) var(--ease-instrument); }
 .loop__pulse { animation: loop-pulse 600ms var(--ease-move) 1 forwards; }
 @keyframes loop-pulse {
   from { stroke-dashoffset: 0; opacity: 1; }
@@ -333,7 +338,7 @@
    own cell for the whole entrance instead of hanging 28px below it. */
 .app__devicecell { display: grid; justify-items: center; padding-bottom: var(--travel-object); }
 .app__riser { position: relative; display: grid; justify-items: center; }
-.app__control { display: grid; gap: var(--s1); justify-items: center; transition: opacity var(--dur-composition) var(--ease-entrance); }
+.app__control { display: grid; gap: var(--s1); justify-items: center }
 .app__proto { color: var(--text-3); }
 .app__ring {
   position: absolute;
@@ -428,6 +433,7 @@
 @keyframes anno-dot { to { opacity: 1; } }
 @keyframes anno-leader { to { transform: scaleX(1); } }
 @keyframes anno-label { to { clip-path: inset(0 0 0 0); } }
+@keyframes anno-leader-v { to { transform: scaleY(1); } }
 
 /* --------------------------------------------------------------------------
    7.6 The retest
@@ -436,19 +442,19 @@
 .retest { width: 100%; align-items: center; }
 .retest__text { display: grid; gap: var(--s3); align-content: center; }
 .retest__sub { color: var(--text-2); }
-.retest__closing { transition: opacity var(--dur-composition) var(--ease-entrance); }
+.retest__closing { }
 .retest__stage { display: grid; align-content: center; }
 .retest__col { display: grid; gap: var(--s2); }
 .retest__day0 { color: var(--text-3); }
 .retest__railwrap { position: relative; display: grid; grid-template-columns: 1px 1fr; gap: var(--s3); min-height: 320px; }
 .retest__rail { height: 100%; width: 1px; }
 .retest__weeks { list-style: none; display: grid; align-content: space-between; }
-.retest__week { display: flex; align-items: center; gap: var(--s2); color: var(--text-3); transition: opacity var(--dur-micro) var(--ease-entrance); }
+.retest__week { display: flex; align-items: center; gap: var(--s2); color: var(--text-3) }
 .retest__tick { width: 10px; height: 1px; background: var(--hairline); display: block; }
 .retest__tick--lit { width: 20px; background: var(--jade); }
 .retest__w12 { color: var(--text); }
 .retest__chase { display: grid; gap: var(--s1); margin-top: var(--s3); }
-.retest__chaseline { color: var(--text-2); transition: clip-path var(--dur-print) var(--ease-entrance); }
+.retest__chaseline { color: var(--text-2) }
 
 /* --------------------------------------------------------------------------
    7.7 The panel
@@ -497,16 +503,16 @@
 .past { width: 100%; align-items: center; }
 .past__text { display: grid; gap: var(--s3); align-content: center; }
 .past__sub { color: var(--text-2); }
-.past__delta { color: var(--jade); transition: opacity var(--dur-composition) var(--ease-entrance); }
+.past__delta { color: var(--jade) }
 .past__stage { display: grid; gap: var(--s4); align-content: center; position: relative; }
 .past__svg { width: 100%; height: auto; }
 .past__x { font-size: var(--telemetry); fill: var(--text-3); letter-spacing: 0.08em; }
 .past__v { font-size: 20px; fill: var(--text); }
 .past__v--now { fill: var(--jade); }
-.past__bar { display: grid; gap: var(--s2); transition: opacity var(--dur-composition) var(--ease-entrance); }
+.past__bar { display: grid; gap: var(--s2) }
 .past__track { position: relative; height: 6px; background: var(--surface-2); }
 .past__last { position: absolute; top: -4px; width: 1px; height: 14px; background: var(--hairline-lit); }
-.past__now { position: absolute; top: -4px; width: 2px; height: 14px; background: var(--jade); transition: left var(--dur-composition) var(--ease-move); }
+.past__now { position: absolute; top: -4px; width: 2px; height: 14px; background: var(--jade) }
 .past__sample { color: var(--text-3); text-align: right; }
 
 /* --------------------------------------------------------------------------
@@ -555,14 +561,19 @@
 .inc__card {
   position: relative;
   background: var(--surface-1);
-  border: 1px solid transparent;
   border-radius: var(--r-object);
   padding: var(--s5);
   display: grid;
   gap: var(--s3);
-  transition: border-color 1400ms var(--ease-instrument);
 }
-.inc__card.is-drawn { border-color: var(--hairline); }
+.inc__border {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
 @media (max-width: 767px) { .inc__card { padding: var(--s4); } }
 .inc__h { margin: 0; }
 .inc__list { list-style: none; display: grid; gap: var(--s2); }
@@ -790,7 +801,7 @@
   background: color-mix(in srgb, var(--surface-1) 62%, transparent);
   box-shadow: var(--glass-lift);
 }
-.inc__card.is-drawn { border-color: transparent; }
+
 
 .wl__field {
   background: var(--glass-1);
@@ -806,3 +817,75 @@
   margin-block: 1px;
 }
 .disc__btn:hover { background: var(--glass-2); }
+
+/* --------------------------------------------------------------------------
+   7.0 The intro — an instrument powering on, printing its name, and getting
+   out of the way.
+   -------------------------------------------------------------------------- */
+
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-intro);
+  display: grid;
+  place-items: center;
+  pointer-events: none; /* never a gate on anything */
+  transition: opacity var(--ease-exit);
+}
+/* The root never fades. "The rule does not fade" (7.0 Beat 4) — so the veil,
+   the wordmark and the ticks each fade on their own and the rule is left
+   standing, which is the whole idea of the sequence: what survives is handed
+   to the hero, and she never sees a seam. */
+.intro__veil {
+  position: absolute;
+  inset: 0;
+  background: var(--void);
+  transition-property: opacity;
+  transition-timing-function: var(--ease-exit);
+}
+.intro.is-out .intro__veil { opacity: 0; }
+
+.intro__mark { position: relative; display: grid; justify-items: center; }
+.intro__wordmark {
+  display: block;
+  height: auto;
+  transition-property: opacity;
+  transition-timing-function: var(--ease-exit);
+}
+.intro__letter {
+  transition: clip-path var(--dur-print) var(--ease-entrance);
+}
+
+/* The surviving rule. It draws centre-out and then stays — everything else
+   above it fades away around it. */
+.intro__rule {
+  display: block;
+  width: 100%;
+  height: 1px;
+  margin-top: var(--s2);
+  background: var(--hairline-lit);
+  transform-origin: center;
+  transition-property: transform;
+  transition-timing-function: var(--ease-instrument);
+}
+
+.intro__ticks {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 6px;
+  margin-top: var(--s1);
+  transition: opacity var(--dur-micro) var(--ease-exit);
+}
+.intro__tick {
+  position: absolute;
+  top: 0;
+  width: 1px;
+  height: 6px;
+  background: var(--text-3);
+  transition: opacity 160ms var(--ease-entrance);
+}
+
+/* The handle the intro's rule travels onto. Occupies its final box from first
+   paint, so the measurement is of the real baseline, not an animating one. */
+.hero__baselinewrap { display: block; width: 100%; max-width: 260px; }

@@ -14,7 +14,7 @@
  * separate beats — Part 4.4.
  */
 
-import { Children, type ReactNode } from 'react'
+import { Children, useEffect, useRef, type ReactNode } from 'react'
 import { usePrefersReducedMotion, useTriggered } from '../lib/motion'
 
 export type PrintDirection = 'left' | 'right' | 'top'
@@ -53,14 +53,35 @@ export default function Print({
   const reduced = usePrefersReducedMotion()
   const [ref, triggered] = useTriggered<HTMLDivElement>()
 
+  const box = useRef<HTMLElement>(null)
   const units = stagger ? Children.toArray(children) : [children]
   // Part 4.4: never more than five beats. Beyond five children the units are
   // grouped so a nine-item list prints as five groups, not nine ticks of
   // stagger that read as a loading screen.
   const perGroup = Math.ceil(units.length / MAX_UNITS)
 
+  /* Held only for the wipe. A permanent hint on every print unit would be two
+     dozen compositor layers alive for the life of the page (Part 10). */
+  const span = delay + duration + MAX_UNITS * STAGGER_MS + 50
+  useEffect(() => {
+    if (linked || reduced || !triggered) return
+    const el = box.current
+    if (!el) return
+    el.style.willChange = 'clip-path'
+    const t = window.setTimeout(() => {
+      el.style.willChange = ''
+    }, span)
+    return () => window.clearTimeout(t)
+  }, [linked, reduced, triggered, span])
+
   return (
-    <Tag ref={ref as never} className={`print ${className}`}>
+    <Tag
+      ref={((node: HTMLElement | null) => {
+        ;(ref as { current: HTMLElement | null }).current = node
+        box.current = node
+      }) as never}
+      className={`print ${className}`}
+    >
       {units.map((unit, i) => {
         const group = Math.floor(i / perGroup)
         const unitDelay = delay + group * STAGGER_MS

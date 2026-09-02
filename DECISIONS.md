@@ -243,3 +243,21 @@ viewport, the app reflows, and the annotation anchors drift off target in LIVE
 while still looking correct in DEGRADED — the exact failure Part 7.5.1 names.
 
 Consequence: the site now has three radius values rather than Part 2.6's two.
+
+## D11 · The wordmark is real Switzer outlines, generated
+
+Part 7.0 requires the intro's wordmark as SVG outlines, single path: "As live
+text it waits on the webfont and the first thing anyone sees flashes in a
+fallback face."
+
+Fontshare is unreachable here, but the outlines did not need it. The shipped
+`switzer-latin-500.woff2` was decompressed with `wawoff2` and parsed with
+`opentype.js` to extract the five glyph paths at 72px with the +0.12em tracking
+Part 7.0 specifies, written to `site/src/config/wordmark.json` — 1KB, real
+Switzer, no substitution.
+
+Per-letter rather than a single path, because Beat 2 prints the letters one at
+a time behind a mask travelling left to right, and one path cannot be wiped
+letter by letter.
+
+Regenerate with the script in the commit history if the face ever changes.

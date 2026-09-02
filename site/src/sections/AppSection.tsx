@@ -124,7 +124,11 @@ export default function AppSection() {
         const seq = band(p, 0.18, 0.92)
         const slot = Math.min(list.length - 1, Math.floor(seq * list.length))
         const withinBand = seq * list.length - slot
-        const advancing = withinBand > 0.7
+        /* Never true on the last screen, and never under reduced motion. At
+           progress 1 — which is exactly what a collapsed reduced-motion stage
+           reports — an unclamped test hides the copy and suppresses every
+           annotation, so the poster version would show a phone and no words. */
+        const advancing = !reduced && withinBand > 0.7 && slot < list.length - 1
         const screen = list[slot]
         // Beat 4 (92–100%): the control prints in beneath the frame.
         const control = band(p, 0.92, 1)
@@ -266,15 +270,16 @@ function AppStageBody({
                     </Button>
                   )
                 ) : (
-                  <>
-                    <Button variant="ghost" href={PROTOTYPE_URL}>
-                      {mobile ? 'Open the app' : 'Try the prototype'}
-                    </Button>
-                    <p className="t-caption app__proto">
-                      It&rsquo;s a prototype, running on sample data.
-                    </p>
-                  </>
+                  <Button variant="ghost" href={PROTOTYPE_URL}>
+                    {mobile ? 'Open the app' : 'Try the prototype'}
+                  </Button>
                 )}
+                {/* Part 5.6: verbatim, and adjacent to the frame in every
+                    state — not only when the prototype link happens to be the
+                    control on show. */}
+                <p className="t-caption app__proto">
+                  It&rsquo;s a prototype, running on sample data.
+                </p>
               </div>
             }
           >
