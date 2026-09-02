@@ -57,6 +57,10 @@ export function mount(container: HTMLElement): Promise<void> {
     el.title = 'The HUMAN app, running on sample data'
     // Part 5.5: before control is taken, scroll passes straight through and
     // the app cannot capture the wheel, trap touch, or steal focus.
+    /* inert, not just tabindex: tabindex="-1" removes the FRAME from the tab
+       order and does nothing about the focusable content inside the framed
+       document, which Tab would otherwise walk straight into. */
+    el.setAttribute('inert', '')
     el.setAttribute('tabindex', '-1')
     el.setAttribute('scrolling', 'no')
     el.setAttribute('loading', 'eager')
@@ -127,6 +131,14 @@ export function getScreen(): ScreenId | null {
  * Part 5.5. Never auto-enabled — it is always her decision. An app that
  * becomes interactive on hover is a scroll trap.
  */
+/** Set by the section so Escape works from inside the framed document as well
+ *  as outside it. Same origin, so this is a direct listener, not a handshake. */
+let onEscape: (() => void) | null = null
+
+export function setEscapeHandler(fn: (() => void) | null) {
+  onEscape = fn
+}
+
 export function setInteractive(on: boolean) {
   if (!frame) return
   if (on) {
@@ -134,12 +146,26 @@ export function setInteractive(on: boolean) {
     frame.setAttribute('tabindex', '0')
     frame.setAttribute('scrolling', 'yes')
     state = 'interactive'
+    try {
+      frame.contentWindow?.addEventListener('keydown', frameEscape)
+    } catch {
+      /* If the frame is ever cross-origin, Escape outside it still works. */
+    }
   } else {
+    try {
+      frame.contentWindow?.removeEventListener('keydown', frameEscape)
+    } catch {
+      /* nothing to detach */
+    }
     frame.setAttribute('inert', '')
     frame.setAttribute('tabindex', '-1')
     frame.setAttribute('scrolling', 'no')
     state = mounted ? 'live' : 'degraded'
   }
+}
+
+function frameEscape(e: KeyboardEvent) {
+  if (e.key === 'Escape') onEscape?.()
 }
 
 export function destroy() {

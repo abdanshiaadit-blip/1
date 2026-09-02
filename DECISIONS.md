@@ -261,3 +261,25 @@ a time behind a mask travelling left to right, and one path cannot be wiped
 letter by letter.
 
 Regenerate with the script in the commit history if the face ever changes.
+
+## D12 · text-3 lightened to clear the brief's own contrast floor
+
+Part 2.2 specifies `--text-3: #5F726B`. Part 10 requires text-3 to reach
+**4.5:1 at its minimum size** and says "verify, don't assume".
+
+Verified, and the swatch fails its own floor:
+
+```
+#5F726B on --void      #05100D   3.78:1
+#5F726B on --surface-1 #0A1A15   3.50:1
+#5F726B on --surface-2 #0F241E   3.18:1
+```
+
+Changed to **`#748C83`** — the minimum lightening of the same hue that clears
+4.5:1 on all three grounds (void 5.36:1, surface-1 4.97:1, surface-2 4.51:1).
+`--text` and `--text-2` were verified too and both pass unchanged: 16.67:1 and
+7.54:1 (6.34:1 on surface-2).
+
+The accessibility floor wins over the swatch. It is a healthcare site, `text-3`
+carries the sources and the sample-data labels, and Part 10 asked for the
+number to be checked rather than trusted.

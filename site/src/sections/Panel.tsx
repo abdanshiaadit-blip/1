@@ -55,16 +55,18 @@ export default function Panel() {
 
           {/* Two segments, fixed-height content below, so switching cannot
               move anything beneath it. */}
-          <div className="seg" role="tablist" aria-label="Panel by body">
+          {/* Not a tablist: there is no tabpanel, no aria-controls and no
+              roving tabindex, and inventing them for two buttons that swap a
+              block of copy would be worse than not claiming the pattern. */}
+          <div className="seg" role="group" aria-label="Panel by body">
             {/* Before the labels in DOM order, so it paints behind them
                 without needing a z-index outside the Part 3.5 scale. */}
             <span className={`seg__ind seg__ind--${who}`} aria-hidden="true" />
             {(['her', 'him'] as const).map((k) => (
               <button
                 key={k}
-                role="tab"
                 type="button"
-                aria-selected={who === k}
+                aria-pressed={who === k}
                 className={`seg__b ${who === k ? 'is-on' : ''}`}
                 onClick={() => setWho(k)}
               >

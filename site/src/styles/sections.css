@@ -121,6 +121,9 @@
   gap: var(--s3);
 }
 .hdr__mark {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px; /* Part 10: no tap target below 44px */
   font-size: 18px;
   font-weight: var(--w-heading);
   letter-spacing: 0.06em; /* the only place with tracking this wide */
@@ -130,7 +133,7 @@
 .hdr__tag { margin-right: auto; }
 @media (max-width: 899px) { .hdr__tag { display: none; } }
 @media (max-width: 899px) { .hdr__mark { margin-right: auto; } }
-.hdr__cta { min-height: 40px; font-size: var(--caption); }
+.hdr__cta { min-height: 44px; font-size: var(--caption); }
 
 /* --------------------------------------------------------------------------
    Telemetry HUD — 7.1 Beat 3. Hidden below 768px.
@@ -630,7 +633,9 @@
   min-height: 44px;
   font-family: inherit;
 }
-.wl__input:focus { outline: none; }
+/* No outline: none. Part 10 forbids it outright, and this is the site's one
+   form field. The jade underline is an extra affordance, not a replacement
+   for the focus ring. */
 .wl__underline { position: absolute; left: 0; right: 0; bottom: 0; }
 .wl__field:focus-within .wl__underline .rule__ink { background: var(--jade); }
 .wl__ticks { max-width: 90px; }
@@ -650,7 +655,7 @@
 .foot__promise { color: var(--text-2); }
 .foot__legal { display: grid; gap: var(--s2); }
 .foot__scope, .foot__links, .foot__copy { color: var(--text-3); }
-.foot__links a { color: var(--text-2); text-decoration: underline; text-underline-offset: 4px; }
+.foot__links a { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; color: var(--text-2); text-decoration: underline; text-underline-offset: 4px; }
 
 /* --------------------------------------------------------------------------
    7.5 on mobile — Part 5.7 and 7.5.

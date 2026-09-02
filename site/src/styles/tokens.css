@@ -63,7 +63,7 @@
   --hairline-lit: #2b4a3f; /* active rules, drawing rules, focus */
   --text: #e8f0ec; /* never pure white — it reads cheap on near-black */
   --text-2: #93a69e; /* min 15px */
-  --text-3: #5f726b; /* min 12px, never a full sentence */
+  --text-3: #748c83; /* min 12px, never a full sentence */
   --jade: #7fe3c0; /* fewer than 12 elements site-wide. scarcity is the point */
   --jade-deep: #125f4b; /* chart fills, in-range bands, primary button */
   --amber: #e0a458; /* worth attention. never red — HUMAN does not frighten */

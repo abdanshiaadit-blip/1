@@ -28,7 +28,11 @@ export default function MobileBar() {
   )
 
   return (
-    <div className={`mbar ${show ? 'is-on' : ''}`} aria-hidden={!show}>
+    /* inert, not just aria-hidden: opacity 0 with pointer-events none leaves
+       both buttons in the tab order, so a keyboard visitor would tab into two
+       invisible controls. inert removes them from the tree and the tab order
+       together. */
+    <div className={`mbar ${show ? 'is-on' : ''}`} inert={!show}>
       <Button variant="ghost" href={PROTOTYPE_URL} className="mbar__ghost">
         Try the prototype
       </Button>

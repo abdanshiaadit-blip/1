@@ -17,6 +17,7 @@ interface Props {
   onClick?: () => void
   type?: 'button' | 'submit'
   full?: boolean
+  id?: string
   className?: string
 }
 
@@ -27,6 +28,7 @@ export default function Button({
   onClick,
   type = 'button',
   full = false,
+  id,
   className = '',
 }: Props) {
   const cls = `btn btn--${variant} ${full ? 'btn--full' : ''} ${className}`
@@ -35,13 +37,13 @@ export default function Button({
     // "Try the prototype" is the only external destination on the site, and it
     // always opens in a new tab with rel="noopener" (Part 5.6).
     return (
-      <a className={cls} href={href} target="_blank" rel="noopener">
+      <a className={cls} id={id} href={href} target="_blank" rel="noopener">
         {children}
       </a>
     )
   }
   return (
-    <button className={cls} type={type} onClick={onClick}>
+    <button className={cls} id={id} type={type} onClick={onClick}>
       {children}
     </button>
   )

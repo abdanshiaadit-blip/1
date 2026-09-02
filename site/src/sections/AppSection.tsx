@@ -91,15 +91,39 @@ export default function AppSection() {
     void AppStage.mount(host.current).then(() => setLive(AppStage.getState() === 'live'))
   }, [useLiveApp])
 
-  // Escape returns to LIVE from INTERACTIVE.
+  /* Escape returns to LIVE from INTERACTIVE — from inside the frame as well as
+     outside it. Once control is taken, focus is in the framed document and the
+     parent window never sees the key, so a listener here alone would leave her
+     with no keyboard way out. */
   useEffect(() => {
     if (!interactive) return
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') release()
     }
     window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
+    AppStage.setEscapeHandler(release)
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      AppStage.setEscapeHandler(null)
+    }
   }, [interactive])
+
+  /* Part 10: the five plates are preloaded during 7.4, the section before
+     this one, so the poster is in cache before the frame needs it. */
+  useEffect(() => {
+    const loop = document.querySelector('[data-section="loop"]')
+    if (!loop) return
+    const io = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return
+      for (const s of SCREENS) {
+        const img = new Image()
+        img.src = `/app/screen-${s.id}.webp`
+      }
+      io.disconnect()
+    })
+    io.observe(loop)
+    return () => io.disconnect()
+  }, [])
 
   function take() {
     AppStage.setInteractive(true)
@@ -108,6 +132,8 @@ export default function AppSection() {
   function release() {
     AppStage.setInteractive(false)
     setInteractive(false)
+    /* Focus returns to the control she used, never to <body> (Part 5.5). The
+       id is real now — it used to query one that was never rendered. */
     document.getElementById('take-control')?.focus()
   }
 
@@ -265,7 +291,12 @@ function AppStageBody({
                       Release
                     </Button>
                   ) : (
-                    <Button variant="ghost" onClick={onTake} className="app__take">
+                    <Button
+                      variant="ghost"
+                      onClick={onTake}
+                      id="take-control"
+                      className="app__take"
+                    >
                       Take control
                     </Button>
                   )
