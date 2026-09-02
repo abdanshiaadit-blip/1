@@ -111,8 +111,13 @@ function Bridge() {
 }
 
 function EmbedShell() {
-  const { tab } = useApp()
+  const { tab, sheets } = useApp()
   const Screen = SCREENS[tab]
+  /* Gated at render, not in an effect: an effect closes the sheet a tick AFTER
+     React has painted it, which is one frame of a rupee figure on a site where
+     Part 1.4 permits none. Not rendering the host at all means a priced
+     surface never reaches the screen in the first place. */
+  const priced = sheets.some((s) => PRICED_SHEETS.includes(s.kind))
   return (
     <PhoneFrame>
       <StatusBar />
@@ -120,7 +125,7 @@ function EmbedShell() {
         <Screen />
       </main>
       <TabBar />
-      <SheetHost />
+      {!priced && <SheetHost />}
       <Bridge />
       {/* No <Booking /> and no <LaunchIntro />: the booking flow shows prices,
           and the launch overlay would play inside the website's phone frame

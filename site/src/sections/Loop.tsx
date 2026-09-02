@@ -134,6 +134,7 @@ export default function Loop() {
               />
             ))}
           </svg>
+          <p className="t-telemetry loop__sample">Sample data</p>
         </FrameCell>
       </div>
     </Section>

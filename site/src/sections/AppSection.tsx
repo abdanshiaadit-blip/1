@@ -284,15 +284,16 @@ function AppStageBody({
                     painted, and keeps holding forever if it never does. */}
                 <img
                   className={`appstage__poster ${live ? 'is-hidden' : ''}`}
-                  src={`/app/screen-${screen.id}@3x.png`}
+                  src={`/app/screen-${screen.id}.webp`}
                   alt=""
                   width={390}
                   height={844}
+                  decoding="async"
                 />
               </div>
             ) : (
               <img
-                src={`/app/screen-${screen.id}@3x.png`}
+                src={`/app/screen-${screen.id}.webp`}
                 alt={`The HUMAN app: ${screen.heading}.`}
                 width={390}
                 height={844}

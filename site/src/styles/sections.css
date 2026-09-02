@@ -225,7 +225,7 @@
 .drift__stage { display: grid; align-content: center; gap: var(--s4); }
 .drift__chart { position: relative; }
 .drift__svg { width: 100%; height: auto; }
-.drift__year { font-size: 11px; fill: var(--text-3); letter-spacing: 0.08em; }
+.drift__year { font-size: var(--telemetry); fill: var(--text-3); letter-spacing: 0.08em; }
 .drift__fine {
   position: absolute;
   transform: translate(-50%, -180%);
@@ -339,7 +339,9 @@
   position: absolute;
   inset: -6px;
   border: 1px solid var(--jade);
-  border-radius: calc(var(--r-object) + 18px);
+  /* Concentric with the hardware: the frame's own outer radius plus the 6px
+     the ring sits outside it. A fixed radius here reads as a sticker. */
+  border-radius: calc(var(--screen-r) + var(--bezel) + 6px);
   pointer-events: none;
 }
 .appstage { position: absolute; inset: 0; }
@@ -480,9 +482,11 @@
 .dot--chosen.is-resolved { opacity: 1; background: var(--jade); }
 .dot:hover { opacity: 0.3; }
 .dot__chip { position: absolute; top: -22px; left: 0; color: var(--text-2); }
+.panel__sample { color: var(--text-3); text-align: right; }
+.loop__sample { color: var(--text-3); text-align: right; }
 .panel__three { list-style: none; display: grid; gap: var(--s3); opacity: 0; transition: opacity var(--dur-composition) var(--ease-entrance) 300ms; }
 .panel__three.is-on { opacity: 1; }
-.panel__prio { position: relative; display: flex; gap: var(--s2); align-items: baseline; padding-bottom: var(--s2); }
+.panel__prio { position: relative; display: flex; gap: var(--s2); align-items: baseline; padding-bottom: var(--s3); min-height: 32px; }
 .panel__prion { color: var(--jade); }
 .panel__priorule { position: absolute; left: 0; right: 0; bottom: 0; }
 
@@ -496,7 +500,7 @@
 .past__delta { color: var(--jade); transition: opacity var(--dur-composition) var(--ease-entrance); }
 .past__stage { display: grid; gap: var(--s4); align-content: center; position: relative; }
 .past__svg { width: 100%; height: auto; }
-.past__x { font-size: 11px; fill: var(--text-3); letter-spacing: 0.08em; }
+.past__x { font-size: var(--telemetry); fill: var(--text-3); letter-spacing: 0.08em; }
 .past__v { font-size: 20px; fill: var(--text); }
 .past__v--now { fill: var(--jade); }
 .past__bar { display: grid; gap: var(--s2); transition: opacity var(--dur-composition) var(--ease-entrance); }
@@ -656,7 +660,17 @@
      true, so the frame is sized by the height actually available and comes out
      near 57vw. The composition fits at every phone size instead of the phone
      being cropped by its own stage. */
-  .device__frame { --fh: min(636px, calc(100svh - 380px)); }
+  /* On .device, not .device__frame: every other measurement (--fw, --bezel,
+     --screen-r) is derived from --fh on .device, so overriding it on the frame
+     alone gives a frame of the right height and the wrong width. */
+  .device { --fh: min(636px, calc(100svh - 452px)); }
+  /* The copy cell reserves the longest of the three mobile screens, not the
+     longest of five — one viewport has to hold the frame, the lane, the label,
+     the control AND the copy, and the frame is what gives way. */
+  .app__copy { min-height: 150px !important; gap: var(--s2); }
+  .app__devicecell { padding-bottom: var(--travel-object); }
+  .app { gap: var(--s3); }
+  .device { gap: var(--s2); }
   /* The annotation lane: reserved from first paint whether or not an
      annotation is present, so nothing below it ever shifts (Part 7.5.1). */
   .app__devicecell { padding-bottom: calc(var(--travel-object) + 40px); }
@@ -751,15 +765,15 @@
   background: linear-gradient(to bottom, color-mix(in srgb, var(--jade-deep) 78%, var(--jade)), var(--jade-deep));
 }
 
-.hdr {
-  background: color-mix(in srgb, var(--void) 72%, transparent);
-  backdrop-filter: var(--glass-blur-heavy);
-  -webkit-backdrop-filter: var(--glass-blur-heavy);
-}
+/* NOT overridden by the glass layer. 7.16 specifies the header as "void at
+   88% with 12px backdrop blur" and 7.15 the bar as "void at 92% with 12px
+   blur" — exact numbers, in the one place the brief already permitted a blur.
+   The glass recipe adds its material to elements the brief left plain; it does
+   not get to redecorate the two it had already specified. */
+.hdr,
 .mbar {
-  background: color-mix(in srgb, var(--void) 76%, transparent);
-  backdrop-filter: var(--glass-blur-heavy);
-  -webkit-backdrop-filter: var(--glass-blur-heavy);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .seg {

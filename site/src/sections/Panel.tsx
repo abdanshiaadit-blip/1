@@ -106,18 +106,23 @@ export default function Panel() {
             )}
           </div>
 
-          {/* The three, each printing onto its own rule with a jade fill. */}
-          <ol className={`panel__three ${on ? 'is-on' : ''}`}>
-            {['Iron & energy', 'Cycle & insulin', 'Thyroid trajectory'].map((t, i) => (
-              <li key={t} className="panel__prio" style={{ transitionDelay: `${300 + i * 80}ms` }}>
+          {/* The three, each printing onto its own rule with a jade fill.
+              Deliberately UNNAMED: Part 7.7 supplies no copy for these rows,
+              and Part 0.4 forbids inventing product content — naming three
+              priorities here would be a claim about what HUMAN decides for
+              her, made up on the page. Rank and rule carry the argument, and
+              the argument is the count, not the contents. */}
+          <ol className={`panel__three ${on ? 'is-on' : ''}`} aria-label="Three priorities this quarter">
+            {[0, 1, 2].map((i) => (
+              <li key={i} className="panel__prio" style={{ transitionDelay: `${300 + i * 80}ms` }}>
                 <span className="t-telemetry panel__prion">{i + 1}</span>
-                <span className="t-body">{t}</span>
                 <span className="panel__priorule">
                   <Rule origin="left" duration={680} delay={300 + i * 80} />
                 </span>
               </li>
             ))}
           </ol>
+          <p className="t-telemetry panel__sample">Sample data</p>
         </FrameCell>
       </div>
     </Section>

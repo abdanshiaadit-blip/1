@@ -20,9 +20,13 @@ export default function Footer() {
         </FrameCell>
 
         <FrameCell name="foot-legal" cols={[7, 12]} className="foot__legal">
-          {/* Verbatim, and permanent. Part 1.4. */}
+          {/* Verbatim, and permanent — not a hover, not a disclosure.
+              Part 7.14's own block prints two sentences; Part 1.4 requires all
+              three "in the footer and in the pricing section, VERBATIM", and
+              Part 12.6 tests for it. The compliance rule wins. */}
           <p className="t-caption foot__scope">
-            HUMAN supports your health decisions. It does not replace your doctor.
+            HUMAN supports your health decisions. It does not replace your doctor. If something
+            in your results looks urgent, we will tell you to see one.
           </p>
           <p className="t-caption foot__links">
             <a href="/privacy">Privacy</a>

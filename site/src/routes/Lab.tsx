@@ -28,7 +28,7 @@ export default function Lab() {
         <FrameCell name="lab-device" cols={[7, 12]} className="lab__device">
           <DeviceFrame>
             <img
-              src="/app/screen-plan@3x.png"
+              src="/app/screen-plan.webp"
               alt="The HUMAN app showing today's actions, each with a control to confirm it."
               width={390}
               height={844}
