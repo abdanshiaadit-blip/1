@@ -187,7 +187,17 @@
    -------------------------------------------------------------------------- */
 
 .device {
-  --screen-w: 340px;
+  /* Everything about the hardware derives from one number — the frame's
+     height, because the viewport is what constrains it. Declared here rather
+     than on the frame so the annotation layer, which spans the full cell, can
+     position dots against the screen's real box. */
+  --fh: min(700px, calc(100svh - 280px));
+  --fw: calc(var(--fh) / 2.0989);
+  --bezel: calc(var(--fw) * 0.028);
+  --screen-r: calc((var(--fw) - var(--bezel) * 2) * 0.135);
+  --screen-w: calc(var(--fw) - var(--bezel) * 2);
+  --screen-h: calc(var(--fh) - var(--bezel) * 2);
+
   position: relative;
   display: grid;
   justify-items: center;
@@ -212,25 +222,29 @@
 }
 
 /* The hardware. Dead upright — no tilt, no perspective, no reflection, no
-   hand, no second device (Part 7.5). The bezel is drawn from the palette:
-   near-black metal, a hairline rim outside and another inside, so it reads as
-   an object without becoming a skeuomorphic mockup.
+   hand, no second device (Part 7.5).
 
-   The outer aspect ratio is solved, not guessed. With a bezel of 3.1% of the
-   outer width on all four sides, an outer ratio of 1 : 2.0919 puts the screen
-   at exactly 390 x 844 — so the plate is never letterboxed or cropped by its
-   own frame. */
+   Proportional and concentric, the way real hardware is:
+
+     bezel      2.8% of the frame's width, identical on all four sides
+     screen r   13.5% of the SCREEN's width — an iPhone's corners are much
+                rounder than a normal UI radius, and getting that wrong is the
+                single thing that makes a drawn phone look like a rectangle
+     outer r    screen radius + bezel, so the two curves are concentric and the
+                bezel keeps a constant width all the way around the corner
+
+   Everything derives from one number, the frame's height, because the height
+   is what the viewport constrains. The outer ratio of 1:2.0989 is solved from
+   the bezel so the screen lands at exactly 390x844 and no plate is ever
+   letterboxed or cropped by its own frame. */
 .device__frame {
   position: relative;
   z-index: var(--z-raised);
-  /* Height-first, because the constraint is always the viewport: a sticky
-     stage is exactly 100vh and the frame has to sit inside it with room for
-     the Sample data label and the control beneath. */
-  height: min(700px, calc(100svh - 280px));
-  width: auto;
-  aspect-ratio: 1 / 2.0919;
-  padding: 3.1%;
-  border-radius: calc(var(--r-object) + 12px);
+  height: var(--fh);
+  width: var(--fw);
+  max-width: 100%;
+  padding: var(--bezel);
+  border-radius: calc(var(--screen-r) + var(--bezel));
   background: linear-gradient(
     160deg,
     color-mix(in srgb, var(--surface-2) 70%, var(--void)) 0%,
@@ -241,12 +255,10 @@
     var(--shadow-device),
     inset 0 0 0 1px var(--hairline-lit);
   outline: 1px solid var(--hairline);
-  outline-offset: 0;
 }
 
-/* Side buttons. Two hairline bars on the left, one on the right, at the
-   proportions they sit at on the real hardware. Enough to read as a device;
-   not enough to become an illustration. */
+/* Side buttons, at the proportions they sit at on the real hardware. Enough
+   to read as a device; not enough to become an illustration. */
 .device__frame::before,
 .device__frame::after {
   content: '';
@@ -257,22 +269,22 @@
   pointer-events: none;
 }
 .device__frame::before {
-  left: -2px;
-  top: 19%;
-  height: 8%;
-  box-shadow: 0 calc(1px + 11%) 0 0 color-mix(in srgb, var(--hairline-lit) 80%, var(--void));
+  left: -1px;
+  top: 18%;
+  height: 7%;
+  box-shadow: 0 calc(1px + 10%) 0 0 color-mix(in srgb, var(--hairline-lit) 80%, var(--void));
 }
 .device__frame::after {
-  right: -2px;
-  top: 24%;
-  height: 13%;
+  right: -1px;
+  top: 23%;
+  height: 12%;
 }
 
 .device__screen {
   position: relative;
   width: 100%;
   height: 100%;
-  border-radius: var(--r-object);
+  border-radius: var(--screen-r);
   overflow: hidden; /* nothing ever renders outside the frame */
   background: var(--surface-1);
 }
@@ -293,4 +305,48 @@
 
 .device__label {
   margin: 0;
+}
+
+/* Reserved from first paint, present or not. */
+.device__lane {
+  position: relative;
+  z-index: var(--z-raised);
+  height: 40px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  color: var(--text-2);
+}
+
+/* --------------------------------------------------------------------------
+   The annotation layer — Part 7.5.1
+
+   It spans the whole DEVICE CELL, not the screen, because the label belongs in
+   the cell's gutter beside the phone. Rendering it inside the screen would
+   clip it to the glass and put the label on top of the app, which is exactly
+   the failure the brief describes.
+   -------------------------------------------------------------------------- */
+
+.device__stage {
+  position: relative;
+  width: 100%;
+  display: grid;
+  justify-items: center;
+}
+
+/* Spans the stage, so its box is the full cell width by the frame's height.
+   That is what gives a dot on the screen a gutter to run its leader into. */
+.device__annos {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: var(--z-raised);
+}
+
+/* Normalised {x, y} against the 390x844 screen, resolved against the screen's
+   real box — so an anchor authored once is correct at every viewport. */
+.anno {
+  position: absolute;
+  left: calc(50% + (var(--ax) - 0.5) * var(--screen-w));
+  top: calc(var(--bezel) + var(--ay) * var(--screen-h));
 }

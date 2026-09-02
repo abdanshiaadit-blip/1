@@ -35,7 +35,7 @@ export default function Annotation({ label, x, y, delay = 0, mobile = false }: P
   return (
     <span
       className={`anno ${left ? 'anno--right' : 'anno--left'} ${mobile ? 'anno--m' : ''}`}
-      style={{ left: `${x * 100}%`, top: `${y * 100}%` }}
+      style={{ '--ax': x, '--ay': y } as React.CSSProperties}
       aria-hidden="true"
     >
       {/* The sequence is fixed and never overlaps a screen change: the dot

@@ -239,6 +239,20 @@ function AppStageBody({
         >
           <DeviceFrame
             glow={rise}
+            annotations={
+              showAnnotations
+                ? annotations.map((a, i) => (
+                    <Annotation key={a.label} {...a} delay={i * 220} mobile={mobile} />
+                  ))
+                : null
+            }
+            lane={
+              mobile
+                ? showAnnotations && annotations.length
+                  ? annotations[annotations.length - 1].label
+                  : ''
+                : undefined
+            }
             footer={
               <div className="app__control" style={{ opacity: control }}>
                 {!mobile && useLiveApp ? (
@@ -284,14 +298,6 @@ function AppStageBody({
                 height={844}
               />
             )}
-
-            {/* The annotation layer lives entirely inside this cell and is
-                clipped to it. A leader running into the copy cell is precisely
-                the overlap Part 3 forbids. */}
-            {showAnnotations &&
-              annotations.map((a, i) => (
-                <Annotation key={a.label} {...a} delay={i * 220} mobile={mobile} />
-              ))}
           </DeviceFrame>
 
           {interactive && (

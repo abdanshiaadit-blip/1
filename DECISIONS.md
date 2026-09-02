@@ -173,3 +173,73 @@ Implemented as the type table specifies — `clamp(11px, …, 12px)` — because
 is the more specific instruction. Flagging it rather than silently choosing:
 if the accessibility floor is the one that matters, the fix is a one-line token
 change to `clamp(12px, …, 12px)`.
+
+## D8 · Gambetta falls back to a system serif italic
+
+Part 2.5 specifies Gambetta Italic 400 for the founder's signature in 7.10 —
+the single italic on the whole site. Fontshare is unreachable from this build
+environment and Gambetta is not on npm, so the signature falls back to
+`Georgia, 'Times New Roman', serif` in italic.
+
+Falling back to Switzer italic would have been worse: the point of that one
+line is that it reads as written by a person rather than a company, and a
+synthesised italic of the site's own face erases the distinction entirely. A
+real serif italic keeps the signal.
+
+**To fix:** drop `gambetta-italic.woff2` into `site/public/fonts/`, add the
+`@font-face`, and the existing `.know__sign` rule picks it up with no other
+change.
+
+## D9 · iOS 26 Liquid Glass — CLIENT DIRECTION, against the brief
+
+The client asked for "exact iOS 26 glass elements in each element or button".
+Implemented across buttons, the header, the mobile action bar, the segmented
+toggle, the membership card, the waitlist field and the disclosure rows.
+
+**This is a deliberate departure from the brief, not an oversight.** Part 2.6
+bans frosted panels and Part 13 bans glassmorphism outright, under "If any of
+these appears, the build has failed regardless of how good the rest is." The
+instruction was explicit and repeated, so it is built; the conflict is
+recorded here rather than silently resolved either way.
+
+The recipe is the app's own — documented in the app's `src/styles/tokens.css`
+— inverted for a near-black ground. Glass on light is a white veil; glass on
+dark has to read as a surface catching light rather than one painted white:
+a translucent fill in the page's own ink, a blur with a saturation boost, a
+specular rim on the top edge only, a fine hairline, and a wide soft lift.
+
+**What was deliberately NOT done:** no glass on the type, the rules, the
+charts or the ledger. Part 2.3's light model still holds — the phone remains
+the only lit object, and glass refracts what is already behind it rather than
+emitting, so it does not become a fourth light source.
+
+**To revert:** delete the "iOS 26 Liquid Glass" block at the end of
+`site/src/styles/sections.css` and the glass tokens in `tokens.css`. Nothing
+else depends on them.
+
+## D10 · The device draws a real iPhone bezel — CLIENT DIRECTION
+
+Part 7.5 specifies "a 1px `hairline-lit` outline at 24px radius". The client
+asked for a real iPhone bezel, "uniform and rounded like on an actual iPhone".
+
+Implemented proportionally and concentrically, which is what makes a drawn
+phone read as hardware rather than as a rectangle:
+
+```
+bezel      2.8% of the frame's width, identical on all four sides
+screen r   13.5% of the SCREEN's width — an iPhone's corners are far rounder
+           than a normal UI radius
+outer r    screen radius + bezel, so the two curves are concentric and the
+           bezel keeps a constant width around the corner
+```
+
+Everything derives from one number, the frame's height, because the viewport
+is what constrains it. The outer ratio of 1:2.0989 is solved from the bezel so
+the screen lands at exactly 390x844 and no plate is letterboxed or cropped.
+
+The live app is rendered at 390x844 and scaled to fit, so it lays out
+identically to the authored plates. Without that the iframe becomes its own
+viewport, the app reflows, and the annotation anchors drift off target in LIVE
+while still looking correct in DEGRADED — the exact failure Part 7.5.1 names.
+
+Consequence: the site now has three radius values rather than Part 2.6's two.

@@ -19,7 +19,7 @@
  * glows.
  */
 
-import type { ReactNode } from 'react'
+import { useEffect, useRef, type ReactNode } from 'react'
 
 interface Props {
   /** What sits on the screen: a poster image, or the live app's iframe. */
@@ -35,6 +35,21 @@ interface Props {
   sampleData?: boolean
   /** Beneath the label. "Take control", or on mobile "Open the app". */
   footer?: ReactNode
+  /**
+   * The mobile annotation lane (Part 7.5.1). There is no gutter on a phone —
+   * the frame is most of the viewport — so the label sits in a reserved lane
+   * directly beneath the frame instead. **The lane's height is reserved
+   * whether or not an annotation is present**, so nothing below it ever
+   * shifts and CLS stays at 0.00.
+   */
+  lane?: ReactNode
+  /**
+   * The annotation layer. Rendered as a sibling of the frame, spanning the
+   * whole device cell — NOT inside the screen. The label belongs in the
+   * cell's gutter beside the phone (Part 7.5.1); inside the screen it would
+   * be clipped to the glass and land on top of the app.
+   */
+  annotations?: ReactNode
   className?: string
 }
 
@@ -43,17 +58,48 @@ export default function DeviceFrame({
   glow = 1,
   sampleData = true,
   footer,
+  lane,
+  annotations,
   className = '',
 }: Props) {
+  const stage = useRef<HTMLDivElement>(null)
+
+  /* The screen is rendered at exactly 390x844 and scaled to fit, so the live
+     app lays out identically to the authored plates. Without this the iframe
+     is its own viewport at whatever the frame happens to be, the app reflows,
+     and the annotation anchors drift off their targets in LIVE while looking
+     correct in DEGRADED — the failure mode Part 7.5.1 calls out by name.
+     Measured rather than derived, because CSS cannot divide a length by a
+     length to produce the unitless number scale() needs. */
+  useEffect(() => {
+    const el = stage.current
+    if (!el) return
+    const screen = el.querySelector<HTMLElement>('.device__screen')
+    if (!screen) return
+    const ro = new ResizeObserver(() => {
+      el.style.setProperty('--screen-scale', String(screen.clientWidth / 390))
+    })
+    ro.observe(screen)
+    return () => ro.disconnect()
+  }, [])
+
   return (
     <div className={`device ${className}`}>
       {/* Light source 2 of 3. Radial, 900px, jade at 8%, blurred — behind the
           frame only, and the only glow anywhere on the site. */}
       <div className="device__glow" aria-hidden="true" style={{ opacity: glow }} />
 
-      <div className="device__frame">
-        <div className="device__screen">{children}</div>
+      {/* Spans the full width of the device cell with the frame centred in
+          it, so the annotation layer has the gutter either side that Part
+          7.5.1 places its labels in. */}
+      <div className="device__stage" ref={stage}>
+        <div className="device__frame">
+          <div className="device__screen">{children}</div>
+        </div>
+        {annotations && <div className="device__annos">{annotations}</div>}
       </div>
+
+      {lane !== undefined && <div className="device__lane t-telemetry">{lane}</div>}
 
       {sampleData && (
         <p className="device__label t-telemetry">Sample data</p>

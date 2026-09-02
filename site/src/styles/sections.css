@@ -343,7 +343,19 @@
   pointer-events: none;
 }
 .appstage { position: absolute; inset: 0; }
-.appstage__frame { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+/* Outranks the generic `.device__screen iframe` sizing rule, which would
+   otherwise stretch the frame to the screen and defeat the point of rendering
+   at plate size. */
+.device__screen .appstage__frame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 390px;
+  height: 844px;
+  border: 0;
+  transform-origin: 0 0;
+  transform: scale(var(--screen-scale, 1));
+}
 .appstage__poster {
   position: absolute;
   inset: 0;
@@ -355,8 +367,17 @@
 .appstage { pointer-events: none; }
 .appstage.is-live { pointer-events: auto; overscroll-behavior: contain; }
 
-/* Annotations — 7.5.1 */
-.anno { position: absolute; z-index: var(--z-raised); pointer-events: none; }
+/* Annotations — 7.5.1
+
+   Anatomy: a 6px jade anchor ring, a HORIZONTAL 1px leader (never diagonal,
+   never curved, never elbowed), and a 2-5 word label in the gutter.
+
+   The leader's length is computed, not fixed: it runs from the dot to just
+   past the frame's edge, so the label always lands in the gutter rather than
+   on the glass. The label goes in the gutter OPPOSITE the anchor's horizontal
+   half, which is what guarantees the leader never crosses back over the
+   screen. */
+
 .anno__dot {
   position: absolute;
   width: 12px;
@@ -372,11 +393,22 @@
   top: -0.5px;
   height: 1px;
   background: var(--hairline-lit);
-  transform: scaleX(0);
   animation: anno-leader 340ms var(--ease-instrument) forwards;
 }
-.anno--right .anno__leader { left: 8px; width: 64px; transform-origin: left; }
-.anno--left .anno__leader { right: 8px; width: 64px; transform-origin: right; }
+/* Anchor on the LEFT half: the leader runs right, out to the right gutter. */
+.anno--right .anno__leader {
+  left: 8px;
+  width: calc(var(--fw) / 2 + 14px - (var(--ax) - 0.5) * var(--screen-w) - 8px);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+/* Anchor on the RIGHT half: the leader runs left. */
+.anno--left .anno__leader {
+  right: 8px;
+  width: calc(var(--fw) / 2 + 14px + (var(--ax) - 0.5) * var(--screen-w) - 8px);
+  transform: scaleX(0);
+  transform-origin: right;
+}
 .anno__label {
   position: absolute;
   top: -0.7em;
@@ -385,8 +417,12 @@
   clip-path: inset(0 100% 0 0);
   animation: anno-label 260ms var(--ease-entrance) forwards;
 }
-.anno--right .anno__label { left: 78px; }
-.anno--left .anno__label { right: 78px; }
+.anno--right .anno__label {
+  left: calc(var(--fw) / 2 + 22px - (var(--ax) - 0.5) * var(--screen-w));
+}
+.anno--left .anno__label {
+  right: calc(var(--fw) / 2 + 22px + (var(--ax) - 0.5) * var(--screen-w));
+}
 @keyframes anno-dot { to { opacity: 1; } }
 @keyframes anno-leader { to { transform: scaleX(1); } }
 @keyframes anno-label { to { clip-path: inset(0 0 0 0); } }
@@ -600,3 +636,159 @@
 .foot__legal { display: grid; gap: var(--s2); }
 .foot__scope, .foot__links, .foot__copy { color: var(--text-3); }
 .foot__links a { color: var(--text-2); text-decoration: underline; text-underline-offset: 4px; }
+
+/* --------------------------------------------------------------------------
+   7.5 on mobile — Part 5.7 and 7.5.
+
+   The frame is locked in the UPPER portion at 78% of viewport width, and the
+   copy sits in a fixed-height cell BELOW it, never beside it. Three screens
+   only, posters rather than the live app: on a phone the full-screen real app
+   in a new tab is a better demo than a postage-stamp embed.
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 767px) {
+  .app { display: flex; flex-direction: column; }
+  .app__devicecell { order: 1; }
+  .app__copy { order: 2; }
+  /* Part 7.5 asks for 78% of viewport width, which at 390x844 is a 636px-tall
+     frame — and the same section also has to hold the Sample data label, the
+     control and a fixed-height copy cell inside one viewport. Both cannot be
+     true, so the frame is sized by the height actually available and comes out
+     near 57vw. The composition fits at every phone size instead of the phone
+     being cropped by its own stage. */
+  .device__frame { --fh: min(636px, calc(100svh - 380px)); }
+  /* The annotation lane: reserved from first paint whether or not an
+     annotation is present, so nothing below it ever shifts (Part 7.5.1). */
+  .app__devicecell { padding-bottom: calc(var(--travel-object) + 40px); }
+  /* On mobile the dot stays on the screen and the leader runs vertically down
+     to the lane; the label itself is rendered into that lane by DeviceFrame,
+     not inside the clipped screen. */
+  .anno--m .anno__label { display: none; }
+  .anno--m .anno__leader {
+    left: 0;
+    right: auto;
+    width: 1px;
+    height: 40px;
+    transform: scaleY(0);
+    transform-origin: top;
+    animation-name: anno-leader-v;
+  }
+}
+
+/* ==========================================================================
+   iOS 26 Liquid Glass — CLIENT DIRECTION (DECISIONS.md D9)
+
+   A departure from Part 2.6 and Part 13, which ban glassmorphism outright.
+   Applied as one recipe so every glass surface on the site is the same
+   material: translucent fill, blur + saturation, a specular rim on the top
+   edge only, a fine hairline, and a wide soft lift. Never a fourth light
+   source in the Part 2.3 sense — glass refracts what is already behind it
+   rather than emitting.
+   ========================================================================== */
+
+.glass,
+.btn--ghost,
+.btn--primary,
+.hdr,
+.mbar,
+.seg,
+.inc__card,
+.wl__field,
+.disc__btn {
+  position: relative;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+}
+
+/* The specular rim: bright along the top edge, shadowed along the bottom.
+   A uniform 1px ring reads as a border; a graded one reads as a material. */
+.glass::after,
+.btn--ghost::after,
+.btn--primary::after,
+.seg::after,
+.inc__card::after,
+.disc__btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    var(--glass-rim) 0,
+    transparent 1.5px,
+    transparent calc(100% - 1.5px),
+    var(--glass-edge) 100%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  padding: 1px;
+}
+
+.btn--ghost {
+  background: var(--glass-1);
+  border-color: transparent;
+  box-shadow: var(--glass-lift);
+}
+.btn--ghost:hover {
+  background: var(--glass-2);
+  border-color: transparent;
+}
+
+/* The primary keeps its jade-deep identity and gains the same material over
+   it, so the two buttons read as one family rather than two systems. */
+.btn--primary {
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--jade-deep) 88%, var(--text)), var(--jade-deep));
+  box-shadow: var(--glass-lift);
+}
+.btn--primary:hover {
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--jade-deep) 78%, var(--jade)), var(--jade-deep));
+}
+
+.hdr {
+  background: color-mix(in srgb, var(--void) 72%, transparent);
+  backdrop-filter: var(--glass-blur-heavy);
+  -webkit-backdrop-filter: var(--glass-blur-heavy);
+}
+.mbar {
+  background: color-mix(in srgb, var(--void) 76%, transparent);
+  backdrop-filter: var(--glass-blur-heavy);
+  -webkit-backdrop-filter: var(--glass-blur-heavy);
+}
+
+.seg {
+  background: var(--glass-1);
+  border-color: transparent;
+  box-shadow: var(--glass-lift);
+}
+.seg__ind {
+  background: var(--glass-3);
+  border-radius: var(--r-control);
+}
+
+.inc__card {
+  background: color-mix(in srgb, var(--surface-1) 62%, transparent);
+  box-shadow: var(--glass-lift);
+}
+.inc__card.is-drawn { border-color: transparent; }
+
+.wl__field {
+  background: var(--glass-1);
+  border-radius: var(--r-control);
+  padding-inline: var(--s2);
+  box-shadow: var(--glass-lift);
+}
+
+.disc__btn {
+  background: var(--glass-1);
+  border-radius: var(--r-control);
+  padding-inline: var(--s2);
+  margin-block: 1px;
+}
+.disc__btn:hover { background: var(--glass-2); }

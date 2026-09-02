@@ -90,6 +90,28 @@
   --w-heading: 450;
   --w-display: 450;
 
+  /* ---- iOS 26 Liquid Glass ----------------------------------------------
+     CLIENT DIRECTION, and a deliberate departure from the brief: Part 2.6 and
+     Part 13 ban glassmorphism and frosted panels outright. Recorded in
+     DECISIONS.md D9.
+
+     The recipe is the app's own, which documents it in src/styles/tokens.css,
+     inverted for a near-black ground. Glass on light is a white veil; glass on
+     dark is a *lift* — the surface has to look like it is catching light from
+     the room rather than being painted white. Four things working together:
+       1. a translucent fill in the page's own ink, not white
+       2. a strong blur plus a saturation boost, so what is behind it bends
+       3. a bright specular rim on the top edge only (inset highlight)
+       4. a fine hairline so the shape still reads, and a wide soft shadow */
+  --glass-1: rgba(232, 240, 236, 0.05);
+  --glass-2: rgba(232, 240, 236, 0.08);
+  --glass-3: rgba(232, 240, 236, 0.12);
+  --glass-rim: rgba(232, 240, 236, 0.18); /* specular top edge */
+  --glass-edge: rgba(5, 16, 13, 0.55); /* the shadowed bottom edge */
+  --glass-blur: blur(30px) saturate(180%);
+  --glass-blur-heavy: blur(44px) saturate(200%);
+  --glass-lift: 0 10px 30px -18px rgba(0, 0, 0, 0.9);
+
   /* ---- Geometry — Part 2.6 ----------------------------------------------
      Exactly two radii exist. Nothing else on the site has a radius at all. */
   --r-control: 2px;
