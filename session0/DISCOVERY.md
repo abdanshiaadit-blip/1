@@ -113,7 +113,10 @@ On **Meera Iyer**, both resolve, exactly:
   "Active now" (`session0/app-screens/screen-priorities@3x.png`).
 - A genuine **twelve-week** before-and-after: `e_vitd_done`, `weeks: 12`, tracked signal
   `Vitamin D` `baseline '16 ng/mL'` → `now '24 ng/mL'`, readout copy *"Vitamin D rose from
-  16 to 24 ng/mL across the 12 weeks"* (`src/data/meera.ts:709-736`).
+  16 to 24 ng/mL across the 12 weeks"* (`src/data/meera.ts:709-736`). The same result is
+  also a Health Passport event (`src/data/meera.ts:794-801`, *"12-week protocol, 41 of 42
+  doses. Vitamin D rose from 16 to 24 ng/mL"*), so the twelve-week story is visible on two
+  of the five plates rather than one.
 
 Meera is also the brief's own audience (Part 1.5: a woman 28–52 managing iron, thyroid or
 cycle issues). **Recommendation: the embedded app runs as Meera.** The captured plates and
@@ -286,8 +289,8 @@ frame. A phone inside a phone. Fixing it means rewriting the app's responsive lo
 container queries.
 
 An iframe fixes it for free, because the iframe **is** the viewport. The same is true of
-`index.html`'s `viewport-fit=cover` and safe-area insets, the 22 `backdrop-filter` surfaces
-that would otherwise sample the site's dark page through the app's glass, and the
+`index.html`'s `viewport-fit=cover` and safe-area insets, the 11 `backdrop-filter` glass
+surfaces that would otherwise sample the site's dark page through the app's glass, and the
 `prefers-reduced-motion` block whose four `!important` universal rules would kill every
 animation on the site for reduced-motion visitors — precisely the users Part 4.10 promises a
 complete poster version to.
